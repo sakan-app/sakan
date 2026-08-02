@@ -5,12 +5,22 @@ import logo from "@/assets/sakan-logo.png.asset.json";
 import { useI18n } from "@/lib/i18n";
 import { localeFlags, localeNames, localeOrder } from "@/i18n";
 import { useAuth } from "@/hooks/useAuth";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { useFeatureStrings } from "@/i18n/feature";
+
+const headerStrings = {
+  ar: { messages: "الرسائل" },
+  en: { messages: "Messages" },
+  de: { messages: "Nachrichten" },
+  ru: { messages: "Сообщения" },
+};
 
 export function Header() {
   const [langOpen, setLangOpen] = useState(false);
   const langRef = useRef<HTMLDivElement>(null);
   const { t, locale, setLocale } = useI18n();
   const { isAuthenticated, signOut } = useAuth();
+  const hs = useFeatureStrings(headerStrings);
   const navigate = useNavigate();
 
   const nav = [
@@ -98,7 +108,7 @@ export function Header() {
           {isAuthenticated ? (
             <div className="hidden items-center gap-2 sm:flex">
               <Link to="/messages" className="text-xs font-semibold text-cream/85 hover:text-gold">
-                {t.nav.messages}
+                {hs.messages}
               </Link>
               <Link to="/profile" className="text-xs font-semibold text-cream/85 hover:text-gold">
                 {t.nav.myProfile}
