@@ -123,7 +123,7 @@ export function MessageBubble({ message, isOwn, strings, locale, onRetry }: Prop
           {isOwn && !message.pending && !message.failed && (
             <span>
               {message.read_at ? (
-                <CheckCheck className="h-3.5 w-3.5" aria-label={strings.read ?? "read"} />
+                <CheckCheck className="h-3.5 w-3.5" />
               ) : message.delivered_at ? (
                 <CheckCheck className="h-3.5 w-3.5" />
               ) : (
