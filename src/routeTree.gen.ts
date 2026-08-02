@@ -29,7 +29,9 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin/analytics'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as AdminReportsRouteImport } from './routes/admin/reports'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as AdminVerificationsRouteImport } from './routes/admin/verifications'
 import { Route as AuthIndexRouteImport } from './routes/auth.index'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
@@ -139,9 +141,19 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminReportsRoute = AdminReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminVerificationsRoute = AdminVerificationsRouteImport.update({
+  id: '/verifications',
+  path: '/verifications',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AuthIndexRoute = AuthIndexRouteImport.update({
@@ -206,7 +218,9 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/reports': typeof AdminReportsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/admin/verifications': typeof AdminVerificationsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/member/$id': typeof MemberIdRoute
@@ -235,7 +249,9 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/reports': typeof AdminReportsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/admin/verifications': typeof AdminVerificationsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/member/$id': typeof MemberIdRoute
@@ -267,7 +283,9 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/reports': typeof AdminReportsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/admin/verifications': typeof AdminVerificationsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/member/$id': typeof MemberIdRoute
@@ -299,7 +317,9 @@ export interface FileRouteTypes {
     | '/settings'
     | '/admin/analytics'
     | '/admin/dashboard'
+    | '/admin/reports'
     | '/admin/users'
+    | '/admin/verifications'
     | '/auth/callback'
     | '/auth/reset-password'
     | '/member/$id'
@@ -328,7 +348,9 @@ export interface FileRouteTypes {
     | '/settings'
     | '/admin/analytics'
     | '/admin/dashboard'
+    | '/admin/reports'
     | '/admin/users'
+    | '/admin/verifications'
     | '/auth/callback'
     | '/auth/reset-password'
     | '/member/$id'
@@ -359,7 +381,9 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/admin/analytics'
     | '/admin/dashboard'
+    | '/admin/reports'
     | '/admin/users'
+    | '/admin/verifications'
     | '/auth/callback'
     | '/auth/reset-password'
     | '/member/$id'
@@ -528,11 +552,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/reports': {
+      id: '/admin/reports'
+      path: '/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AdminReportsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/users': {
       id: '/admin/users'
       path: '/users'
       fullPath: '/admin/users'
       preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/verifications': {
+      id: '/admin/verifications'
+      path: '/verifications'
+      fullPath: '/admin/verifications'
+      preLoaderRoute: typeof AdminVerificationsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/auth/': {
@@ -639,7 +677,9 @@ const AuthenticatedRouteRouteWithChildren =
 interface AdminRouteRouteChildren {
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminReportsRoute: typeof AdminReportsRoute
   AdminUsersRoute: typeof AdminUsersRoute
+  AdminVerificationsRoute: typeof AdminVerificationsRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminUserIdRoute: typeof AdminUserIdRoute
 }
@@ -647,7 +687,9 @@ interface AdminRouteRouteChildren {
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
+  AdminReportsRoute: AdminReportsRoute,
   AdminUsersRoute: AdminUsersRoute,
+  AdminVerificationsRoute: AdminVerificationsRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminUserIdRoute: AdminUserIdRoute,
 }
