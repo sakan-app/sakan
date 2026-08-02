@@ -22,6 +22,20 @@ import { RealtimeBridge } from "@/components/RealtimeBridge";
 import { PwaProvider } from "@/components/pwa/PwaProvider";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 
+/** Routes rendered inside the authenticated native app shell. */
+const APP_SHELL_PREFIXES = [
+  "/home",
+  "/discover",
+  "/messages",
+  "/matches",
+  "/favorites",
+  "/profile",
+  "/settings",
+  "/billing",
+  "/notifications",
+  "/onboarding",
+];
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
