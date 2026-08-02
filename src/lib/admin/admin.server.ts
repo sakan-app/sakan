@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Json } from "@/integrations/supabase/types";
 
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import type { Database } from "@/integrations/supabase/types";
@@ -32,16 +33,16 @@ export async function assertAdmin(supabase: CallerClient, userId: string): Promi
 async function logAction(params: {
   adminId: string;
   action: string;
-  targetTable?: string;
-  targetId?: string;
-  details?: Record<string, unknown>;
+  targetTable?: string | undefined;
+  targetId?: string | undefined;
+  details?: Record<string, unknown> | undefined;
 }): Promise<void> {
   await supabaseAdmin.from("admin_actions").insert({
     admin_id: params.adminId,
     action: params.action,
     target_table: params.targetTable ?? null,
     target_id: params.targetId ?? null,
-    details: params.details ?? {},
+    details: (params.details ?? {}) as Json,
   });
 }
 
@@ -164,8 +165,8 @@ export async function getDashboardStats() {
 // ---------------------------------------------------------------------------
 
 export type UserListFilter = {
-  search?: string;
-  status?: "active" | "suspended" | "all";
+  search?: string | undefined;
+  status?: "active" | "suspended" | "all" | undefined;
   verified?: "verified" | "unverified" | "all";
   page: number;
   pageSize: number;
@@ -264,7 +265,7 @@ export async function setUserStatus(params: {
   adminId: string;
   targetId: string;
   action: "suspend" | "unsuspend" | "ban";
-  reason?: string;
+  reason?: string | undefined;
 }) {
   const isActive = params.action === "unsuspend";
   const { error } = await supabaseAdmin
@@ -373,7 +374,7 @@ export async function reviewVerification(params: {
   adminId: string;
   id: string;
   decision: "approved" | "rejected";
-  notes?: string;
+  notes?: string | undefined;
 }) {
   const { data: row, error } = await supabaseAdmin
     .from("verification_requests")
@@ -436,7 +437,7 @@ export async function resolveReport(params: {
   adminId: string;
   id: string;
   action: "resolved" | "dismissed";
-  notes?: string;
+  notes?: string | undefined;
 }) {
   const { error } = await supabaseAdmin
     .from("reports")
@@ -510,8 +511,8 @@ export async function resolveModerationFlag(params: {
 // ---------------------------------------------------------------------------
 
 export async function listSubscriptions(params: {
-  status?: string;
-  planCode?: string;
+  status?: string | undefined;
+  planCode?: string | undefined;
   page: number;
   pageSize: number;
 }) {
@@ -530,7 +531,7 @@ export async function listSubscriptions(params: {
   return { rows: data ?? [], total: count ?? 0, page, pageSize };
 }
 
-export async function listPayments(params: { status?: string; page: number; pageSize: number }) {
+export async function listPayments(params: { status?: string | undefined; page: number; pageSize: number }) {
   const page = Math.max(1, params.page);
   const pageSize = Math.min(100, Math.max(1, params.pageSize));
   const from = (page - 1) * pageSize;
@@ -550,8 +551,8 @@ export async function listPayments(params: { status?: string; page: number; page
 // ---------------------------------------------------------------------------
 
 export async function listAuditLog(params: {
-  action?: string;
-  adminId?: string;
+  action?: string | undefined;
+  adminId?: string | undefined;
   page: number;
   pageSize: number;
 }) {
