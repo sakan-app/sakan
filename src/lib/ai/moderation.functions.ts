@@ -34,7 +34,7 @@ export const moderateText = createServerFn({ method: "POST" })
 
 const moderateImageInput = z.object({
   storagePath: z.string().min(1),
-  bucket: z.enum(["avatars", "gallery", "verification"]),
+  bucket: z.enum(["avatars", "gallery", "verification", "wallpapers"]),
 });
 
 export const moderateImage = createServerFn({ method: "POST" })

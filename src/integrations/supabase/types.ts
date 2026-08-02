@@ -221,6 +221,59 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_wallpapers: {
+        Row: {
+          blur: number
+          brightness: number
+          conversation_id: string | null
+          created_at: string
+          custom_image: string | null
+          id: string
+          opacity: number
+          overlay: number
+          updated_at: string
+          user_id: string
+          wallpaper_id: string
+          wallpaper_type: string
+        }
+        Insert: {
+          blur?: number
+          brightness?: number
+          conversation_id?: string | null
+          created_at?: string
+          custom_image?: string | null
+          id?: string
+          opacity?: number
+          overlay?: number
+          updated_at?: string
+          user_id: string
+          wallpaper_id?: string
+          wallpaper_type?: string
+        }
+        Update: {
+          blur?: number
+          brightness?: number
+          conversation_id?: string | null
+          created_at?: string
+          custom_image?: string | null
+          id?: string
+          opacity?: number
+          overlay?: number
+          updated_at?: string
+          user_id?: string
+          wallpaper_id?: string
+          wallpaper_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_wallpapers_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       compatibility_scores: {
         Row: {
           candidate_id: string
