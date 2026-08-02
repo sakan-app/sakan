@@ -1,7 +1,4 @@
 import { useEffect, type ReactNode } from "react";
-import { toast } from "sonner";
-import { useFeatureStrings } from "@/i18n/feature";
-import { pwaStrings } from "@/components/pwa/pwa.strings";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -19,24 +16,39 @@ export function clearDeferredInstallPrompt(): void {
 }
 
 export function PwaProvider({ children }: { children: ReactNode }) {
-  const t = useFeatureStrings(pwaStrings);
-
   useEffect(() => {
     if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
 
-    // A service worker must never control Vite's development preview: cached
-    // module URLs can retain incompatible React dependency hashes after HMR.
-    if (import.meta.env.DEV) {
-      void navigator.serviceWorker.getRegistrations().then((registrations) =>
-        Promise.all(registrations.map((registration) => registration.unregister())),
+    const hostname = window.location.hostname;
+    const isPreview =
+      window.self !== window.top ||
+      hostname.startsWith("id-preview--") ||
+      hostname.startsWith("preview--") ||
+      hostname === "lovableproject.com" ||
+      hostname.endsWith(".lovableproject.com") ||
+      hostname === "lovableproject-dev.com" ||
+      hostname.endsWith(".lovableproject-dev.com") ||
+      hostname === "beta.lovable.dev" ||
+      hostname.endsWith(".beta.lovable.dev");
+    const swDisabled = new URLSearchParams(window.location.search).get("sw") === "off";
+
+    async function removeStaleAppWorker() {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.allSettled(
+        registrations
+          .filter((registration) => new URL(registration.scope).origin === window.location.origin)
+          .map((registration) => registration.unregister()),
       );
       if ("caches" in window) {
-        void caches.keys().then((keys) =>
-          Promise.all(
-            keys.filter((key) => key.startsWith("sakan-")).map((key) => caches.delete(key)),
-          ),
+        const keys = await caches.keys();
+        await Promise.allSettled(
+          keys.filter((key) => key.startsWith("sakan-")).map((key) => caches.delete(key)),
         );
       }
+    }
+
+    if (!import.meta.env.PROD || isPreview || swDisabled) {
+      void removeStaleAppWorker();
       return;
     }
 
@@ -51,26 +63,7 @@ export function PwaProvider({ children }: { children: ReactNode }) {
     function registerSw() {
       navigator.serviceWorker
         .register("/sw.js")
-        .then((registration) => {
-          registration.addEventListener("updatefound", () => {
-            const installing = registration.installing;
-            if (!installing) return;
-            installing.addEventListener("statechange", () => {
-              if (installing.state === "installed" && navigator.serviceWorker.controller) {
-                toast(t.updateAvailable, {
-                  action: {
-                    label: t.updateReload,
-                    onClick: () => {
-                      installing.postMessage({ type: "SKIP_WAITING" });
-                      window.location.reload();
-                    },
-                  },
-                  duration: 15000,
-                });
-              }
-            });
-          });
-        })
+        .then(() => undefined)
         .catch(() => {
           // registration failures shouldn't break the app
         });
@@ -86,7 +79,7 @@ export function PwaProvider({ children }: { children: ReactNode }) {
       window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
       window.removeEventListener("load", registerSw);
     };
-  }, [t]);
+  }, []);
 
   return <>{children}</>;
 }
