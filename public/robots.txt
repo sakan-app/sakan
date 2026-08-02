@@ -25,4 +25,4 @@ Disallow: /auth/callback
 Disallow: /auth/reset-password
 Disallow: /unauthorized
 
-Sitemap: https://sakan.app/sitemap.xml
+Sitemap: https://www.sakanapp.net/sitemap.xml

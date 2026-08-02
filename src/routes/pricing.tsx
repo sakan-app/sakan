@@ -37,7 +37,7 @@ export const Route = createFileRoute("/pricing")({
             "@type": "AggregateOffer",
             priceCurrency: "EUR",
             offerCount: 3,
-            url: "https://sakan.app/pricing",
+            url: "https://www.sakanapp.net/pricing",
           },
         }),
       },

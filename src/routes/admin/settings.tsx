@@ -123,7 +123,7 @@ function AdminSettings() {
               value={draft.support_email}
               disabled={!isSuper}
               onChange={(event) => set("support_email", event.target.value)}
-              placeholder="support@sakan.app"
+              placeholder="support@sakanapp.net"
             />
           </Row>
           <Row label="Default language">

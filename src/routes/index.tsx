@@ -49,19 +49,19 @@ export const Route = createFileRoute("/")({
             {
               "@type": "Organization",
               name: "سَكَن | SAKAN",
-              url: "https://sakan.app",
-              logo: "https://sakan.app/icons/icon-512.png",
+              url: "https://www.sakanapp.net",
+              logo: "https://www.sakanapp.net/icons/icon-512.png",
               description:
                 "منصة دولية للتعارف الجاد والزواج المستقر في أوروبا والعالم العربي.",
             },
             {
               "@type": "WebSite",
               name: "سَكَن | SAKAN",
-              url: "https://sakan.app",
+              url: "https://www.sakanapp.net",
               inLanguage: ["ar", "en", "de", "ru"],
               potentialAction: {
                 "@type": "SearchAction",
-                target: "https://sakan.app/search?country={search_term_string}",
+                target: "https://www.sakanapp.net/search?country={search_term_string}",
                 "query-input": "required name=search_term_string",
               },
             },

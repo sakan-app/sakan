@@ -52,7 +52,7 @@ export function Footer() {
           <h3 className="mb-4 text-sm font-bold text-gold">تواصل معنا</h3>
           <ul className="space-y-3 text-sm text-cream/70">
             <li className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-gold" /> info@sakan.app
+              <Mail className="h-4 w-4 text-gold" /> info@sakanapp.net
             </li>
             <li className="flex items-center gap-2">
               <Phone className="h-4 w-4 text-gold" /> +49 30 12345678

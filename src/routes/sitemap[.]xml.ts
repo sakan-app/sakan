@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const SITE_URL = "https://sakan.app";
+const SITE_URL = "https://www.sakanapp.net";
 
 const PUBLIC_ROUTES = [
   { path: "/", priority: "1.0", changefreq: "daily" },
