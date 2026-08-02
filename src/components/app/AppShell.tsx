@@ -12,6 +12,7 @@ import {
   Home,
   LogOut,
   MessageCircle,
+  Megaphone,
   Search,
   Settings,
   Sparkles,
