@@ -46,7 +46,7 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-gold/15 bg-navy-deep/95 backdrop-blur">
+    <header className="glass-topbar sticky top-0 z-50" style={{ paddingTop: "env(safe-area-inset-top)" }}>
       <div className="mx-auto grid max-w-[1360px] grid-cols-[auto_1fr_auto] items-center gap-4 px-4 py-3 lg:px-8">
         <Link to="/" className="flex shrink-0 items-center gap-2">
           <img src={logo.url} alt="شعار منصة سكن" className="h-11 w-11 object-contain" />
