@@ -16,6 +16,7 @@ import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as ImpressumRouteImport } from './routes/impressum'
 import { Route as OfflineRouteImport } from './routes/offline'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
@@ -85,6 +86,11 @@ const OfflineRoute = OfflineRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SearchRoute = SearchRouteImport.update({
@@ -278,6 +284,7 @@ export interface FileRoutesByFullPath {
   '/impressum': typeof ImpressumRoute
   '/offline': typeof OfflineRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/unauthorized': typeof UnauthorizedRoute
@@ -321,6 +328,7 @@ export interface FileRoutesByTo {
   '/impressum': typeof ImpressumRoute
   '/offline': typeof OfflineRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/unauthorized': typeof UnauthorizedRoute
@@ -367,6 +375,7 @@ export interface FileRoutesById {
   '/impressum': typeof ImpressumRoute
   '/offline': typeof OfflineRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/unauthorized': typeof UnauthorizedRoute
@@ -413,6 +422,7 @@ export interface FileRouteTypes {
     | '/impressum'
     | '/offline'
     | '/pricing'
+    | '/privacy'
     | '/search'
     | '/sitemap.xml'
     | '/unauthorized'
@@ -456,6 +466,7 @@ export interface FileRouteTypes {
     | '/impressum'
     | '/offline'
     | '/pricing'
+    | '/privacy'
     | '/search'
     | '/sitemap.xml'
     | '/unauthorized'
@@ -501,6 +512,7 @@ export interface FileRouteTypes {
     | '/impressum'
     | '/offline'
     | '/pricing'
+    | '/privacy'
     | '/search'
     | '/sitemap.xml'
     | '/unauthorized'
@@ -547,6 +559,7 @@ export interface RootRouteChildren {
   ImpressumRoute: typeof ImpressumRoute
   OfflineRoute: typeof OfflineRoute
   PricingRoute: typeof PricingRoute
+  PrivacyRoute: typeof PrivacyRoute
   SearchRoute: typeof SearchRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
@@ -606,6 +619,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/search': {
@@ -955,6 +975,7 @@ const rootRouteChildren: RootRouteChildren = {
   ImpressumRoute: ImpressumRoute,
   OfflineRoute: OfflineRoute,
   PricingRoute: PricingRoute,
+  PrivacyRoute: PrivacyRoute,
   SearchRoute: SearchRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   UnauthorizedRoute: UnauthorizedRoute,
