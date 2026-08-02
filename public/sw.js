@@ -1,5 +1,5 @@
 /* SAKAN service worker */
-const VERSION = "sakan-v1";
+const VERSION = "sakan-v2";
 const SHELL_CACHE = `${VERSION}-shell`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const IMAGE_CACHE = `${VERSION}-images`;
@@ -51,7 +51,17 @@ function isImageRequest(request) {
 }
 
 function isStaticAsset(request) {
-  return ["style", "script", "font"].includes(request.destination);
+  return ["style", "font"].includes(request.destination);
+}
+
+function isDevelopmentModule(url) {
+  return (
+    url.pathname.startsWith("/src/") ||
+    url.pathname.startsWith("/node_modules/") ||
+    url.pathname.startsWith("/@") ||
+    url.searchParams.has("tsr-split") ||
+    url.searchParams.has("t")
+  );
 }
 
 self.addEventListener("fetch", (event) => {
@@ -60,6 +70,10 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(request.url);
   if (isSupabaseRequest(url)) return; // never cache API/auth
+
+  // Vite development modules use mutable URLs and dependency hashes. Caching
+  // them can mix React and React DOM builds and cause invalid hook calls.
+  if (isDevelopmentModule(url) || request.destination === "script") return;
 
   // Navigations: network-first with offline fallback
   if (request.mode === "navigate") {
