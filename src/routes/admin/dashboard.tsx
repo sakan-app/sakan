@@ -7,10 +7,13 @@ import {
   Bell,
   CreditCard,
   Flag,
+  HeartHandshake,
   MessagesSquare,
   Radio,
+  Repeat,
   ShieldCheck,
   Sparkles,
+  TrendingUp,
   UserPlus,
   Users,
 } from "lucide-react";
@@ -52,6 +55,8 @@ function AdminDashboard() {
             <StatCard label="Total users" value={stats.data.usersTotal} icon={Users} />
             <StatCard label="Active (24h)" value={stats.data.usersActive24h} icon={Activity} tone="gold" />
             <StatCard label="New today" value={stats.data.usersNewToday} icon={UserPlus} />
+            <StatCard label="New this week" value={stats.data.usersNewWeek} icon={UserPlus} />
+            <StatCard label="New this month" value={stats.data.usersNewMonth} icon={UserPlus} />
             <StatCard label="Verified users" value={stats.data.usersVerified} icon={ShieldCheck} />
             <StatCard
               label="Pending verifications"
@@ -67,7 +72,13 @@ function AdminDashboard() {
             />
             <StatCard label="Active conversations" value={stats.data.conversationsActive} icon={MessagesSquare} hint="last 7 days" />
             <StatCard label="Messages today" value={stats.data.messagesToday} icon={Bell} />
+            <StatCard label="Matches today" value={stats.data.matchesToday} icon={HeartHandshake} />
+            <StatCard label="Notifications today" value={stats.data.notificationsToday} icon={Bell} />
             <StatCard label="Premium members" value={stats.data.premiumActive} icon={Sparkles} tone="gold" />
+            <StatCard label="MRR" value={`${(stats.data.mrrCents / 100).toFixed(2)} USD`} icon={Repeat} tone="gold" />
+            <StatCard label="ARR" value={`${(stats.data.arrCents / 100).toFixed(2)} USD`} icon={TrendingUp} tone="gold" />
+            <StatCard label="Active subscriptions" value={stats.data.subscriptionsActive} icon={CreditCard} />
+            <StatCard label="Expired subscriptions" value={stats.data.subscriptionsExpired} icon={CreditCard} />
             <StatCard
               label="Revenue this month"
               value={`${(stats.data.revenueThisMonthCents / 100).toFixed(2)} USD`}
