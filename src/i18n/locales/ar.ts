@@ -49,7 +49,7 @@ export const ar = {
     safeNote: "آمن، خاص وسريع 100%",
     liveNow: "نشط الآن",
     liveTitle: "أعضاء موثقون نشطون الآن",
-    liveBadge: "(ميزة 1 يورو)",
+    liveBadge: "(ميزة 99 سنت)",
     liveCount: "عضواً نشطاً الآن",
     whyTitle: "لماذا سَكَن؟",
     features: [

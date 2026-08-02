@@ -20,6 +20,7 @@ import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as AuthenticatedBillingRouteImport } from './routes/_authenticated/billing'
 import { Route as AuthenticatedDiscoverRouteImport } from './routes/_authenticated/discover'
 import { Route as AuthenticatedFavoritesRouteImport } from './routes/_authenticated/favorites'
+import { Route as AuthenticatedFeaturedRouteImport } from './routes/_authenticated/featured'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedMatchesRouteImport } from './routes/_authenticated/matches'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
@@ -28,6 +29,7 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminActivityRouteImport } from './routes/admin/activity'
+import { Route as AdminAdsRouteImport } from './routes/admin/ads'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin/analytics'
 import { Route as AdminConversationsRouteImport } from './routes/admin/conversations'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
@@ -47,6 +49,7 @@ import { Route as AuthenticatedMessagesIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedMessagesIdRouteImport } from './routes/_authenticated/messages.$id'
 import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
 import { Route as AdminUserIdRouteImport } from './routes/admin/user.$id'
+import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -102,6 +105,11 @@ const AuthenticatedFavoritesRoute = AuthenticatedFavoritesRouteImport.update({
   path: '/favorites',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedFeaturedRoute = AuthenticatedFeaturedRouteImport.update({
+  id: '/featured',
+  path: '/featured',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -141,6 +149,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const AdminActivityRoute = AdminActivityRouteImport.update({
   id: '/activity',
   path: '/activity',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdsRoute = AdminAdsRouteImport.update({
+  id: '/ads',
+  path: '/ads',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
@@ -240,6 +253,11 @@ const AdminUserIdRoute = AdminUserIdRouteImport.update({
   path: '/user/$id',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
+  id: '/api/public/stripe-webhook',
+  path: '/api/public/stripe-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -252,6 +270,7 @@ export interface FileRoutesByFullPath {
   '/billing': typeof AuthenticatedBillingRoute
   '/discover': typeof AuthenticatedDiscoverRoute
   '/favorites': typeof AuthenticatedFavoritesRoute
+  '/featured': typeof AuthenticatedFeaturedRoute
   '/home': typeof AuthenticatedHomeRoute
   '/matches': typeof AuthenticatedMatchesRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -259,6 +278,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRoute
   '/admin/activity': typeof AdminActivityRoute
+  '/admin/ads': typeof AdminAdsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/conversations': typeof AdminConversationsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -278,6 +298,7 @@ export interface FileRoutesByFullPath {
   '/messages/$id': typeof AuthenticatedMessagesIdRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/admin/user/$id': typeof AdminUserIdRoute
+  '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/messages/': typeof AuthenticatedMessagesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -290,6 +311,7 @@ export interface FileRoutesByTo {
   '/billing': typeof AuthenticatedBillingRoute
   '/discover': typeof AuthenticatedDiscoverRoute
   '/favorites': typeof AuthenticatedFavoritesRoute
+  '/featured': typeof AuthenticatedFeaturedRoute
   '/home': typeof AuthenticatedHomeRoute
   '/matches': typeof AuthenticatedMatchesRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -297,6 +319,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRoute
   '/admin/activity': typeof AdminActivityRoute
+  '/admin/ads': typeof AdminAdsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/conversations': typeof AdminConversationsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -316,6 +339,7 @@ export interface FileRoutesByTo {
   '/messages/$id': typeof AuthenticatedMessagesIdRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/admin/user/$id': typeof AdminUserIdRoute
+  '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/messages': typeof AuthenticatedMessagesIndexRoute
 }
 export interface FileRoutesById {
@@ -331,6 +355,7 @@ export interface FileRoutesById {
   '/_authenticated/billing': typeof AuthenticatedBillingRoute
   '/_authenticated/discover': typeof AuthenticatedDiscoverRoute
   '/_authenticated/favorites': typeof AuthenticatedFavoritesRoute
+  '/_authenticated/featured': typeof AuthenticatedFeaturedRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/matches': typeof AuthenticatedMatchesRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
@@ -338,6 +363,7 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/admin/activity': typeof AdminActivityRoute
+  '/admin/ads': typeof AdminAdsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/conversations': typeof AdminConversationsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -357,6 +383,7 @@ export interface FileRoutesById {
   '/_authenticated/messages/$id': typeof AuthenticatedMessagesIdRoute
   '/_authenticated/profile/edit': typeof AuthenticatedProfileEditRoute
   '/admin/user/$id': typeof AdminUserIdRoute
+  '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
 }
 export interface FileRouteTypes {
@@ -372,6 +399,7 @@ export interface FileRouteTypes {
     | '/billing'
     | '/discover'
     | '/favorites'
+    | '/featured'
     | '/home'
     | '/matches'
     | '/notifications'
@@ -379,6 +407,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/settings'
     | '/admin/activity'
+    | '/admin/ads'
     | '/admin/analytics'
     | '/admin/conversations'
     | '/admin/dashboard'
@@ -398,6 +427,7 @@ export interface FileRouteTypes {
     | '/messages/$id'
     | '/profile/edit'
     | '/admin/user/$id'
+    | '/api/public/stripe-webhook'
     | '/messages/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -410,6 +440,7 @@ export interface FileRouteTypes {
     | '/billing'
     | '/discover'
     | '/favorites'
+    | '/featured'
     | '/home'
     | '/matches'
     | '/notifications'
@@ -417,6 +448,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/settings'
     | '/admin/activity'
+    | '/admin/ads'
     | '/admin/analytics'
     | '/admin/conversations'
     | '/admin/dashboard'
@@ -436,6 +468,7 @@ export interface FileRouteTypes {
     | '/messages/$id'
     | '/profile/edit'
     | '/admin/user/$id'
+    | '/api/public/stripe-webhook'
     | '/messages'
   id:
     | '__root__'
@@ -450,6 +483,7 @@ export interface FileRouteTypes {
     | '/_authenticated/billing'
     | '/_authenticated/discover'
     | '/_authenticated/favorites'
+    | '/_authenticated/featured'
     | '/_authenticated/home'
     | '/_authenticated/matches'
     | '/_authenticated/notifications'
@@ -457,6 +491,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/_authenticated/settings'
     | '/admin/activity'
+    | '/admin/ads'
     | '/admin/analytics'
     | '/admin/conversations'
     | '/admin/dashboard'
@@ -476,6 +511,7 @@ export interface FileRouteTypes {
     | '/_authenticated/messages/$id'
     | '/_authenticated/profile/edit'
     | '/admin/user/$id'
+    | '/api/public/stripe-webhook'
     | '/_authenticated/messages/'
   fileRoutesById: FileRoutesById
 }
@@ -492,6 +528,7 @@ export interface RootRouteChildren {
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   MemberIdRoute: typeof MemberIdRoute
   AuthIndexRoute: typeof AuthIndexRoute
+  ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -573,6 +610,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFavoritesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/featured': {
+      id: '/_authenticated/featured'
+      path: '/featured'
+      fullPath: '/featured'
+      preLoaderRoute: typeof AuthenticatedFeaturedRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/home': {
       id: '/_authenticated/home'
       path: '/home'
@@ -627,6 +671,13 @@ declare module '@tanstack/react-router' {
       path: '/activity'
       fullPath: '/admin/activity'
       preLoaderRoute: typeof AdminActivityRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/ads': {
+      id: '/admin/ads'
+      path: '/ads'
+      fullPath: '/admin/ads'
+      preLoaderRoute: typeof AdminAdsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/analytics': {
@@ -762,6 +813,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUserIdRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/api/public/stripe-webhook': {
+      id: '/api/public/stripe-webhook'
+      path: '/api/public/stripe-webhook'
+      fullPath: '/api/public/stripe-webhook'
+      preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -780,6 +838,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedBillingRoute: typeof AuthenticatedBillingRoute
   AuthenticatedDiscoverRoute: typeof AuthenticatedDiscoverRoute
   AuthenticatedFavoritesRoute: typeof AuthenticatedFavoritesRoute
+  AuthenticatedFeaturedRoute: typeof AuthenticatedFeaturedRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedMatchesRoute: typeof AuthenticatedMatchesRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
@@ -794,6 +853,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBillingRoute: AuthenticatedBillingRoute,
   AuthenticatedDiscoverRoute: AuthenticatedDiscoverRoute,
   AuthenticatedFavoritesRoute: AuthenticatedFavoritesRoute,
+  AuthenticatedFeaturedRoute: AuthenticatedFeaturedRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedMatchesRoute: AuthenticatedMatchesRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
@@ -809,6 +869,7 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface AdminRouteRouteChildren {
   AdminActivityRoute: typeof AdminActivityRoute
+  AdminAdsRoute: typeof AdminAdsRoute
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminConversationsRoute: typeof AdminConversationsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
@@ -826,6 +887,7 @@ interface AdminRouteRouteChildren {
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminActivityRoute: AdminActivityRoute,
+  AdminAdsRoute: AdminAdsRoute,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminConversationsRoute: AdminConversationsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
@@ -858,17 +920,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthResetPasswordRoute: AuthResetPasswordRoute,
   MemberIdRoute: MemberIdRoute,
   AuthIndexRoute: AuthIndexRoute,
+  ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

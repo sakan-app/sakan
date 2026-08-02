@@ -715,3 +715,23 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Featured ticker — one creative travels the full width over three minutes. */
+@keyframes featured-travel {
+  from { transform: translateX(110%); }
+  to { transform: translateX(-110%); }
+}
+.featured-track {
+  display: inline-flex;
+  align-items: center;
+  animation: featured-travel 180s linear forwards;
+  will-change: transform;
+}
+[dir="rtl"] .featured-track { animation-name: featured-travel-rtl; }
+@keyframes featured-travel-rtl {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(110%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .featured-track { animation: none; transform: none; }
+}
