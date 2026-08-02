@@ -9,12 +9,10 @@ interface NavItem {
   labelKey: keyof typeof navStrings.ar;
 }
 
-const items: NavItem[] = [
-  { to: "/", icon: Home, labelKey: "home" },
-  { to: "/search", icon: Search, labelKey: "search" },
-  { to: "/favorites", icon: Heart, labelKey: "favorites" },
-  { to: "/profile", icon: User, labelKey: "profile" },
-];
+const first: NavItem = { to: "/", icon: Home, labelKey: "home" };
+const second: NavItem = { to: "/search", icon: Search, labelKey: "search" };
+const third: NavItem = { to: "/favorites", icon: Heart, labelKey: "favorites" };
+const fourth: NavItem = { to: "/profile", icon: User, labelKey: "profile" };
 
 export function BottomNav() {
   const strings = useFeatureStrings(navStrings);
@@ -24,8 +22,6 @@ export function BottomNav() {
     if (to === "/") return pathname === "/";
     return pathname.startsWith(to);
   }
-
-  const [first, second, third, fourth] = items as [NavItem, NavItem, NavItem, NavItem];
 
   return (
     <nav
