@@ -9,8 +9,10 @@ import {
   Loader2,
   Pin,
 } from "lucide-react";
-import { memo, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 
+import { ReactionRow } from "@/components/chat/ReactionRow";
+import type { MessageReaction } from "@/lib/chat/reactions";
 import type { ChatMessage } from "@/lib/chat/types";
 import { signStoragePath } from "@/lib/chat/queries";
 import { useQuery } from "@tanstack/react-query";
@@ -30,6 +32,11 @@ type Props = {
   selectionMode?: boolean;
   selected?: boolean;
   editing?: boolean;
+  reactions?: MessageReaction[];
+  viewerId?: string;
+  otherName?: string;
+  translateSignal?: number;
+  onToggleReaction?: (emoji: string) => void;
   onRetry?: () => void;
   onReply?: () => void;
   onOpenMenu?: (point: { x: number; y: number }) => void;
@@ -95,6 +102,11 @@ function MessageBubbleImpl({
   selectionMode,
   selected,
   editing,
+  reactions,
+  viewerId = "",
+  otherName = "",
+  translateSignal = 0,
+  onToggleReaction,
   onRetry,
   onReply,
   onOpenMenu,
@@ -135,6 +147,16 @@ function MessageBubbleImpl({
       setTranslating(false);
     }
   }
+
+  const firstSignal = useRef(translateSignal);
+  useEffect(() => {
+    if (translateSignal === firstSignal.current) return;
+    firstSignal.current = translateSignal;
+    if (!message.body || message.deleted_at) return;
+    void handleTranslate();
+    // handleTranslate is stable for the lifetime of this message row
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [translateSignal]);
 
   const time = new Date(message.created_at).toLocaleTimeString(locale, {
     hour: "2-digit",
@@ -382,9 +404,25 @@ function MessageBubbleImpl({
           {message.edited_at && !message.deleted_at && <span>{strings.edited}</span>}
           <span>{time}</span>
           {isOwn && !message.pending && !message.failed && (
-            <span>
+            <span
+              title={
+                message.read_at
+                  ? strings.statusRead
+                  : message.delivered_at
+                    ? strings.statusDelivered
+                    : strings.statusSent
+              }
+              aria-label={
+                message.read_at
+                  ? strings.statusRead
+                  : message.delivered_at
+                    ? strings.statusDelivered
+                    : strings.statusSent
+              }
+              className="transition-opacity"
+            >
               {message.read_at ? (
-                <CheckCheck className="h-3.5 w-3.5" />
+                <CheckCheck className="h-3.5 w-3.5 text-sky-300" />
               ) : message.delivered_at ? (
                 <CheckCheck className="h-3.5 w-3.5" />
               ) : (
@@ -392,13 +430,26 @@ function MessageBubbleImpl({
               )}
             </span>
           )}
-          {message.pending && <Loader2 className="h-3 w-3 animate-spin" />}
+          {message.pending && (
+            <Loader2 aria-label={strings.statusSending} className="h-3 w-3 animate-spin" />
+          )}
           {message.failed && onRetry && (
             <button type="button" onClick={onRetry} className="underline">
               {strings.retrySend}
             </button>
           )}
         </div>
+
+        {!message.deleted_at && (reactions?.length ?? 0) > 0 && (
+          <ReactionRow
+            reactions={reactions ?? []}
+            userId={viewerId}
+            otherName={otherName}
+            youLabel={strings.you}
+            strings={strings}
+            onToggle={(emoji) => onToggleReaction?.(emoji)}
+          />
+        )}
       </div>
     </div>
   );
