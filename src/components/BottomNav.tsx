@@ -25,11 +25,11 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-gold/20 bg-navy-deep/80 backdrop-blur-xl lg:hidden"
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      className="glass-mobile fixed inset-x-0 bottom-0 z-50 rounded-t-[26px] lg:hidden"
+      style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0.25rem)" }}
       aria-label={strings.home}
     >
-      <div className="relative mx-auto flex max-w-[560px] items-center justify-between px-4 py-2">
+      <div className="relative mx-auto flex max-w-[560px] items-center justify-between px-4 pb-1 pt-2">
         <NavLink item={first} active={isActive(first.to)} label={strings[first.labelKey]} />
         <NavLink item={second} active={isActive(second.to)} label={strings[second.labelKey]} />
 
