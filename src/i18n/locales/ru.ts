@@ -51,7 +51,7 @@ export const ru: Dictionary = {
     safeNote: "100% безопасно, приватно и быстро",
     liveNow: "сейчас онлайн",
     liveTitle: "Проверенные участники сейчас онлайн",
-    liveBadge: "(функция за 1 €)",
+    liveBadge: "(функция за 99 центов)",
     liveCount: "участников онлайн",
     whyTitle: "Почему Sakan?",
     features: [

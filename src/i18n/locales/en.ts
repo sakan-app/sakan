@@ -51,7 +51,7 @@ export const en: Dictionary = {
     safeNote: "100% safe, private and fast",
     liveNow: "online now",
     liveTitle: "Verified members online right now",
-    liveBadge: "(€1 feature)",
+    liveBadge: "(99¢ feature)",
     liveCount: "members online now",
     whyTitle: "Why Sakan?",
     features: [

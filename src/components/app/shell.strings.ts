@@ -10,6 +10,7 @@ export type ShellStrings = {
   notifications: string;
   settings: string;
   billing: string;
+  featured: string;
   editProfile: string;
   search: string;
   searchPlaceholder: string;
@@ -37,6 +38,7 @@ export const shellStrings: FeatureDictionary<ShellStrings> = {
     notifications: "الإشعارات",
     settings: "الإعدادات",
     billing: "الاشتراك",
+    featured: "إعلان مميز",
     editProfile: "تعديل الملف",
     search: "بحث",
     searchPlaceholder: "ابحث عن عضو أو مدينة…",
@@ -62,6 +64,7 @@ export const shellStrings: FeatureDictionary<ShellStrings> = {
     notifications: "Notifications",
     settings: "Settings",
     billing: "Subscription",
+    featured: "Featured ad",
     editProfile: "Edit profile",
     search: "Search",
     searchPlaceholder: "Search a member or city…",
@@ -87,6 +90,7 @@ export const shellStrings: FeatureDictionary<ShellStrings> = {
     notifications: "Mitteilungen",
     settings: "Einstellungen",
     billing: "Abo",
+    featured: "Anzeige",
     editProfile: "Profil bearbeiten",
     search: "Suche",
     searchPlaceholder: "Mitglied oder Stadt suchen…",
@@ -112,6 +116,7 @@ export const shellStrings: FeatureDictionary<ShellStrings> = {
     notifications: "Уведомления",
     settings: "Настройки",
     billing: "Подписка",
+    featured: "Реклама",
     editProfile: "Редактировать профиль",
     search: "Поиск",
     searchPlaceholder: "Найти участника или город…",

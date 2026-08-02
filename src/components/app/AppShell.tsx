@@ -12,6 +12,7 @@ import {
   Home,
   LogOut,
   MessageCircle,
+  Megaphone,
   Search,
   Settings,
   Sparkles,
@@ -67,6 +68,7 @@ const SIDEBAR_PRIMARY: NavEntry[] = [
 
 const SIDEBAR_SECONDARY: NavEntry[] = [
   { to: "/billing", icon: CreditCard, key: "billing" },
+  { to: "/featured", icon: Megaphone, key: "featured" },
   { to: "/settings", icon: Settings, key: "settings" },
 ];
 

@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { FeaturedTicker } from "@/components/ads/FeaturedTicker";
+import { AdSlot } from "@/components/ads/AdSlot";
 import { MemberCard } from "@/components/MemberCard";
 import { activeMembersQuery, type Gender } from "@/lib/members";
 import { useI18n } from "@/lib/i18n";
@@ -103,6 +105,7 @@ function Index() {
   return (
     <div className="min-h-screen bg-navy-deep">
       <Header />
+      <FeaturedTicker />
 
       {/* HERO */}
       <section className="relative overflow-hidden bg-navy-deep">
@@ -268,6 +271,7 @@ function Index() {
 
       {/* WHY SAKAN */}
       <section className="bg-cream py-14">
+        <AdSlot slot="home_below_hero" className="mb-10 px-4" />
         <div className="mx-auto max-w-[1360px] px-6 lg:px-8">
           <h2 className="mb-10 text-center text-2xl font-black text-navy">
             <span className="text-gold">✦</span> {t.home.whyTitle} <span className="text-gold">✦</span>

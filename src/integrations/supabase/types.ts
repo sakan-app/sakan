@@ -41,6 +41,45 @@ export type Database = {
         }
         Relationships: []
       }
+      ad_placements: {
+        Row: {
+          config: Json
+          created_at: string
+          enabled: boolean
+          id: string
+          label: string
+          min_height: number
+          network: string | null
+          slot_key: string
+          unit_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          label: string
+          min_height?: number
+          network?: string | null
+          slot_key: string
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          label?: string
+          min_height?: number
+          network?: string | null
+          slot_key?: string
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       admin_actions: {
         Row: {
           action: string
@@ -292,6 +331,72 @@ export type Database = {
           favorite_id?: string
           id?: string
           note?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      featured_ads: {
+        Row: {
+          amount_cents: number
+          clicks: number
+          created_at: string
+          currency: string
+          ends_at: string | null
+          headline: string | null
+          id: string
+          image_path: string
+          impressions: number
+          paid_at: string | null
+          provider: string | null
+          provider_ref: string | null
+          review_note: string | null
+          starts_at: string | null
+          status: Database["public"]["Enums"]["featured_ad_status"]
+          subtitle: string | null
+          target_url: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents?: number
+          clicks?: number
+          created_at?: string
+          currency?: string
+          ends_at?: string | null
+          headline?: string | null
+          id?: string
+          image_path: string
+          impressions?: number
+          paid_at?: string | null
+          provider?: string | null
+          provider_ref?: string | null
+          review_note?: string | null
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["featured_ad_status"]
+          subtitle?: string | null
+          target_url?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          clicks?: number
+          created_at?: string
+          currency?: string
+          ends_at?: string | null
+          headline?: string | null
+          id?: string
+          image_path?: string
+          impressions?: number
+          paid_at?: string | null
+          provider?: string | null
+          provider_ref?: string | null
+          review_note?: string | null
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["featured_ad_status"]
+          subtitle?: string | null
+          target_url?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -1127,6 +1232,12 @@ export type Database = {
         | "refunded"
       billing_interval: "monthly" | "annual"
       consent_type: "terms" | "privacy" | "marketing" | "cookies"
+      featured_ad_status:
+        | "pending_payment"
+        | "pending_review"
+        | "active"
+        | "expired"
+        | "rejected"
       gender: "male" | "female"
       language_code: "ar" | "en" | "de" | "ru"
       log_level: "debug" | "info" | "warn" | "error"
@@ -1299,6 +1410,13 @@ export const Constants = {
       ],
       billing_interval: ["monthly", "annual"],
       consent_type: ["terms", "privacy", "marketing", "cookies"],
+      featured_ad_status: [
+        "pending_payment",
+        "pending_review",
+        "active",
+        "expired",
+        "rejected",
+      ],
       gender: ["male", "female"],
       language_code: ["ar", "en", "de", "ru"],
       log_level: ["debug", "info", "warn", "error"],

@@ -7,6 +7,8 @@
  * else in the app changes.
  */
 
+import { stripeIsLive, stripeKey, stripeRequest } from "./stripe.server";
+
 export type CheckoutRequest = {
   userId: string;
   planCode: string;
@@ -49,14 +51,60 @@ const manualProvider: PaymentProvider = {
 };
 
 /**
- * Stripe slot. Add the adapter here when a Stripe key is available:
- * create a Checkout Session, return { kind: "redirect", url, providerRef },
- * and confirm it from the webhook route with `activateSubscription()`.
+ * Stripe adapter — creates a hosted Checkout Session in subscription mode.
+ * The purchase is only written to the database once the signed
+ * `checkout.session.completed` webhook arrives.
  */
 function stripeProvider(): PaymentProvider | null {
-  const key = process.env["STRIPE_SECRET_KEY"];
-  if (!key) return null;
-  return null;
+  if (!stripeKey()) return null;
+  return {
+    id: "stripe",
+    live: stripeIsLive(),
+    async createCheckout(req) {
+      const session = await stripeRequest<{ id: string; url: string }>(
+        "/checkout/sessions",
+        {
+          mode: "subscription",
+          success_url: `${req.returnUrl}?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${req.returnUrl}?checkout=canceled`,
+          client_reference_id: req.userId,
+          allow_promotion_codes: true,
+          line_items: [
+            {
+              quantity: 1,
+              price_data: {
+                currency: req.currency.toLowerCase(),
+                unit_amount: req.amountCents,
+                recurring: { interval: req.interval === "annual" ? "year" : "month" },
+                product_data: { name: `SAKAN ${req.description}` },
+              },
+            },
+          ],
+          metadata: {
+            kind: "subscription",
+            user_id: req.userId,
+            plan_code: req.planCode,
+            interval: req.interval,
+          },
+          subscription_data: {
+            metadata: {
+              kind: "subscription",
+              user_id: req.userId,
+              plan_code: req.planCode,
+              interval: req.interval,
+            },
+          },
+        },
+      );
+      return { kind: "redirect", url: session.url, providerRef: session.id };
+    },
+    async cancel(providerRef) {
+      if (!providerRef || !providerRef.startsWith("sub_")) return;
+      await stripeRequest(`/subscriptions/${providerRef}`, {
+        cancel_at_period_end: true,
+      });
+    },
+  };
 }
 
 export function getPaymentProvider(): PaymentProvider {
