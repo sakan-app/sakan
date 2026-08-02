@@ -1,5 +1,5 @@
 export const ar = {
-  meta: { name: "العربية", dir: "rtl" as const },
+  meta: { name: "العربية", dir: "rtl" as "rtl" | "ltr" },
   common: {
     loading: "جارٍ التحميل…",
     save: "حفظ",
