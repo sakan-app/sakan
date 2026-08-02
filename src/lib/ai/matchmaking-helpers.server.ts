@@ -117,3 +117,20 @@ export function gatewayErrorToMessage(error: unknown): string {
   if (error instanceof GatewayError) return error.kind;
   return "failed";
 }
+
+export async function generateOpeners(
+  me: CompatibilityProfile,
+  candidate: CompatibilityProfile,
+  language: Locale,
+): Promise<string[]> {
+  const { buildOpenerMessages, openerSchema } = await import("@/lib/ai/prompts");
+  const { content } = await chatCompletion({
+    messages: buildOpenerMessages(me, candidate, language),
+    jsonSchema: openerSchema,
+  });
+  const parsed = parseJsonContent<{ openers: string[] }>(content);
+  if (!parsed || !Array.isArray(parsed.openers)) {
+    throw new GatewayError("failed", "Could not parse openers response.");
+  }
+  return parsed.openers.slice(0, 3);
+}

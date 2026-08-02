@@ -470,23 +470,25 @@ function TabBar() {
   const s = useFeatureStrings(shellStrings);
   const pathname = useActivePath();
   const unread = useUnreadMessages();
+  const notifications = useUnreadCount().data ?? 0;
 
   return (
     <nav
       aria-label={s.menu}
       className="fixed inset-x-0 bottom-0 z-40 px-3 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] lg:hidden"
     >
-      <div className="mx-auto flex max-w-[520px] items-center justify-around rounded-[26px] glass-bar border border-white/12 px-1.5 py-1.5 shadow-[var(--shadow-float)]">
+      <div className="mx-auto flex max-w-[560px] items-center justify-around rounded-[26px] glass-bar border border-white/12 px-1 py-1.5 shadow-[var(--shadow-float)]">
         {TABS.map((item) => {
           const active = isActivePath(pathname, item.to);
           const Icon = item.icon;
-          const badge = item.key === "messages" ? unread : 0;
+          const badge =
+            item.key === "messages" ? unread : item.key === "notifications" ? notifications : 0;
           return (
             <Link
               key={item.to}
               to={item.to}
               aria-current={active ? "page" : undefined}
-              className="relative flex min-h-[52px] min-w-[56px] flex-col items-center justify-center gap-1 rounded-[20px] px-2 tap-scale"
+              className="relative flex min-h-[52px] min-w-[48px] flex-1 flex-col items-center justify-center gap-1 rounded-[20px] px-1 tap-scale"
             >
               {active && (
                 <motion.span
@@ -509,7 +511,7 @@ function TabBar() {
                 )}
               </span>
               <span
-                className={`relative text-[10px] transition-colors ${
+                className={`relative max-w-full truncate text-[9.5px] transition-colors ${
                   active ? "font-bold text-gold" : "text-cream/55"
                 }`}
               >
@@ -528,11 +530,21 @@ function TabBar() {
 export function AppShell() {
   const pathname = useActivePath();
   const immersive = isImmersive(pathname);
+  const { width, collapsed, persistWidth, toggleCollapsed } = useSidebarState();
+  const shellInset = (collapsed ? SIDEBAR_COLLAPSED : width) + 32;
 
   return (
     <div className="app-canvas">
-      <Sidebar />
-      <div className="lg:ps-[16.75rem] lg:pe-4">
+      <Sidebar
+        width={width}
+        collapsed={collapsed}
+        onResize={persistWidth}
+        onToggle={toggleCollapsed}
+      />
+      <div
+        className="lg:pe-4 lg:[padding-inline-start:var(--shell-inset)]"
+        style={{ "--shell-inset": `${shellInset}px` } as React.CSSProperties}
+      >
         <MobileBar />
         <Toolbar />
         <main
