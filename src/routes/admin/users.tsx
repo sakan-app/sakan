@@ -312,6 +312,9 @@ function AdminUsers() {
                                 />
                                 <MenuItem
                                   label="Delete account"
+                                />
+                                <MenuItem
+                                  label="__PLACEHOLDER__"
                                   destructive
                                   onClick={() =>
                                     confirm({
