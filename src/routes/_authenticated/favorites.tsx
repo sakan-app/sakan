@@ -50,7 +50,7 @@ function FavoritesPage() {
               <Bookmark className="mx-auto h-12 w-12 text-gold-deep" />
               <h2 className="mt-4 text-lg font-bold text-cream">{s.favorites.empty}</h2>
               <p className="mt-2 text-xs leading-6 text-cream/60">{s.favorites.emptyText}</p>
-              <Link to="/search" className="btn-gold mt-6 inline-block px-6 py-2.5 text-sm">
+              <Link to="/discover" className="btn-gold mt-6 inline-block px-6 py-2.5 text-sm">
                 {s.favorites.title}
               </Link>
             </div>

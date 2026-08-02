@@ -148,6 +148,8 @@ function MemberProfile() {
               minAge: 18,
               maxAge: 60,
               country: "all",
+              sort: "recent" as const,
+              page: 1,
             }}
             className="text-xs text-cream/60 hover:text-gold"
           >
