@@ -44,6 +44,7 @@ import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as MemberIdRouteImport } from './routes/member.$id'
 import { Route as AuthenticatedMessagesIndexRouteImport } from './routes/_authenticated/messages.index'
+import { Route as AuthenticatedMessagesIdRouteImport } from './routes/_authenticated/messages.$id'
 import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
 import { Route as AdminUserIdRouteImport } from './routes/admin/user.$id'
 
@@ -223,6 +224,11 @@ const AuthenticatedMessagesIndexRoute =
     path: '/messages/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedMessagesIdRoute = AuthenticatedMessagesIdRouteImport.update({
+  id: '/messages/$id',
+  path: '/messages/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedProfileEditRoute =
   AuthenticatedProfileEditRouteImport.update({
     id: '/edit',
@@ -269,6 +275,7 @@ export interface FileRoutesByFullPath {
   '/member/$id': typeof MemberIdRoute
   '/admin/': typeof AdminIndexRoute
   '/auth/': typeof AuthIndexRoute
+  '/messages/$id': typeof AuthenticatedMessagesIdRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/admin/user/$id': typeof AdminUserIdRoute
   '/messages/': typeof AuthenticatedMessagesIndexRoute
@@ -306,6 +313,7 @@ export interface FileRoutesByTo {
   '/member/$id': typeof MemberIdRoute
   '/admin': typeof AdminIndexRoute
   '/auth': typeof AuthIndexRoute
+  '/messages/$id': typeof AuthenticatedMessagesIdRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/admin/user/$id': typeof AdminUserIdRoute
   '/messages': typeof AuthenticatedMessagesIndexRoute
@@ -346,6 +354,7 @@ export interface FileRoutesById {
   '/member/$id': typeof MemberIdRoute
   '/admin/': typeof AdminIndexRoute
   '/auth/': typeof AuthIndexRoute
+  '/_authenticated/messages/$id': typeof AuthenticatedMessagesIdRoute
   '/_authenticated/profile/edit': typeof AuthenticatedProfileEditRoute
   '/admin/user/$id': typeof AdminUserIdRoute
   '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
@@ -386,6 +395,7 @@ export interface FileRouteTypes {
     | '/member/$id'
     | '/admin/'
     | '/auth/'
+    | '/messages/$id'
     | '/profile/edit'
     | '/admin/user/$id'
     | '/messages/'
@@ -423,6 +433,7 @@ export interface FileRouteTypes {
     | '/member/$id'
     | '/admin'
     | '/auth'
+    | '/messages/$id'
     | '/profile/edit'
     | '/admin/user/$id'
     | '/messages'
@@ -462,6 +473,7 @@ export interface FileRouteTypes {
     | '/member/$id'
     | '/admin/'
     | '/auth/'
+    | '/_authenticated/messages/$id'
     | '/_authenticated/profile/edit'
     | '/admin/user/$id'
     | '/_authenticated/messages/'
@@ -729,6 +741,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMessagesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/messages/$id': {
+      id: '/_authenticated/messages/$id'
+      path: '/messages/$id'
+      fullPath: '/messages/$id'
+      preLoaderRoute: typeof AuthenticatedMessagesIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profile/edit': {
       id: '/_authenticated/profile/edit'
       path: '/edit'
@@ -767,6 +786,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRouteWithChildren
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedMessagesIdRoute: typeof AuthenticatedMessagesIdRoute
   AuthenticatedMessagesIndexRoute: typeof AuthenticatedMessagesIndexRoute
 }
 
@@ -780,6 +800,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRouteWithChildren,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedMessagesIdRoute: AuthenticatedMessagesIdRoute,
   AuthenticatedMessagesIndexRoute: AuthenticatedMessagesIndexRoute,
 }
 

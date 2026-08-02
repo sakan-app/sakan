@@ -380,12 +380,13 @@ function ConversationPage() {
 
   async function shareMessages(list: ChatMessage[]) {
     const text = list.map((m) => messageText(m, s)).join("\n");
+    const nav: Navigator = navigator;
     try {
-      if (typeof navigator !== "undefined" && "share" in navigator) {
-        await navigator.share({ text });
+      if (typeof nav.share === "function") {
+        await nav.share({ text });
         return;
       }
-      await navigator.clipboard.writeText(text);
+      await nav.clipboard.writeText(text);
       toast.success(s.copied);
     } catch {
       /* user dismissed the share sheet */
@@ -645,7 +646,7 @@ function ConversationPage() {
                     rtl={rtl}
                     replyTarget={replyTarget}
                     replyTargetName={
-                      replyTarget ? (replyTarget.sender_id === userId ? s.you : info.otherName) : undefined
+                      replyTarget ? (replyTarget.sender_id === userId ? s.you : info.otherName) : ""
                     }
                     highlighted={highlightId === message.id || activeResultId === message.id}
                     searchTerm={searchOpen ? debouncedTerm : ""}
@@ -718,7 +719,7 @@ function ConversationPage() {
         onSendAttachment={handleSendAttachment}
         onTyping={sendTyping}
         replyTo={replyTo}
-        replyToName={replyTo ? (replyTo.sender_id === userId ? s.you : info.otherName) : undefined}
+        replyToName={replyTo ? (replyTo.sender_id === userId ? s.you : info.otherName) : ""}
         onCancelReply={() => setReplyTo(null)}
         focusToken={composerFocus}
       />
