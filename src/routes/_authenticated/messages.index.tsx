@@ -4,8 +4,6 @@ import { Loader2, MessageCircle, Search, UserRound } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsOnline } from "@/hooks/usePresence";
 import { useFeatureStrings } from "@/i18n/feature";
@@ -140,23 +138,20 @@ function MessagesIndexPage() {
 
   if (to && !startError) {
     return (
-      <div className="flex min-h-screen flex-col bg-cream">
-        <Header />
+      <div className="w-full">
         <main className="flex flex-1 items-center justify-center py-24">
           <Loader2 className="h-7 w-7 animate-spin text-gold-deep" />
         </main>
-        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-cream pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0">
-      <Header />
+    <div className="w-full">
       <main className="mx-auto w-full max-w-[720px] flex-1 px-4 py-8 lg:px-0">
-        <h1 className="text-2xl font-black text-navy">{s.title}</h1>
+        <h1 className="text-2xl font-black text-cream">{s.title}</h1>
 
-        <div className="panel-navy mt-4 p-4">
+        <div className="glass-card mt-4 p-4">
           <div className="relative">
             <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-cream/40" />
             <input
@@ -197,7 +192,6 @@ function MessagesIndexPage() {
           </div>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

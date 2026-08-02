@@ -3,8 +3,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Camera, Loader2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { useAuth } from "@/hooks/useAuth";
 import { useI18n } from "@/lib/i18n";
 import {
@@ -246,8 +244,7 @@ function OnboardingPage() {
   const busy = save.isPending || uploading;
 
   return (
-    <div className="flex min-h-screen flex-col bg-navy-deep">
-      <Header />
+    <div className="w-full">
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-10">
         <h1 className="text-center text-2xl font-bold text-cream">{t.onboarding.title}</h1>
         <p className="mt-2 text-center text-sm text-cream/70">{t.onboarding.subtitle}</p>
@@ -274,7 +271,7 @@ function OnboardingPage() {
           ))}
         </div>
 
-        <div className="panel-navy mt-6 p-6 sm:p-8">
+        <div className="glass-card mt-6 p-6 sm:p-8">
           {profileQ.isLoading ? (
             <p className="py-8 text-center text-sm text-cream/70">{t.common.loading}</p>
           ) : (
@@ -490,7 +487,6 @@ function OnboardingPage() {
           )}
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

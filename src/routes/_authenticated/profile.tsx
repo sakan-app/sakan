@@ -3,8 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { BadgeCheck, Loader2, ShieldAlert, UserRound } from "lucide-react";
 import { useEffect } from "react";
 
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { useAuth } from "@/hooks/useAuth";
 import { useI18n } from "@/lib/i18n";
 import { avatarUrlQuery, myProfileQuery } from "@/lib/profile-queries";
@@ -42,17 +40,16 @@ function MyProfilePage() {
   const notProvided = t.member.notProvided;
 
   return (
-    <div className="flex min-h-screen flex-col bg-cream">
-      <Header />
+    <div className="w-full">
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
         {profileQ.isPending ? (
           <div className="flex justify-center py-20">
             <Loader2 className="h-7 w-7 animate-spin text-gold-deep" />
           </div>
         ) : !profile ? (
-          <p className="py-20 text-center text-sm text-muted-foreground">{t.common.errorText}</p>
+          <p className="py-20 text-center text-sm text-cream/60">{t.common.errorText}</p>
         ) : (
-          <div className="panel-navy p-6 sm:p-8">
+          <div className="glass-card p-6 sm:p-8">
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
               <div className="h-28 w-28 shrink-0 overflow-hidden rounded-full border border-gold/40 bg-navy">
                 {avatarQ.data ? (
@@ -157,7 +154,6 @@ function MyProfilePage() {
           </div>
         )}
       </main>
-      <Footer />
     </div>
   );
 }

@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 
 import { Composer } from "@/components/chat/Composer";
 import { MessageBubble } from "@/components/chat/MessageBubble";
-import { Header } from "@/components/Header";
 import { useAuth } from "@/hooks/useAuth";
 import { formatLastSeen, useIsOnline } from "@/hooks/usePresence";
 import { useFeatureStrings } from "@/i18n/feature";
@@ -178,8 +177,7 @@ function ConversationPage() {
 
   if (infoQ.isPending) {
     return (
-      <div className="flex min-h-screen flex-col bg-navy">
-        <Header />
+      <div className="w-full">
         <main className="flex flex-1 items-center justify-center">
           <Loader2 className="h-7 w-7 animate-spin text-gold-deep" />
         </main>
@@ -189,11 +187,10 @@ function ConversationPage() {
 
   if (!infoQ.data) {
     return (
-      <div className="flex min-h-screen flex-col bg-cream">
-        <Header />
+      <div className="w-full">
         <main className="flex flex-1 items-center justify-center px-6 py-20 text-center">
           <div>
-            <h1 className="text-lg font-bold text-navy">{s.loadError}</h1>
+            <h1 className="text-lg font-bold text-cream">{s.loadError}</h1>
             <Link to="/messages" className="btn-gold mt-6 inline-block px-6 py-2.5 text-sm">
               {s.back}
             </Link>

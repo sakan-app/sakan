@@ -1,8 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Bell, Eye, Heart, Loader2, MessageCircle, ShieldCheck, Sparkles, Trash2 } from "lucide-react";
 
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { useI18n } from "@/lib/i18n";
 import { useFeatureStrings } from "@/i18n/feature";
 import { socialStrings } from "@/lib/social/strings";
@@ -84,13 +82,12 @@ function NotificationsPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-cream pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0">
-      <Header />
+    <div className="w-full">
       <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-10 lg:px-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-black text-navy">{s.title}</h1>
-            <p className="mt-1 text-sm text-muted-foreground">{s.subtitle}</p>
+            <h1 className="text-2xl font-black text-cream">{s.title}</h1>
+            <p className="mt-1 text-sm text-cream/60">{s.subtitle}</p>
           </div>
           {hasUnread && (
             <button type="button" onClick={() => markAllAsRead.mutate()} className="btn-outline-gold px-4 py-2 text-xs">
@@ -99,7 +96,7 @@ function NotificationsPage() {
           )}
         </div>
 
-        <label className="mt-6 flex w-fit items-center gap-2 text-sm text-navy">
+        <label className="mt-6 flex w-fit items-center gap-2 text-sm text-cream">
           <input
             type="checkbox"
             checked={unreadOnly}
@@ -115,18 +112,18 @@ function NotificationsPage() {
               <Loader2 className="h-7 w-7 animate-spin text-gold-deep" />
             </div>
           ) : listQ.isError ? (
-            <div className="mx-auto max-w-md rounded-xl border border-gold/30 bg-white p-10 text-center shadow-[var(--shadow-card)]">
-              <h2 className="text-lg font-bold text-navy">{shared.errorTitle}</h2>
-              <p className="mt-2 text-xs leading-6 text-muted-foreground">{shared.errorText}</p>
+            <div className="mx-auto max-w-md glass-card p-10 text-center ">
+              <h2 className="text-lg font-bold text-cream">{shared.errorTitle}</h2>
+              <p className="mt-2 text-xs leading-6 text-cream/60">{shared.errorText}</p>
               <button onClick={() => void listQ.refetch()} className="btn-gold mt-6 px-6 py-2.5 text-sm">
                 {shared.retry}
               </button>
             </div>
           ) : visible.length === 0 ? (
-            <div className="mx-auto max-w-md rounded-xl border border-gold/30 bg-white p-10 text-center shadow-[var(--shadow-card)]">
+            <div className="mx-auto max-w-md glass-card p-10 text-center ">
               <Bell className="mx-auto h-12 w-12 text-gold-deep" />
-              <h2 className="mt-4 text-lg font-bold text-navy">{s.empty}</h2>
-              <p className="mt-2 text-xs leading-6 text-muted-foreground">{s.emptyText}</p>
+              <h2 className="mt-4 text-lg font-bold text-cream">{s.empty}</h2>
+              <p className="mt-2 text-xs leading-6 text-cream/60">{s.emptyText}</p>
             </div>
           ) : (
             <ul className="flex flex-col gap-2">
@@ -135,7 +132,7 @@ function NotificationsPage() {
                 return (
                   <li
                     key={item.id}
-                    className={`flex items-start gap-3 rounded-xl border border-gold/25 bg-white p-4 shadow-[var(--shadow-card)] ${
+                    className={`flex items-start gap-3 rounded-xl border border-gold/25 bg-white p-4  ${
                       item.readAt ? "" : "bg-gold/5"
                     }`}
                   >
@@ -148,9 +145,9 @@ function NotificationsPage() {
                         )}
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-bold text-navy">{item.title}</span>
-                        {item.body && <span className="block truncate text-xs text-muted-foreground">{item.body}</span>}
-                        <span className="mt-1 block text-[11px] text-muted-foreground">
+                        <span className="block truncate text-sm font-bold text-cream">{item.title}</span>
+                        {item.body && <span className="block truncate text-xs text-cream/60">{item.body}</span>}
+                        <span className="mt-1 block text-[11px] text-cream/60">
                           {relativeTime(item.createdAt, locale)}
                         </span>
                       </span>
@@ -161,7 +158,7 @@ function NotificationsPage() {
                       onClick={() => deleteNotification.mutate(item.id)}
                       aria-label={s.delete}
                       title={s.delete}
-                      className="shrink-0 rounded-full p-2 text-muted-foreground transition hover:bg-red-50 hover:text-red-500"
+                      className="shrink-0 rounded-full p-2 text-cream/60 transition hover:bg-red-50 hover:text-red-500"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -172,7 +169,6 @@ function NotificationsPage() {
           )}
         </div>
       </main>
-      <Footer />
     </div>
   );
 }
