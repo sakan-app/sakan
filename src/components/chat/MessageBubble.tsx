@@ -403,3 +403,5 @@ function MessageBubbleImpl({
     </div>
   );
 }
+
+export const MessageBubble = memo(MessageBubbleImpl);
