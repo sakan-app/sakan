@@ -27,6 +27,8 @@ import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authentic
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminAnalyticsRouteImport } from './routes/admin/analytics'
+import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as AuthIndexRouteImport } from './routes/auth.index'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
@@ -125,6 +127,16 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AuthIndexRoute = AuthIndexRouteImport.update({
   id: '/auth/',
   path: '/auth/',
@@ -180,6 +192,8 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/member/$id': typeof MemberIdRoute
@@ -205,6 +219,8 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/member/$id': typeof MemberIdRoute
@@ -233,6 +249,8 @@ export interface FileRoutesById {
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/member/$id': typeof MemberIdRoute
@@ -261,6 +279,8 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/settings'
+    | '/admin/analytics'
+    | '/admin/dashboard'
     | '/auth/callback'
     | '/auth/reset-password'
     | '/member/$id'
@@ -286,6 +306,8 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/settings'
+    | '/admin/analytics'
+    | '/admin/dashboard'
     | '/auth/callback'
     | '/auth/reset-password'
     | '/member/$id'
@@ -313,6 +335,8 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding'
     | '/_authenticated/profile'
     | '/_authenticated/settings'
+    | '/admin/analytics'
+    | '/admin/dashboard'
     | '/auth/callback'
     | '/auth/reset-password'
     | '/member/$id'
@@ -466,6 +490,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/analytics': {
+      id: '/admin/analytics'
+      path: '/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AdminAnalyticsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/auth/': {
       id: '/auth/'
       path: '/auth'
@@ -561,10 +599,14 @@ const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface AdminRouteRouteChildren {
+  AdminAnalyticsRoute: typeof AdminAnalyticsRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAnalyticsRoute: AdminAnalyticsRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 

@@ -33,7 +33,6 @@ const TOOLTIP = {
 } as const;
 const AXIS = { fill: "rgba(255,255,255,0.45)", fontSize: 11 } as const;
 
-export default function noop() {}
 
 function AdminAnalytics() {
   const fn = useServerFn(getAnalytics);
