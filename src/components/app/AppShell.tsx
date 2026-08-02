@@ -2,6 +2,9 @@ import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-route
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import {
+  Bell,
+  ChevronLeft,
+  ChevronRight,
   Compass,
   CreditCard,
   Globe,
@@ -14,7 +17,7 @@ import {
   Sparkles,
   UserRound,
 } from "lucide-react";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
 import logo from "@/assets/sakan-logo.png.asset.json";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
@@ -24,28 +27,47 @@ import { useFeatureStrings } from "@/i18n/feature";
 import { localeFlags, localeNames, localeOrder } from "@/i18n";
 import { useI18n } from "@/lib/i18n";
 import { conversationsQuery } from "@/lib/chat/queries";
+import { useUnreadCount } from "@/hooks/useNotifications";
 import { avatarUrlQuery, myProfileQuery } from "@/lib/profile-queries";
 
 type TabKey = keyof Pick<
   ShellStrings,
-  "home" | "discover" | "messages" | "matches" | "favorites" | "profile"
+  "home" | "discover" | "messages" | "matches" | "favorites" | "profile" | "notifications"
 >;
 
 type NavEntry = { to: string; icon: typeof Home; key: TabKey | keyof ShellStrings };
 
+/** Bottom navigation on phones — six persistent native tabs, no hamburger menu. */
 const TABS: Array<{ to: string; icon: typeof Home; key: TabKey }> = [
   { to: "/home", icon: Home, key: "home" },
   { to: "/discover", icon: Compass, key: "discover" },
   { to: "/messages", icon: MessageCircle, key: "messages" },
+  { to: "/favorites", icon: Heart, key: "favorites" },
+  { to: "/notifications", icon: Bell, key: "notifications" },
+  { to: "/profile", icon: UserRound, key: "profile" },
+];
+
+/** Desktop sidebar shows the same tabs plus the secondary destinations. */
+const SIDEBAR_PRIMARY: NavEntry[] = [
+  { to: "/home", icon: Home, key: "home" },
+  { to: "/discover", icon: Compass, key: "discover" },
+  { to: "/messages", icon: MessageCircle, key: "messages" },
   { to: "/matches", icon: Sparkles, key: "matches" },
+  { to: "/favorites", icon: Heart, key: "favorites" },
+  { to: "/notifications", icon: Bell, key: "notifications" },
   { to: "/profile", icon: UserRound, key: "profile" },
 ];
 
 const SIDEBAR_SECONDARY: NavEntry[] = [
-  { to: "/favorites", icon: Heart, key: "favorites" },
   { to: "/billing", icon: CreditCard, key: "billing" },
   { to: "/settings", icon: Settings, key: "settings" },
 ];
+
+const SIDEBAR_MIN = 208;
+const SIDEBAR_MAX = 360;
+const SIDEBAR_COLLAPSED = 78;
+const SIDEBAR_WIDTH_KEY = "sakan.sidebar.width";
+const SIDEBAR_COLLAPSED_KEY = "sakan.sidebar.collapsed";
 
 function useActivePath() {
   return useRouterState({ select: (s) => s.location.pathname });
