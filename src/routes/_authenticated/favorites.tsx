@@ -9,7 +9,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useFeatureStrings } from "@/i18n/feature";
 import { socialStrings } from "@/lib/social/strings";
 import { favoritesQuery, useToggleFavorite } from "@/lib/social/queries";
-import { useSocialRealtime } from "@/lib/social/realtime";
 
 export const Route = createFileRoute("/_authenticated/favorites")({
   head: () => ({
@@ -25,7 +24,6 @@ function FavoritesPage() {
   const { user } = useAuth();
   const s = useFeatureStrings(socialStrings);
   const userId = user?.id ?? "";
-  useSocialRealtime();
   const favoritesQ = useQuery(favoritesQuery(userId));
   const toggle = useToggleFavorite(userId);
   const entries = favoritesQ.data ?? [];
