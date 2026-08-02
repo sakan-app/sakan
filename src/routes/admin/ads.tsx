@@ -83,16 +83,17 @@ function AdminAds() {
         <StatCard label="Ad revenue" value={`${(revenue / 100).toFixed(2)} EUR`} icon={Megaphone} />
       </div>
 
-      <Panel title="All creatives">
+      <Panel>
+        <h2 className="mb-4 text-sm font-bold text-cream">All creatives</h2>
         {ads.isLoading ? (
           <LoadingState label="Loading ads…" />
         ) : ads.isError ? (
           <ErrorState message={(ads.error as Error).message} onRetry={() => void ads.refetch()} />
         ) : rows.length === 0 ? (
-          <EmptyState title="No ads yet" description="Featured purchases will appear here." />
+          <EmptyState label="No featured purchases yet." />
         ) : (
-          <TableShell>
-            <thead>
+          <TableShell
+            head={
               <tr>
                 <Th>Headline</Th>
                 <Th>Status</Th>
@@ -101,8 +102,8 @@ function AdminAds() {
                 <Th>Clicks</Th>
                 <Th>Actions</Th>
               </tr>
-            </thead>
-            <tbody>
+            }
+          >
               {rows.map((ad) => (
                 <tr key={ad.id}>
                   <Td>
@@ -140,7 +141,6 @@ function AdminAds() {
                   </Td>
                 </tr>
               ))}
-            </tbody>
           </TableShell>
         )}
       </Panel>
