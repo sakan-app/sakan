@@ -360,7 +360,7 @@ export async function getUserDetailFull(targetId: string) {
       id: photo.id,
       kind: photo.kind,
       is_approved: photo.is_approved,
-      url: await signPath(photo.kind === "avatar" ? "avatars" : photo.kind === "verification" ? "documents" : "gallery", photo.storage_path),
+      url: await signPath(photo.kind === "avatar" ? "avatars" : photo.kind === "verification" ? "verification" : "gallery", photo.storage_path),
     })),
   );
 
@@ -677,7 +677,7 @@ export async function getConversationMessages(params: { conversationId: string; 
   const rows = await Promise.all(
     (data ?? []).map(async (m) => ({
       ...m,
-      attachmentUrl: m.attachment_path ? await signPath("chat", m.attachment_path) : null,
+      attachmentUrl: m.attachment_path ? await signPath("chat-media", m.attachment_path) : null,
     })),
   );
   return { rows };
