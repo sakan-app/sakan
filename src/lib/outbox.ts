@@ -45,3 +45,57 @@ export async function queueOutboxRequest(entry: {
     }
   }
 }
+
+interface OutboxEntry {
+  id: number;
+  url: string;
+  method?: string;
+  headers?: Record<string, string>;
+  body?: string;
+}
+
+async function readAll(db: IDBDatabase): Promise<OutboxEntry[]> {
+  return new Promise((resolve, reject) => {
+    const request = db.transaction(STORE_NAME, "readonly").objectStore(STORE_NAME).getAll();
+    request.onsuccess = () => resolve(request.result as OutboxEntry[]);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function remove(db: IDBDatabase, id: number): Promise<void> {
+  await new Promise<void>((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    tx.objectStore(STORE_NAME).delete(id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+/**
+ * Replays every queued request. Called when the browser reports connectivity
+ * again or when the service worker's Background Sync event fires.
+ * Returns the number of successfully flushed entries.
+ */
+export async function flushOutbox(): Promise<number> {
+  if (typeof indexedDB === "undefined") return 0;
+  let flushed = 0;
+  const db = await openDb();
+  const entries = await readAll(db);
+  for (const entry of entries) {
+    try {
+      const response = await fetch(entry.url, {
+        method: entry.method ?? "POST",
+        headers: { "Content-Type": "application/json", ...(entry.headers ?? {}) },
+        body: entry.body,
+      });
+      // Drop permanently rejected requests so the queue cannot deadlock.
+      if (response.ok || (response.status >= 400 && response.status < 500)) {
+        await remove(db, entry.id);
+        if (response.ok) flushed += 1;
+      }
+    } catch {
+      break; // still offline — retry on the next sync
+    }
+  }
+  return flushed;
+}
