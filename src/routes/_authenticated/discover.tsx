@@ -159,7 +159,7 @@ function DiscoverPage() {
                   {option === "recent"
                     ? t.search.sortRecent
                     : option === "newest"
-                      ? ss.sort.newest
+                      ? t.search.sortNewest
                       : t.search.sortComplete}
                 </Chip>
               ))}
