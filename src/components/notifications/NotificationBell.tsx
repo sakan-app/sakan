@@ -7,7 +7,6 @@ import {
   useMarkAllAsRead,
   useMarkAsRead,
   useNotificationsList,
-  useNotificationsRealtime,
   useUnreadCount,
   type NotificationItem,
   type NotificationType,
@@ -55,7 +54,6 @@ export function NotificationBell({ className = "" }: { className?: string }) {
   const [open, setOpen] = useState(false);
   const s = useFeatureStrings(socialStrings).notifications;
 
-  useNotificationsRealtime();
   const listQ = useNotificationsList();
   const unreadQ = useUnreadCount();
   const markAsRead = useMarkAsRead();
