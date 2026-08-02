@@ -108,7 +108,7 @@ export function Header() {
           {isAuthenticated ? (
             <div className="hidden items-center gap-2 sm:flex">
               <Link to="/pricing" className="text-xs font-semibold text-cream/85 hover:text-gold">
-                {bs.pricingTitle}
+                {hs.pricing}
               </Link>
               <Link to="/messages" className="text-xs font-semibold text-cream/85 hover:text-gold">
                 {hs.messages}
@@ -126,7 +126,7 @@ export function Header() {
           ) : (
             <div className="hidden items-center gap-2 sm:flex">
               <Link to="/pricing" className="text-xs font-semibold text-cream/85 hover:text-gold">
-                {bs.pricingTitle}
+                {hs.pricing}
               </Link>
               <Link to="/auth" className="btn-outline-gold px-4 py-2 text-xs font-semibold">
                 {t.nav.login}
