@@ -1,9 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { MapPin, SearchX, SlidersHorizontal } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Loader2, MapPin, SearchX, SlidersHorizontal } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MemberCard } from "@/components/MemberCard";
-import { countries, filterMembers, type Gender } from "@/data/members";
+import { searchMembersQuery, type Gender } from "@/lib/members";
+import { useI18n } from "@/lib/i18n";
+import { countryLabel } from "@/lib/countries";
 
 type Search = {
   iAm: Gender;
@@ -34,11 +37,18 @@ export const Route = createFileRoute("/search")({
 
 function SearchPage() {
   const criteria = Route.useSearch();
-  const results = filterMembers(criteria);
-  const countryLabel =
-    criteria.country === "all"
-      ? "كل الدول"
-      : (countries.find((c) => c.code === criteria.country)?.ar ?? criteria.country);
+  const { t } = useI18n();
+  const membersQ = useQuery(
+    searchMembersQuery({
+      lookingFor: criteria.lookingFor,
+      minAge: criteria.minAge,
+      maxAge: criteria.maxAge,
+      country: criteria.country,
+    }),
+  );
+  const results = membersQ.data ?? [];
+  const country =
+    criteria.country === "all" ? t.search.allCountries : countryLabel(t, criteria.country);
 
   return (
     <div className="min-h-screen bg-cream">
@@ -47,16 +57,18 @@ function SearchPage() {
       <section className="bg-navy-deep py-8">
         <div className="mx-auto max-w-[1360px] px-6 lg:px-8">
           <h1 className="flex items-center justify-center gap-2 text-center text-2xl font-black text-cream">
-            <MapPin className="h-6 w-6 text-gold" /> أعضاء نشطون بالقرب منك
+            <MapPin className="h-6 w-6 text-gold" /> {t.search.title}
           </h1>
           <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-xs">
             <span className="flex items-center gap-1 text-gold">
-              <SlidersHorizontal className="h-4 w-4" /> معايير البحث:
+              <SlidersHorizontal className="h-4 w-4" /> {t.search.criteria}
             </span>
             {[
-              `أبحث عن: ${criteria.lookingFor === "female" ? "امرأة" : "رجل"}`,
-              `العمر: ${criteria.minAge} - ${criteria.maxAge}`,
-              `الإقامة: ${countryLabel}`,
+              `${t.search.lookingForChip}: ${
+                criteria.lookingFor === "female" ? t.enums.gender.female : t.enums.gender.male
+              }`,
+              `${t.search.ageChip}: ${criteria.minAge} - ${criteria.maxAge}`,
+              `${t.search.residenceChip}: ${country}`,
             ].map((chip) => (
               <span key={chip} className="rounded-full border border-gold/30 px-3 py-1 text-cream/75">
                 {chip}
@@ -64,22 +76,36 @@ function SearchPage() {
             ))}
           </div>
           <p className="mt-4 text-center text-xs text-cream/60">
-            تم العثور على <span className="font-bold text-gold">{results.length}</span> عضواً موثقاً
+            {t.search.foundPre} <span className="font-bold text-gold">{results.length}</span>{" "}
+            {t.search.foundPost}
           </p>
         </div>
       </section>
 
       <section className="py-10">
         <div className="mx-auto max-w-[1360px] px-6 lg:px-8">
-          {results.length === 0 ? (
+          {membersQ.isPending ? (
+            <div className="flex justify-center py-16 text-navy/70">
+              <Loader2 className="h-7 w-7 animate-spin text-gold-deep" />
+            </div>
+          ) : membersQ.isError ? (
+            <div className="mx-auto max-w-md rounded-xl border border-gold/30 bg-white p-10 text-center shadow-[var(--shadow-card)]">
+              <h2 className="text-lg font-bold text-navy">{t.common.errorTitle}</h2>
+              <p className="mt-2 text-xs leading-6 text-muted-foreground">{t.common.errorText}</p>
+              <button
+                onClick={() => void membersQ.refetch()}
+                className="btn-gold mt-6 px-6 py-2.5 text-sm"
+              >
+                {t.common.retry}
+              </button>
+            </div>
+          ) : results.length === 0 ? (
             <div className="mx-auto max-w-md rounded-xl border border-gold/30 bg-white p-10 text-center shadow-[var(--shadow-card)]">
               <SearchX className="mx-auto h-12 w-12 text-gold-deep" />
-              <h2 className="mt-4 text-lg font-bold text-navy">لا يوجد أعضاء مطابقون</h2>
-              <p className="mt-2 text-xs leading-6 text-muted-foreground">
-                جرّب توسيع نطاق العمر أو اختيار دولة أخرى للعثور على شريك مناسب.
-              </p>
+              <h2 className="mt-4 text-lg font-bold text-navy">{t.search.emptyTitle}</h2>
+              <p className="mt-2 text-xs leading-6 text-muted-foreground">{t.search.emptyText}</p>
               <Link to="/" className="btn-gold mt-6 inline-block px-6 py-2.5 text-sm">
-                تعديل معايير البحث
+                {t.search.editCriteria}
               </Link>
             </div>
           ) : (

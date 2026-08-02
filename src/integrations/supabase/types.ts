@@ -410,6 +410,7 @@ export type Database = {
           gender: Database["public"]["Enums"]["gender"] | null
           height_cm: number | null
           id: string
+          interests: string[]
           is_active: boolean
           is_hidden: boolean
           is_verified: boolean
@@ -420,6 +421,7 @@ export type Database = {
           onboarding_complete: boolean
           preferred_language: Database["public"]["Enums"]["language_code"]
           religiosity: Database["public"]["Enums"]["religiosity_level"] | null
+          spoken_languages: string[]
           updated_at: string
         }
         Insert: {
@@ -435,6 +437,7 @@ export type Database = {
           gender?: Database["public"]["Enums"]["gender"] | null
           height_cm?: number | null
           id: string
+          interests?: string[]
           is_active?: boolean
           is_hidden?: boolean
           is_verified?: boolean
@@ -445,6 +448,7 @@ export type Database = {
           onboarding_complete?: boolean
           preferred_language?: Database["public"]["Enums"]["language_code"]
           religiosity?: Database["public"]["Enums"]["religiosity_level"] | null
+          spoken_languages?: string[]
           updated_at?: string
         }
         Update: {
@@ -460,6 +464,7 @@ export type Database = {
           gender?: Database["public"]["Enums"]["gender"] | null
           height_cm?: number | null
           id?: string
+          interests?: string[]
           is_active?: boolean
           is_hidden?: boolean
           is_verified?: boolean
@@ -470,6 +475,7 @@ export type Database = {
           onboarding_complete?: boolean
           preferred_language?: Database["public"]["Enums"]["language_code"]
           religiosity?: Database["public"]["Enums"]["religiosity_level"] | null
+          spoken_languages?: string[]
           updated_at?: string
         }
         Relationships: []

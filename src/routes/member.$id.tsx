@@ -1,4 +1,5 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import {
   BadgeCheck,
@@ -6,20 +7,24 @@ import {
   GraduationCap,
   Heart,
   Languages,
+  Loader2,
   MapPin,
   MessageCircle,
   Moon,
   ShieldCheck,
+  UserRound,
   Users,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { members } from "@/data/members";
+import { memberQuery } from "@/lib/members";
+import { useI18n } from "@/lib/i18n";
+import { countryFlag, countryLabel } from "@/lib/countries";
+import { useAuth } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/member/$id")({
-  loader: ({ params }) => {
-    const member = members.find((m) => m.id === params.id);
-    if (!member) throw notFound();
+  loader: async ({ params, context }) => {
+    const member = await context.queryClient.ensureQueryData(memberQuery(params.id));
     return member;
   },
   head: ({ loaderData }) => ({
@@ -31,24 +36,92 @@ export const Route = createFileRoute("/member/$id")({
       },
       { property: "og:title", content: `${loaderData?.name ?? "عضو"} | سَكَن` },
       { property: "og:description", content: loaderData?.bio ?? "ملف عضو موثق على منصة سَكَن." },
+      { property: "og:type", content: "profile" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: MemberProfile,
+  errorComponent: MemberError,
+  notFoundComponent: MemberError,
 });
 
+function MemberError() {
+  const { t } = useI18n();
+  return (
+    <div className="flex min-h-screen flex-col bg-cream">
+      <Header />
+      <main className="flex flex-1 items-center justify-center px-6 py-20 text-center">
+        <div>
+          <h1 className="text-lg font-bold text-navy">{t.common.errorTitle}</h1>
+          <p className="mt-2 text-xs text-muted-foreground">{t.common.errorText}</p>
+          <Link to="/" className="btn-gold mt-6 inline-block px-6 py-2.5 text-sm">
+            {t.nav.home}
+          </Link>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
 function MemberProfile() {
-  const member = Route.useLoaderData();
-  const gallery = [member.profilePhoto, ...member.additionalPhotos];
+  const { id } = Route.useParams();
+  const { t } = useI18n();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const memberQ = useQuery(memberQuery(id));
+  const member = memberQ.data;
   const [active, setActive] = useState(0);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  if (memberQ.isPending) {
+    return (
+      <div className="flex min-h-screen flex-col bg-cream">
+        <Header />
+        <main className="flex flex-1 items-center justify-center py-24">
+          <Loader2 className="h-7 w-7 animate-spin text-gold-deep" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!member) return <MemberError />;
+
+  const gallery = [member.profilePhoto, ...member.gallery].filter(
+    (url): url is string => Boolean(url),
+  );
+  const notProvided = t.member.notProvided;
+  const maritalLabel = member.maritalStatus
+    ? t.enums.marital[member.maritalStatus]
+    : notProvided;
+  const religiosityLabel = member.religiosity
+    ? t.enums.religiosity[member.religiosity]
+    : notProvided;
+  const location = [member.city, countryLabel(t, member.countryCode)]
+    .filter(Boolean)
+    .join("، ");
 
   const info = [
-    { icon: Briefcase, label: "المهنة", value: member.job },
-    { icon: GraduationCap, label: "التعليم", value: member.education },
-    { icon: Users, label: "الحالة الاجتماعية", value: member.maritalStatus },
-    { icon: Moon, label: "الالتزام الديني", value: member.religiousLevel },
-    { icon: Languages, label: "اللغات", value: member.languages.join("، ") },
-    { icon: MapPin, label: "الإقامة", value: `${member.cityAr}، ${member.countryAr}` },
+    { icon: Briefcase, label: t.member.occupation, value: member.occupation ?? notProvided },
+    { icon: GraduationCap, label: t.member.education, value: member.education ?? notProvided },
+    { icon: Users, label: t.member.maritalStatus, value: maritalLabel },
+    { icon: Moon, label: t.member.religiosity, value: religiosityLabel },
+    {
+      icon: Languages,
+      label: t.member.languages,
+      value: member.languages.length ? member.languages.join("، ") : notProvided,
+    },
+    { icon: MapPin, label: t.member.residence, value: location || notProvided },
   ];
+
+  function handleStartChat() {
+    if (!isAuthenticated) {
+      void navigate({ to: "/auth" });
+      return;
+    }
+    setNotice(t.member.chatSoon);
+  }
 
   return (
     <div className="min-h-screen bg-cream">
@@ -56,24 +129,40 @@ function MemberProfile() {
 
       <div className="bg-navy-deep pb-16 pt-8">
         <div className="mx-auto max-w-[1100px] px-6 lg:px-8">
-          <Link to="/search" search={{ iAm: "male", lookingFor: member.gender, minAge: 18, maxAge: 60, country: "all" }} className="text-xs text-cream/60 hover:text-gold">
-            ← العودة إلى نتائج البحث
+          <Link
+            to="/search"
+            search={{
+              iAm: "male",
+              lookingFor: member.gender ?? "female",
+              minAge: 18,
+              maxAge: 60,
+              country: "all",
+            }}
+            className="text-xs text-cream/60 hover:text-gold"
+          >
+            {t.member.back}
           </Link>
 
           <div className="mt-5 grid gap-8 lg:grid-cols-[380px_1fr]">
             {/* Gallery */}
             <div>
               <div className="relative overflow-hidden rounded-2xl border border-gold/30 shadow-[var(--shadow-card)]">
-                <img
-                  src={gallery[active]}
-                  alt={`صورة ${member.name}`}
-                  width={480}
-                  height={600}
-                  className="aspect-[4/5] w-full object-cover"
-                />
+                {gallery[active] ? (
+                  <img
+                    src={gallery[active]}
+                    alt={`${t.member.photoAlt} ${member.name}`}
+                    width={480}
+                    height={600}
+                    className="aspect-[4/5] w-full object-cover"
+                  />
+                ) : (
+                  <span className="grid aspect-[4/5] w-full place-items-center bg-navy">
+                    <UserRound className="h-14 w-14 text-gold/40" />
+                  </span>
+                )}
                 {member.isVerified && (
                   <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-navy-deep/85 px-2.5 py-1 text-[11px] font-semibold text-cream">
-                    <BadgeCheck className="h-4 w-4 text-sky-400" /> موثّق
+                    <BadgeCheck className="h-4 w-4 text-sky-400" /> {t.member.verified}
                   </span>
                 )}
               </div>
@@ -85,11 +174,11 @@ function MemberProfile() {
                     className={`overflow-hidden rounded-lg border ${
                       i === active ? "border-gold" : "border-gold/20"
                     }`}
-                    aria-label={`عرض الصورة ${i + 1}`}
+                    aria-label={`${t.member.photoAlt} ${i + 1}`}
                   >
                     <img
                       src={photo}
-                      alt={`صورة إضافية ${i + 1} لـ ${member.name}`}
+                      alt={`${t.member.photoAlt} ${member.name} ${i + 1}`}
                       loading="lazy"
                       className="aspect-square w-full object-cover"
                     />
@@ -103,24 +192,27 @@ function MemberProfile() {
               <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
                 <div className="min-w-0">
                   <h1 className="flex items-center gap-2 text-2xl font-black text-cream">
-                    <span className="truncate">{member.name}، {member.age}</span>
+                    <span className="truncate">
+                      {member.name}
+                      {member.age != null ? `، ${member.age}` : ""}
+                    </span>
                     {member.isVerified && <BadgeCheck className="h-5 w-5 shrink-0 text-sky-400" />}
                   </h1>
                   <p className="mt-1 flex items-center gap-2 text-sm text-cream/65">
                     <MapPin className="h-4 w-4 text-gold" />
-                    {member.countryFlag} {member.cityAr}، {member.countryAr}
+                    {countryFlag(member.countryCode)} {location}
                   </p>
                 </div>
                 {member.online && (
                   <span className="flex shrink-0 items-center gap-1.5 rounded-full border border-emerald-400/40 px-3 py-1 text-[11px] text-emerald-300">
-                    <span className="h-2 w-2 rounded-full bg-emerald-400" /> نشط الآن
+                    <span className="h-2 w-2 rounded-full bg-emerald-400" /> {t.member.onlineNow}
                   </span>
                 )}
               </div>
 
               <div className="mt-5 rounded-lg border border-gold/15 bg-navy/40 p-4">
-                <h2 className="mb-2 text-sm font-bold text-gold">نبذة عني</h2>
-                <p className="text-sm leading-7 text-cream/75">{member.bio}</p>
+                <h2 className="mb-2 text-sm font-bold text-gold">{t.member.aboutMe}</h2>
+                <p className="text-sm leading-7 text-cream/75">{member.bio ?? notProvided}</p>
               </div>
 
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -138,7 +230,7 @@ function MemberProfile() {
               </div>
 
               <div className="mt-6">
-                <h2 className="mb-3 text-sm font-bold text-gold">الاهتمامات</h2>
+                <h2 className="mb-3 text-sm font-bold text-gold">{t.member.interests}</h2>
                 <div className="flex flex-wrap gap-2">
                   {member.interests.map((tag: string) => (
                     <span
@@ -152,16 +244,24 @@ function MemberProfile() {
               </div>
 
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                <button className="btn-gold flex flex-1 items-center justify-center gap-2 py-3 text-sm">
-                  <MessageCircle className="h-4 w-4" /> ابدأ المحادثة
+                <button
+                  onClick={handleStartChat}
+                  className="btn-gold flex flex-1 items-center justify-center gap-2 py-3 text-sm"
+                >
+                  <MessageCircle className="h-4 w-4" /> {t.member.startChat}
                 </button>
-                <button className="btn-outline-gold flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold">
-                  <Heart className="h-4 w-4" /> إضافة للمفضلة
+                <button
+                  onClick={handleStartChat}
+                  className="btn-outline-gold flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold"
+                >
+                  <Heart className="h-4 w-4" /> {t.member.addFavorite}
                 </button>
               </div>
 
+              {notice && <p className="mt-3 text-center text-[11px] text-gold">{notice}</p>}
+
               <p className="mt-4 flex items-center justify-center gap-2 text-[11px] text-cream/45">
-                <ShieldCheck className="h-3.5 w-3.5 text-gold" /> تم التحقق من الهوية والصور يدوياً
+                <ShieldCheck className="h-3.5 w-3.5 text-gold" /> {t.member.verifiedNote}
               </p>
             </div>
           </div>
