@@ -20,6 +20,10 @@ export type ShellStrings = {
   greetingAfternoon: string;
   greetingEvening: string;
   publicSite: string;
+  collapse: string;
+  expand: string;
+  resizeSidebar: string;
+  admin: string;
 };
 
 export const shellStrings: FeatureDictionary<ShellStrings> = {
@@ -43,6 +47,10 @@ export const shellStrings: FeatureDictionary<ShellStrings> = {
     greetingAfternoon: "نهارك سعيد",
     greetingEvening: "مساء الخير",
     publicSite: "الموقع العام",
+    collapse: "طيّ القائمة",
+    expand: "توسيع القائمة",
+    resizeSidebar: "تغيير عرض القائمة",
+    admin: "لوحة الإدارة",
   },
   en: {
     home: "Home",
@@ -64,6 +72,10 @@ export const shellStrings: FeatureDictionary<ShellStrings> = {
     greetingAfternoon: "Good afternoon",
     greetingEvening: "Good evening",
     publicSite: "Public site",
+    collapse: "Collapse",
+    expand: "Expand",
+    resizeSidebar: "Resize sidebar",
+    admin: "Admin",
   },
   de: {
     home: "Start",
@@ -85,6 +97,10 @@ export const shellStrings: FeatureDictionary<ShellStrings> = {
     greetingAfternoon: "Guten Tag",
     greetingEvening: "Guten Abend",
     publicSite: "Öffentliche Seite",
+    collapse: "Einklappen",
+    expand: "Ausklappen",
+    resizeSidebar: "Seitenleiste anpassen",
+    admin: "Verwaltung",
   },
   ru: {
     home: "Главная",
@@ -106,5 +122,9 @@ export const shellStrings: FeatureDictionary<ShellStrings> = {
     greetingAfternoon: "Добрый день",
     greetingEvening: "Добрый вечер",
     publicSite: "Публичный сайт",
+    collapse: "Свернуть",
+    expand: "Развернуть",
+    resizeSidebar: "Изменить ширину",
+    admin: "Админка",
   },
 };
