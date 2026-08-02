@@ -94,8 +94,12 @@ export function Header() {
               </div>
             )}
           </div>
+          {isAuthenticated && <NotificationBell />}
           {isAuthenticated ? (
             <div className="hidden items-center gap-2 sm:flex">
+              <Link to="/messages" className="text-xs font-semibold text-cream/85 hover:text-gold">
+                {t.nav.messages}
+              </Link>
               <Link to="/profile" className="text-xs font-semibold text-cream/85 hover:text-gold">
                 {t.nav.myProfile}
               </Link>
