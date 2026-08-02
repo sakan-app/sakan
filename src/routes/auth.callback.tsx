@@ -33,11 +33,11 @@ function AuthCallback() {
       if (data.session) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("onboarding_completed")
+          .select("onboarding_complete")
           .eq("id", data.session.user.id)
           .maybeSingle();
         void navigate({
-          to: profile?.onboarding_completed ? "/profile" : "/onboarding",
+          to: profile?.onboarding_complete ? "/profile" : "/onboarding",
           replace: true,
         });
       } else {
