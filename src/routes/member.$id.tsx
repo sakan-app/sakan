@@ -70,11 +70,13 @@ function MemberProfile() {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const memberQ = useQuery(memberQuery(id));
-  const member = memberQ.data;
+  const loaderMember = Route.useLoaderData();
+  // Fall back to loader data so SSR and the first client render agree.
+  const member = memberQ.data ?? loaderMember;
   const [active, setActive] = useState(0);
   const [notice, setNotice] = useState<string | null>(null);
 
-  if (memberQ.isPending) {
+  if (memberQ.isPending && !member) {
     return (
       <div className="flex min-h-screen flex-col bg-cream">
         <Header />
