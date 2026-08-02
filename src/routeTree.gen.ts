@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as OfflineRouteImport } from './routes/offline'
 import { Route as PricingRouteImport } from './routes/pricing'
@@ -58,6 +59,11 @@ const IndexRoute = IndexRouteImport.update({
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRouteRoute = AdminRouteRouteImport.update({
@@ -262,6 +268,7 @@ const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/about': typeof AboutRoute
   '/offline': typeof OfflineRoute
   '/pricing': typeof PricingRoute
   '/search': typeof SearchRoute
@@ -303,6 +310,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/offline': typeof OfflineRoute
   '/pricing': typeof PricingRoute
   '/search': typeof SearchRoute
@@ -347,6 +355,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/admin': typeof AdminRouteRouteWithChildren
+  '/about': typeof AboutRoute
   '/offline': typeof OfflineRoute
   '/pricing': typeof PricingRoute
   '/search': typeof SearchRoute
@@ -391,6 +400,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/about'
     | '/offline'
     | '/pricing'
     | '/search'
@@ -432,6 +442,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/offline'
     | '/pricing'
     | '/search'
@@ -475,6 +486,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/admin'
+    | '/about'
     | '/offline'
     | '/pricing'
     | '/search'
@@ -519,6 +531,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  AboutRoute: typeof AboutRoute
   OfflineRoute: typeof OfflineRoute
   PricingRoute: typeof PricingRoute
   SearchRoute: typeof SearchRoute
@@ -545,6 +558,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -911,6 +931,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdminRouteRoute: AdminRouteRouteWithChildren,
+  AboutRoute: AboutRoute,
   OfflineRoute: OfflineRoute,
   PricingRoute: PricingRoute,
   SearchRoute: SearchRoute,
