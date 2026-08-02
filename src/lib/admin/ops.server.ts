@@ -62,6 +62,14 @@ export type LiveStats = {
   revenueThisMonthCents: number;
   registrations14d: { date: string; count: number }[];
   onlineNow: number;
+  usersNewWeek: number;
+  usersNewMonth: number;
+  matchesToday: number;
+  notificationsToday: number;
+  subscriptionsActive: number;
+  subscriptionsExpired: number;
+  mrrCents: number;
+  arrCents: number;
 };
 
 export async function getLiveStats(): Promise<LiveStats> {
@@ -81,6 +89,12 @@ export async function getLiveStats(): Promise<LiveStats> {
     onlineNow,
     payments,
     signups,
+    usersNewWeek,
+    usersNewMonth,
+    matchesToday,
+    notificationsToday,
+    subscriptionsExpired,
+    billing,
   ] = await Promise.all([
     countOf(() => supabaseAdmin.from("profiles").select("id", { count: "exact", head: true })),
     countOf(() => supabaseAdmin.from("profiles").select("id", { count: "exact", head: true }).gte("last_seen_at", iso(1))),
@@ -96,6 +110,14 @@ export async function getLiveStats(): Promise<LiveStats> {
     countOf(() => supabaseAdmin.from("profiles").select("id", { count: "exact", head: true }).gte("last_seen_at", minutesAgoIso(5))),
     supabaseAdmin.from("payments").select("amount_cents").eq("status", "succeeded").gte("paid_at", monthStart),
     supabaseAdmin.from("profiles").select("created_at").gte("created_at", iso(13)),
+    countOf(() => supabaseAdmin.from("profiles").select("id", { count: "exact", head: true }).gte("created_at", iso(7))),
+    countOf(() => supabaseAdmin.from("profiles").select("id", { count: "exact", head: true }).gte("created_at", iso(30))),
+    countOf(() => supabaseAdmin.from("matches").select("id", { count: "exact", head: true }).gte("created_at", startOfTodayIso())),
+    countOf(() =>
+      supabaseAdmin.from("notifications").select("id", { count: "exact", head: true }).gte("created_at", startOfTodayIso()),
+    ),
+    countOf(() => supabaseAdmin.from("subscriptions").select("id", { count: "exact", head: true }).eq("status", "expired")),
+    import("./billing.server").then((m) => m.getBillingOverview()),
   ]);
 
   const buckets = new Map<string, number>();
@@ -118,6 +140,14 @@ export async function getLiveStats(): Promise<LiveStats> {
     revenueThisMonthCents: (payments.data ?? []).reduce((sum, r) => sum + r.amount_cents, 0),
     registrations14d: Array.from(buckets.entries()).map(([date, count]) => ({ date, count })),
     onlineNow,
+    usersNewWeek,
+    usersNewMonth,
+    matchesToday,
+    notificationsToday,
+    subscriptionsActive: billing.subscriptionsActive,
+    subscriptionsExpired,
+    mrrCents: billing.mrrCents,
+    arrCents: billing.arrCents,
   };
 }
 
