@@ -58,7 +58,7 @@ function AdminNotifications() {
     onSuccess: (result) => {
       setTitle("");
       setBody("");
-      toast.success(`Sent to ${result?.count ?? 0} members`);
+      toast.success(`Sent to ${result?.recipients ?? 0} members`);
       void queryClient.invalidateQueries({ queryKey: ["admin", "notifications"] });
     },
     onError: (error: Error) => toast.error(error.message || "Broadcast failed"),

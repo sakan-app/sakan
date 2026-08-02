@@ -8,7 +8,7 @@ export type ConfirmRequest = {
   confirmLabel?: string;
   destructive?: boolean;
   requireReason?: boolean;
-  onConfirm: (reason: string) => Promise<void> | void;
+  onConfirm: (reason: string) => Promise<unknown> | unknown;
 };
 
 /** Blocking confirmation sheet for dangerous or irreversible admin actions. */
