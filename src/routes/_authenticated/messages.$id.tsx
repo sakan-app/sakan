@@ -6,6 +6,7 @@ import {
   BadgeCheck,
   Loader2,
   MessageSquareOff,
+  Image as ImageIcon,
   Phone,
   Search,
   SearchX,
@@ -17,6 +18,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { Composer } from "@/components/chat/Composer";
+import { ChatWallpaper } from "@/components/chat/ChatWallpaper";
 import { ConversationSearchBar } from "@/components/chat/ConversationSearchBar";
 import { DeleteMessageDialog } from "@/components/chat/DeleteMessageDialog";
 import { ForwardSheet } from "@/components/chat/ForwardSheet";
@@ -26,6 +28,7 @@ import { MessageContextMenu, type ContextMenuAction } from "@/components/chat/Me
 import { MessageInfoSheet } from "@/components/chat/MessageInfoSheet";
 import { PinnedBanner } from "@/components/chat/PinnedBanner";
 import { SelectionBar } from "@/components/chat/SelectionBar";
+import { WallpaperPicker } from "@/components/chat/WallpaperPicker";
 import { useAuth } from "@/hooks/useAuth";
 import { formatLastSeen, useIsOnline } from "@/hooks/usePresence";
 import { useFeatureStrings } from "@/i18n/feature";
@@ -53,6 +56,8 @@ import {
   toggleReaction,
 } from "@/lib/chat/reactions";
 import { useConversationRealtime } from "@/lib/chat/realtime";
+import { resolveSettings, wallpapersQuery } from "@/lib/chat/wallpaper-queries";
+import { wallpaperStrings } from "@/lib/chat/wallpaper-strings";
 import type { ChatMessage, MessageKind } from "@/lib/chat/types";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -188,6 +193,7 @@ function ConversationPage() {
   const { user } = useAuth();
   const { locale } = useI18n();
   const s = useFeatureStrings(chatStrings);
+  const ws = useFeatureStrings(wallpaperStrings);
   const queryClient = useQueryClient();
   const userId = user?.id ?? "";
   const rtl = locale === "ar";
@@ -217,6 +223,10 @@ function ConversationPage() {
   const [debouncedTerm, setDebouncedTerm] = useState("");
   const [searchIndex, setSearchIndex] = useState(0);
   const [translateSignals, setTranslateSignals] = useState<Record<string, number>>({});
+  const [wallpaperOpen, setWallpaperOpen] = useState(false);
+
+  const wallpapersQ = useQuery(wallpapersQuery(userId));
+  const wallpaper = useMemo(() => resolveSettings(wallpapersQ.data, id), [wallpapersQ.data, id]);
 
   const reactionsQ = useQuery(conversationReactionsQuery(id));
   const reactionsByMessage = useMemo(() => groupReactions(reactionsQ.data), [reactionsQ.data]);
@@ -711,6 +721,15 @@ function ConversationPage() {
           >
             <Search className="h-5 w-5" />
           </button>
+          <button
+            type="button"
+            aria-label={ws.changeWallpaper}
+            title={ws.changeWallpaper}
+            onClick={() => setWallpaperOpen(true)}
+            className="grid h-9 w-9 place-items-center rounded-full text-gold hover:bg-gold/10"
+          >
+            <ImageIcon className="h-5 w-5" />
+          </button>
         </div>
       )}
 
@@ -722,7 +741,8 @@ function ConversationPage() {
       />
 
       <div className="relative flex-1 overflow-hidden">
-        <div ref={scrollRef} onScroll={handleScroll} className="h-full space-y-2 overflow-y-auto px-3 py-4">
+        <ChatWallpaper settings={wallpaper} />
+        <div ref={scrollRef} onScroll={handleScroll} className="relative h-full space-y-2 overflow-y-auto px-3 py-4">
           {messagesQ.isFetchingNextPage && (
             <div className="flex justify-center py-2">
               <Loader2 className="h-4 w-4 animate-spin text-gold-deep" />
@@ -905,6 +925,14 @@ function ConversationPage() {
           startId={viewerStartId}
           strings={s}
           onClose={() => setViewerStartId(null)}
+        />
+      )}
+
+      {wallpaperOpen && (
+        <WallpaperPicker
+          conversationId={id}
+          current={wallpaper}
+          onClose={() => setWallpaperOpen(false)}
         />
       )}
     </div>
