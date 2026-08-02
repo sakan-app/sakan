@@ -139,7 +139,7 @@ function MyProfilePage() {
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <Link
-                to="/onboarding"
+                to="/profile/edit"
                 className="btn-gold flex-1 py-3 text-center text-sm font-bold"
               >
                 {t.profile.editTitle}

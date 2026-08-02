@@ -9,6 +9,7 @@ import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/hooks/useAuth";
 import { useI18n, format } from "@/lib/i18n";
 import { authErrorMessage } from "@/lib/auth-errors";
+import { resetRequestSchema, signInSchema, signUpSchema } from "@/lib/validation";
 
 export const Route = createFileRoute("/auth/")({
   head: () => ({
@@ -55,11 +56,28 @@ function AuthPage() {
   }, [isAuthenticated, isLoading, navigate]);
 
   function validate(): string | null {
-    if (mode === "signup" && displayName.trim().length < 2) return t.auth.errors.nameShort;
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return t.auth.errors.email;
-    if (mode !== "reset" && password.length < 8) return t.auth.errors.passwordShort;
-    if (mode === "signup" && password !== confirm) return t.auth.errors.passwordMismatch;
-    return null;
+    if (mode === "reset") {
+      return resetRequestSchema.safeParse({ email }).success ? null : t.auth.errors.email;
+    }
+    if (mode === "signin") {
+      const parsed = signInSchema.safeParse({ email, password });
+      if (parsed.success) return null;
+      return parsed.error.issues[0]?.path[0] === "password"
+        ? t.auth.errors.passwordShort
+        : t.auth.errors.email;
+    }
+    const parsed = signUpSchema.safeParse({
+      displayName,
+      email,
+      password,
+      confirm,
+    });
+    if (parsed.success) return null;
+    const field = parsed.error.issues[0]?.path[0];
+    if (field === "displayName") return t.auth.errors.nameShort;
+    if (field === "email") return t.auth.errors.email;
+    if (field === "confirm") return t.auth.errors.passwordMismatch;
+    return t.auth.errors.passwordShort;
   }
 
   async function handleSubmit(event: FormEvent) {
