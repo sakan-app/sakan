@@ -9,6 +9,7 @@ import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/hooks/useAuth";
 import { useI18n, format } from "@/lib/i18n";
 import { authErrorMessage } from "@/lib/auth-errors";
+import { resetRequestSchema, signInSchema, signUpSchema } from "@/lib/validation";
 
 export const Route = createFileRoute("/auth/")({
   head: () => ({
@@ -69,13 +70,13 @@ function AuthPage() {
       displayName,
       email,
       password,
-      confirmPassword: confirm,
+      confirm,
     });
     if (parsed.success) return null;
     const field = parsed.error.issues[0]?.path[0];
     if (field === "displayName") return t.auth.errors.nameShort;
     if (field === "email") return t.auth.errors.email;
-    if (field === "confirmPassword") return t.auth.errors.passwordMismatch;
+    if (field === "confirm") return t.auth.errors.passwordMismatch;
     return t.auth.errors.passwordShort;
   }
 
