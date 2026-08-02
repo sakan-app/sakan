@@ -974,7 +974,7 @@ export type Database = {
       user_plan_tier: { Args: { _user_id: string }; Returns: number }
     }
     Enums: {
-      app_role: "user" | "moderator" | "admin"
+      app_role: "user" | "moderator" | "admin" | "super_admin"
       billing_event_type:
         | "checkout"
         | "activated"
@@ -1017,7 +1017,7 @@ export type Database = {
         | "past_due"
         | "canceled"
         | "expired"
-      verification_status: "pending" | "approved" | "rejected"
+      verification_status: "pending" | "approved" | "rejected" | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1145,7 +1145,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["user", "moderator", "admin"],
+      app_role: ["user", "moderator", "admin", "super_admin"],
       billing_event_type: [
         "checkout",
         "activated",
@@ -1192,7 +1192,7 @@ export const Constants = {
         "canceled",
         "expired",
       ],
-      verification_status: ["pending", "approved", "rejected"],
+      verification_status: ["pending", "approved", "rejected", "expired"],
     },
   },
 } as const
