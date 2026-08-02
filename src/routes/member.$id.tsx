@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { memberQuery } from "@/lib/members";
+import { memberQuery, type MemberView } from "@/lib/members";
 import { useI18n } from "@/lib/i18n";
 import { countryFlag, countryLabel } from "@/lib/countries";
 import { useAuth } from "@/hooks/useAuth";
@@ -70,9 +70,9 @@ function MemberProfile() {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const memberQ = useQuery(memberQuery(id));
-  const loaderMember = Route.useLoaderData();
+  const loaderMember = Route.useLoaderData() as MemberView | null | undefined;
   // Fall back to loader data so SSR and the first client render agree.
-  const member = memberQ.data ?? loaderMember;
+  const member: MemberView | null | undefined = memberQ.data ?? loaderMember;
   const [active, setActive] = useState(0);
   const [notice, setNotice] = useState<string | null>(null);
 
