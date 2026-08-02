@@ -17,6 +17,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { LocaleSync } from "@/components/LocaleSync";
 import { OfflineBanner } from "@/components/OfflineBanner";
 import { BottomNav } from "@/components/BottomNav";
+import { RealtimeBridge } from "@/components/RealtimeBridge";
 import { PwaProvider } from "@/components/pwa/PwaProvider";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 
@@ -151,6 +152,7 @@ function RootComponent() {
         <I18nProvider>
           <PwaProvider>
             <LocaleSync />
+            <RealtimeBridge />
             <OfflineBanner />
             <div className="pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0">
               {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
