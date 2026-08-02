@@ -91,11 +91,14 @@ function DiscoverPage() {
 
   function patch(next: Partial<z.infer<typeof discoverSearchSchema>>) {
     setPage(1);
-    void navigate({ search: (prev) => ({ ...prev, ...next }), replace: true });
+    void navigate({
+      search: (prev: z.infer<typeof discoverSearchSchema>) => ({ ...prev, ...next }),
+      replace: true,
+    });
   }
 
   return (
-    <Screen title={s.discover} subtitle={ss.results.subtitle}>
+    <Screen title={s.discover} subtitle={t.search.title}>
       <GlassCard className="sticky top-16 z-20 p-3 lg:top-2">
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
@@ -112,7 +115,7 @@ function DiscoverPage() {
             type="button"
             onClick={() => setShowFilters((v) => !v)}
             aria-expanded={showFilters}
-            aria-label={ss.filters.title}
+            aria-label={t.search.sortLabel}
             className={`grid h-11 w-11 shrink-0 place-items-center rounded-[14px] tap-scale ${
               showFilters ? "chip-glass-active" : "glass-tile"
             }`}
@@ -130,13 +133,13 @@ function DiscoverPage() {
           <div className="space-y-3 pt-3">
             <div className="no-scrollbar flex gap-2 overflow-x-auto">
               <Chip active={!gender} onClick={() => patch({ g: undefined })}>
-                {ss.filters.title}
+                {t.search.allCountries}
               </Chip>
               <Chip active={gender === "female"} onClick={() => patch({ g: "female" })}>
-                {t.form.female}
+                {t.enums.gender.female}
               </Chip>
               <Chip active={gender === "male"} onClick={() => patch({ g: "male" })}>
-                {t.form.male}
+                {t.enums.gender.male}
               </Chip>
             </div>
             <div className="no-scrollbar flex gap-2 overflow-x-auto">
@@ -154,10 +157,10 @@ function DiscoverPage() {
               {(["recent", "newest", "complete"] as MemberSort[]).map((option) => (
                 <Chip key={option} active={sort === option} onClick={() => patch({ sort: option })}>
                   {option === "recent"
-                    ? ss.sort.recent
+                    ? t.search.sortRecent
                     : option === "newest"
                       ? ss.sort.newest
-                      : ss.sort.complete}
+                      : t.search.sortComplete}
                 </Chip>
               ))}
             </div>
@@ -174,7 +177,7 @@ function DiscoverPage() {
           </div>
         ) : members.length === 0 ? (
           <GlassCard className="p-10 text-center">
-            <p className="text-sm text-cream/70">{ss.results.empty}</p>
+            <p className="text-sm text-cream/70">{t.search.emptyText}</p>
           </GlassCard>
         ) : (
           <>
@@ -198,7 +201,7 @@ function DiscoverPage() {
                   className="btn-gold flex items-center gap-2 px-7 py-2.5 text-sm"
                 >
                   {listQ.isFetching && <Loader2 className="h-4 w-4 animate-spin" />}
-                  {ss.results.loadMore}
+                  {t.search.loadMore}
                 </button>
               </div>
             )}
