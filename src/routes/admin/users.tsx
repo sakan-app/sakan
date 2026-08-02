@@ -326,6 +326,25 @@ function AdminUsers() {
                                 />
                               </>
                             ) : null}
+                            {access.data?.isSuperAdmin ? (
+                              <MenuItem
+                                label={user.roles.includes("super_admin") ? "Demote super admin" : "Promote to super admin"}
+                                onClick={() =>
+                                  confirm({
+                                    title: "Change role",
+                                    description: `${user.roles.includes("super_admin") ? "Revoke" : "Grant"} the super admin role for ${user.display_name}.`,
+                                    destructive: true,
+                                    requireReason: true,
+                                    onConfirm: () =>
+                                      roleChange.mutateAsync({
+                                        targetId: user.id,
+                                        role: "super_admin",
+                                        grant: !user.roles.includes("super_admin"),
+                                      }),
+                                  })
+                                }
+                              />
+                            ) : null}
                           </div>
                         ) : null}
                       </div>
