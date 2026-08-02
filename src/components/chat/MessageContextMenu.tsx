@@ -1,5 +1,7 @@
 import {
   Copy,
+  Flag,
+  Languages,
   CornerUpLeft,
   Forward,
   Info,
@@ -24,7 +26,9 @@ export type ContextMenuAction =
   | "select"
   | "info"
   | "pin"
-  | "unpin";
+  | "unpin"
+  | "translate"
+  | "report";
 
 type Props = {
   x: number;
@@ -34,11 +38,15 @@ type Props = {
   isPinned: boolean;
   canCopy: boolean;
   canEdit: boolean;
+  canTranslate: boolean;
+  reactionEmojis: readonly string[];
+  myReaction?: string | null;
+  onReact: (emoji: string) => void;
   onAction: (action: ContextMenuAction) => void;
   onClose: () => void;
 };
 
-const MENU_WIDTH = 208;
+const MENU_WIDTH = 248;
 
 export function MessageContextMenu({
   x,
@@ -48,6 +56,10 @@ export function MessageContextMenu({
   isPinned,
   canCopy,
   canEdit,
+  canTranslate,
+  reactionEmojis,
+  myReaction,
+  onReact,
   onAction,
   onClose,
 }: Props) {
@@ -75,6 +87,7 @@ export function MessageContextMenu({
     { id: "reply", label: strings.reply, icon: CornerUpLeft },
     ...(canCopy ? [{ id: "copy" as const, label: strings.copy, icon: Copy }] : []),
     ...(canEdit ? [{ id: "edit" as const, label: strings.edit, icon: Pencil }] : []),
+    ...(canTranslate ? [{ id: "translate" as const, label: strings.translate, icon: Languages }] : []),
     { id: "forward", label: strings.forward, icon: Forward },
     { id: "share", label: strings.share, icon: Share2 },
     { id: "select", label: strings.selectAction, icon: SquareCheck },
@@ -84,7 +97,7 @@ export function MessageContextMenu({
       : { id: "pin", label: strings.pin, icon: Pin },
     ...(isOwn
       ? [{ id: "delete" as const, label: strings.deleteAction, icon: Trash2, danger: true }]
-      : []),
+      : [{ id: "report" as const, label: strings.report, icon: Flag, danger: true }]),
   ];
 
   return (
@@ -98,6 +111,29 @@ export function MessageContextMenu({
         onClick={(e) => e.stopPropagation()}
         className="menu-pop absolute overflow-hidden rounded-2xl border border-gold/25 bg-navy-deep/95 py-1.5 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.9)] backdrop-blur-xl"
       >
+        <div
+          className="flex items-center justify-between gap-0.5 border-b border-gold/15 px-2 pb-2 pt-1"
+          role="group"
+          aria-label={strings.react}
+        >
+          {reactionEmojis.map((emoji) => (
+            <button
+              key={emoji}
+              type="button"
+              aria-label={emoji}
+              aria-pressed={myReaction === emoji}
+              onClick={() => {
+                onReact(emoji);
+                onClose();
+              }}
+              className={`grid h-8 w-8 place-items-center rounded-full text-lg transition-transform hover:scale-110 active:scale-95 ${
+                myReaction === emoji ? "bg-gold/25" : "hover:bg-gold/10"
+              }`}
+            >
+              {emoji}
+            </button>
+          ))}
+        </div>
         {items.map((item) => (
           <button
             key={item.id}
