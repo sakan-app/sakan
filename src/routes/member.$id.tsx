@@ -57,7 +57,7 @@ export const Route = createFileRoute("/member/$id")({
                 address: {
                   "@type": "PostalAddress",
                   addressLocality: loaderData.city ?? undefined,
-                  addressCountry: loaderData.country ?? undefined,
+                  addressCountry: loaderData.countryCode ?? undefined,
                 },
               },
             }),

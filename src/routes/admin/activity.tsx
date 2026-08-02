@@ -12,10 +12,10 @@ import {
   Pagination,
   Panel,
   Pill,
-  TableShell,
   Td,
   Th,
 } from "@/components/admin/ui";
+import { VirtualTableShell } from "@/components/admin/VirtualTableShell";
 import { listActivity } from "@/lib/admin/ops.functions";
 import { cn } from "@/lib/utils";
 
@@ -29,7 +29,7 @@ function AdminActivity() {
 
   const activity = useQuery({
     queryKey: ["admin", "activity", source, search, page],
-    queryFn: () => listFn({ data: { source, search: search || undefined, page, pageSize: 30 } }),
+    queryFn: () => listFn({ data: { source, search: search || undefined, page, pageSize: 100 } }),
     placeholderData: keepPreviousData,
   });
 
@@ -74,7 +74,7 @@ function AdminActivity() {
             <EmptyState label="No entries recorded." />
           ) : (
             <>
-              <TableShell
+              <VirtualTableShell
                 head={
                   <tr>
                     <Th>When</Th>
@@ -84,9 +84,10 @@ function AdminActivity() {
                     <Th>Details</Th>
                   </tr>
                 }
-              >
-                {activity.data.rows.map((row) => (
-                  <tr key={row.id} className="align-top hover:bg-cream/4">
+                rows={activity.data.rows}
+                rowKey={(row) => row.id}
+                renderRow={(row) => (
+                  <>
                     <Td className="whitespace-nowrap text-xs tabular-nums">{row.created_at.replace("T", " ").slice(0, 19)}</Td>
                     <Td className="text-xs">{row.actorName ?? row.actor_id?.slice(0, 8) ?? "system"}</Td>
                     <Td>
@@ -103,9 +104,9 @@ function AdminActivity() {
                         {row.details ? JSON.stringify(row.details) : "—"}
                       </pre>
                     </Td>
-                  </tr>
-                ))}
-              </TableShell>
+                  </>
+                )}
+              />
               <Pagination page={activity.data.page} pageSize={activity.data.pageSize} total={activity.data.total} onPage={setPage} />
             </>
           )
