@@ -30,7 +30,7 @@ export type MemberView = {
 };
 
 const ONLINE_WINDOW_MS = 15 * 60 * 1000;
-const PUBLIC_COLUMNS =
+export const PUBLIC_COLUMNS =
   "id, display_name, birth_date, gender, looking_for, country_code, city, bio, interests, spoken_languages, education, occupation, marital_status, religiosity, height_cm, is_verified, last_seen_at, avatar_url";
 
 function ageFromBirthDate(birthDate: string | null): number | null {
@@ -41,7 +41,7 @@ function ageFromBirthDate(birthDate: string | null): number | null {
   return Math.floor(diff / (365.25 * 24 * 60 * 60 * 1000));
 }
 
-type PublicProfile = Pick<
+export type PublicProfile = Pick<
   ProfileRow,
   | "id"
   | "display_name"
@@ -78,7 +78,7 @@ async function signPaths(bucket: "avatars" | "gallery", paths: string[]) {
   return map;
 }
 
-async function toMemberViews(rows: PublicProfile[]): Promise<MemberView[]> {
+export async function toMemberViews(rows: PublicProfile[]): Promise<MemberView[]> {
   if (rows.length === 0) return [];
   const ids = rows.map((row) => row.id);
 

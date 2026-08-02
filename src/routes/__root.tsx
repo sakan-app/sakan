@@ -11,10 +11,14 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { Toaster } from "sonner";
 import { I18nProvider } from "@/lib/i18n";
 import { AuthProvider } from "@/hooks/useAuth";
 import { LocaleSync } from "@/components/LocaleSync";
 import { OfflineBanner } from "@/components/OfflineBanner";
+import { BottomNav } from "@/components/BottomNav";
+import { PwaProvider } from "@/components/pwa/PwaProvider";
+import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 
 function NotFoundComponent() {
   return (
@@ -96,6 +100,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "theme-color", content: "#0D1B3D" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "SAKAN" },
     ],
     links: [
       {
@@ -103,6 +112,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -138,10 +149,17 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <I18nProvider>
-          <LocaleSync />
-          <OfflineBanner />
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
+          <PwaProvider>
+            <LocaleSync />
+            <OfflineBanner />
+            <div className="pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0">
+              {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+              <Outlet />
+            </div>
+            <BottomNav />
+            <InstallPrompt />
+            <Toaster richColors position="top-center" />
+          </PwaProvider>
         </I18nProvider>
       </AuthProvider>
     </QueryClientProvider>

@@ -25,7 +25,7 @@ export function BottomNav() {
     return pathname.startsWith(to);
   }
 
-  const [first, second, third, fourth] = items;
+  const [first, second, third, fourth] = items as [NavItem, NavItem, NavItem, NavItem];
 
   return (
     <nav
