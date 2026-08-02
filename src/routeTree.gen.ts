@@ -15,12 +15,15 @@ import { Route as OfflineRouteImport } from './routes/offline'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as AuthenticatedFavoritesRouteImport } from './routes/_authenticated/favorites'
+import { Route as AuthenticatedMatchesRouteImport } from './routes/_authenticated/matches'
+import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthIndexRouteImport } from './routes/auth.index'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as MemberIdRouteImport } from './routes/member.$id'
+import { Route as AuthenticatedMessagesIndexRouteImport } from './routes/_authenticated/messages.index'
 import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
 
 const IndexRoute = IndexRouteImport.update({
@@ -52,6 +55,17 @@ const AuthenticatedFavoritesRoute = AuthenticatedFavoritesRouteImport.update({
   path: '/favorites',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMatchesRoute = AuthenticatedMatchesRouteImport.update({
+  id: '/matches',
+  path: '/matches',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedNotificationsRoute =
+  AuthenticatedNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -82,6 +96,12 @@ const MemberIdRoute = MemberIdRouteImport.update({
   path: '/member/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedMessagesIndexRoute =
+  AuthenticatedMessagesIndexRouteImport.update({
+    id: '/messages/',
+    path: '/messages/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedProfileEditRoute =
   AuthenticatedProfileEditRouteImport.update({
     id: '/edit',
@@ -95,6 +115,8 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/favorites': typeof AuthenticatedFavoritesRoute
+  '/matches': typeof AuthenticatedMatchesRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
@@ -102,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/member/$id': typeof MemberIdRoute
   '/auth/': typeof AuthIndexRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
+  '/messages/': typeof AuthenticatedMessagesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -109,6 +132,8 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/favorites': typeof AuthenticatedFavoritesRoute
+  '/matches': typeof AuthenticatedMatchesRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
@@ -116,6 +141,7 @@ export interface FileRoutesByTo {
   '/member/$id': typeof MemberIdRoute
   '/auth': typeof AuthIndexRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
+  '/messages': typeof AuthenticatedMessagesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,6 +151,8 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/_authenticated/favorites': typeof AuthenticatedFavoritesRoute
+  '/_authenticated/matches': typeof AuthenticatedMatchesRoute
+  '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
@@ -132,6 +160,7 @@ export interface FileRoutesById {
   '/member/$id': typeof MemberIdRoute
   '/auth/': typeof AuthIndexRoute
   '/_authenticated/profile/edit': typeof AuthenticatedProfileEditRoute
+  '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +170,8 @@ export interface FileRouteTypes {
     | '/search'
     | '/unauthorized'
     | '/favorites'
+    | '/matches'
+    | '/notifications'
     | '/onboarding'
     | '/profile'
     | '/auth/callback'
@@ -148,6 +179,7 @@ export interface FileRouteTypes {
     | '/member/$id'
     | '/auth/'
     | '/profile/edit'
+    | '/messages/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -155,6 +187,8 @@ export interface FileRouteTypes {
     | '/search'
     | '/unauthorized'
     | '/favorites'
+    | '/matches'
+    | '/notifications'
     | '/onboarding'
     | '/profile'
     | '/auth/callback'
@@ -162,6 +196,7 @@ export interface FileRouteTypes {
     | '/member/$id'
     | '/auth'
     | '/profile/edit'
+    | '/messages'
   id:
     | '__root__'
     | '/'
@@ -170,6 +205,8 @@ export interface FileRouteTypes {
     | '/search'
     | '/unauthorized'
     | '/_authenticated/favorites'
+    | '/_authenticated/matches'
+    | '/_authenticated/notifications'
     | '/_authenticated/onboarding'
     | '/_authenticated/profile'
     | '/auth/callback'
@@ -177,6 +214,7 @@ export interface FileRouteTypes {
     | '/member/$id'
     | '/auth/'
     | '/_authenticated/profile/edit'
+    | '/_authenticated/messages/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -235,6 +273,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFavoritesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/matches': {
+      id: '/_authenticated/matches'
+      path: '/matches'
+      fullPath: '/matches'
+      preLoaderRoute: typeof AuthenticatedMatchesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/notifications': {
+      id: '/_authenticated/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/onboarding': {
       id: '/_authenticated/onboarding'
       path: '/onboarding'
@@ -277,6 +329,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MemberIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/messages/': {
+      id: '/_authenticated/messages/'
+      path: '/messages'
+      fullPath: '/messages/'
+      preLoaderRoute: typeof AuthenticatedMessagesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profile/edit': {
       id: '/_authenticated/profile/edit'
       path: '/edit'
@@ -300,14 +359,20 @@ const AuthenticatedProfileRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedFavoritesRoute: typeof AuthenticatedFavoritesRoute
+  AuthenticatedMatchesRoute: typeof AuthenticatedMatchesRoute
+  AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRouteWithChildren
+  AuthenticatedMessagesIndexRoute: typeof AuthenticatedMessagesIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFavoritesRoute: AuthenticatedFavoritesRoute,
+  AuthenticatedMatchesRoute: AuthenticatedMatchesRoute,
+  AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRouteWithChildren,
+  AuthenticatedMessagesIndexRoute: AuthenticatedMessagesIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
