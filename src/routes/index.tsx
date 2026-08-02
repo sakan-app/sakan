@@ -80,19 +80,79 @@ function Index() {
 
       {/* HERO */}
       <section className="relative overflow-hidden bg-navy-deep">
-        <div className="grid lg:grid-cols-2">
-          <div className="relative min-h-[280px] lg:min-h-[560px]">
-            <img
-              src={hero}
-              alt="عروسان يقفان معاً في شارع أوروبي عند الغروب"
-              width={1200}
-              height={900}
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-l from-transparent via-navy-deep/20 to-navy-deep" />
+        <div className="grid lg:grid-cols-[420px_minmax(0,1fr)_1.1fr]">
+          {/* SEARCH PANEL */}
+          <div className="order-2 w-full px-4 pb-8 lg:order-none lg:self-center lg:px-6 lg:pb-0">
+            <form onSubmit={submit} className="panel-navy p-5">
+              <div className="mb-4 text-center text-xs text-gold/70">✦ ابحث عن شريك حياتك ✦</div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-2 block text-xs font-semibold text-cream/80">أنا</label>
+                  <div className="flex gap-2">
+                    <button type="button" className={genderBtn(iAm === "male")} onClick={() => setIAm("male")}>
+                      <User className="h-4 w-4" /> رجل
+                    </button>
+                    <button type="button" className={genderBtn(iAm === "female")} onClick={() => setIAm("female")}>
+                      <User className="h-4 w-4" /> امرأة
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <label className="mb-2 block text-xs font-semibold text-cream/80">أبحث عن</label>
+                  <div className="flex gap-2">
+                    <button type="button" className={genderBtn(lookingFor === "male")} onClick={() => setLookingFor("male")}>
+                      <User className="h-4 w-4" /> رجل
+                    </button>
+                    <button type="button" className={genderBtn(lookingFor === "female")} onClick={() => setLookingFor("female")}>
+                      <User className="h-4 w-4" /> امرأة
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-2 block text-xs font-semibold text-cream/80">العمر من</label>
+                  <select className="field-navy" value={minAge} onChange={(e) => setMinAge(Number(e.target.value))}>
+                    {Array.from({ length: 43 }, (_, i) => 18 + i).map((a) => (
+                      <option key={a} value={a}>{a}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-2 block text-xs font-semibold text-cream/80">إلى</label>
+                  <select className="field-navy" value={maxAge} onChange={(e) => setMaxAge(Number(e.target.value))}>
+                    {Array.from({ length: 43 }, (_, i) => 18 + i).map((a) => (
+                      <option key={a} value={a}>{a}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <label className="mb-2 block text-xs font-semibold text-cream/80">مكان الإقامة</label>
+                <div className="relative">
+                  <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gold" />
+                  <select className="field-navy" value={country} onChange={(e) => setCountry(e.target.value)}>
+                    <option value="all">اختر الدولة</option>
+                    {countries.map((c) => (
+                      <option key={c.code} value={c.code}>{c.ar}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <button type="submit" className="btn-gold mt-5 w-full py-3 text-base">
+                ابدأ رحلتك الآن
+              </button>
+              <p className="mt-3 flex items-center justify-center gap-2 text-[11px] text-cream/50">
+                <Lock className="h-3 w-3 text-gold" /> آمن، خاص وسريع 100%
+              </p>
+            </form>
           </div>
 
-          <div className="flex flex-col justify-center gap-8 px-6 py-10 lg:px-12">
+          <div className="order-1 flex flex-col justify-center gap-8 px-6 py-10 lg:order-none lg:px-8">
             <div>
               <h1 className="text-3xl font-black leading-tight text-cream sm:text-4xl lg:text-5xl">
                 منصة تجمع القلوب
@@ -120,77 +180,17 @@ function Index() {
               </div>
             </div>
           </div>
-        </div>
 
-        {/* SEARCH PANEL */}
-        <div className="relative z-10 mx-auto -mt-4 w-full max-w-[1360px] px-4 lg:absolute lg:left-8 lg:top-1/2 lg:mt-0 lg:w-[420px] lg:-translate-y-1/2 lg:px-0">
-          <form onSubmit={submit} className="panel-navy p-5">
-            <div className="mb-4 text-center text-xs text-gold/70">✦ ابحث عن شريك حياتك ✦</div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="mb-2 block text-xs font-semibold text-cream/80">أنا</label>
-                <div className="flex gap-2">
-                  <button type="button" className={genderBtn(iAm === "male")} onClick={() => setIAm("male")}>
-                    <User className="h-4 w-4" /> رجل
-                  </button>
-                  <button type="button" className={genderBtn(iAm === "female")} onClick={() => setIAm("female")}>
-                    <User className="h-4 w-4" /> امرأة
-                  </button>
-                </div>
-              </div>
-              <div>
-                <label className="mb-2 block text-xs font-semibold text-cream/80">أبحث عن</label>
-                <div className="flex gap-2">
-                  <button type="button" className={genderBtn(lookingFor === "male")} onClick={() => setLookingFor("male")}>
-                    <User className="h-4 w-4" /> رجل
-                  </button>
-                  <button type="button" className={genderBtn(lookingFor === "female")} onClick={() => setLookingFor("female")}>
-                    <User className="h-4 w-4" /> امرأة
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-4 grid grid-cols-2 gap-4">
-              <div>
-                <label className="mb-2 block text-xs font-semibold text-cream/80">العمر من</label>
-                <select className="field-navy" value={minAge} onChange={(e) => setMinAge(Number(e.target.value))}>
-                  {Array.from({ length: 43 }, (_, i) => 18 + i).map((a) => (
-                    <option key={a} value={a}>{a}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="mb-2 block text-xs font-semibold text-cream/80">إلى</label>
-                <select className="field-navy" value={maxAge} onChange={(e) => setMaxAge(Number(e.target.value))}>
-                  {Array.from({ length: 43 }, (_, i) => 18 + i).map((a) => (
-                    <option key={a} value={a}>{a}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <label className="mb-2 block text-xs font-semibold text-cream/80">مكان الإقامة</label>
-              <div className="relative">
-                <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gold" />
-                <select className="field-navy" value={country} onChange={(e) => setCountry(e.target.value)}>
-                  <option value="all">اختر الدولة</option>
-                  {countries.map((c) => (
-                    <option key={c.code} value={c.code}>{c.ar}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <button type="submit" className="btn-gold mt-5 w-full py-3 text-base">
-              ابدأ رحلتك الآن
-            </button>
-            <p className="mt-3 flex items-center justify-center gap-2 text-[11px] text-cream/50">
-              <Lock className="h-3 w-3 text-gold" /> آمن، خاص وسريع 100%
-            </p>
-          </form>
+          <div className="relative order-first min-h-[280px] lg:order-none lg:min-h-[560px]">
+            <img
+              src={hero}
+              alt="عروسان يقفان معاً في شارع أوروبي عند الغروب"
+              width={1200}
+              height={900}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-l from-transparent via-navy-deep/20 to-navy-deep" />
+          </div>
         </div>
       </section>
 
