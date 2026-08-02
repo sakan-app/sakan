@@ -312,9 +312,6 @@ function AdminUsers() {
                                 />
                                 <MenuItem
                                   label="Delete account"
-                                />
-                                <MenuItem
-                                  label="__PLACEHOLDER__"
                                   destructive
                                   onClick={() =>
                                     confirm({
@@ -347,24 +344,6 @@ function AdminUsers() {
                                   })
                                 }
                               />
-                            ) : null}
-                            {false ? (
-                              <>
-                                <MenuItem
-                                  label="unused"
-                                  destructive
-                                  onClick={() =>
-                                    confirm({
-                                      title: `Delete ${user.display_name}?`,
-                                      description: "This permanently removes the auth account and all owned data. It cannot be undone.",
-                                      destructive: true,
-                                      requireReason: true,
-                                      confirmLabel: "Delete permanently",
-                                      onConfirm: (reason) => action.mutateAsync({ targetId: user.id, action: "delete", reason }),
-                                    })
-                                  }
-                                />
-                              </>
                             ) : null}
                           </div>
                         ) : null}
