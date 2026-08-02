@@ -37,7 +37,7 @@ export function StatCard({
 }: {
   label: string;
   value: string | number;
-  hint?: string;
+  hint?: string | undefined;
   icon?: React.ComponentType<{ className?: string }>;
   tone?: "default" | "gold" | "danger";
 }) {
