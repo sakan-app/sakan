@@ -24,6 +24,12 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
+  head: () => ({
+    meta: [
+      { title: "SAKAN Admin" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth" });

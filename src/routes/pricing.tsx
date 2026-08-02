@@ -23,6 +23,25 @@ export const Route = createFileRoute("/pricing")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: "عضوية سَكَن",
+          description:
+            "باقات عضوية سَكَن للتعارف الجاد: رسائل بلا حدود، فلاتر متقدمة، ومطابقة بالذكاء الاصطناعي.",
+          brand: { "@type": "Brand", name: "SAKAN" },
+          offers: {
+            "@type": "AggregateOffer",
+            priceCurrency: "EUR",
+            offerCount: 3,
+            url: "https://sakan.app/pricing",
+          },
+        }),
+      },
+    ],
   }),
   component: PricingPage,
 });
