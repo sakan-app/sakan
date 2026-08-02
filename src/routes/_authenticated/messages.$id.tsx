@@ -207,9 +207,16 @@ function ConversationPage() {
 
   if (infoQ.isPending) {
     return (
-      <div className="w-full">
-        <main className="flex flex-1 items-center justify-center">
-          <Loader2 className="h-7 w-7 animate-spin text-gold-deep" />
+      <div className="flex h-screen flex-col bg-navy">
+        <div className="flex items-center gap-3 border-b border-gold/15 bg-navy-deep px-3 py-2.5">
+          <div className="skeleton-glass h-9 w-9 rounded-full" />
+          <div className="space-y-1.5">
+            <div className="skeleton-glass h-3 w-32" />
+            <div className="skeleton-glass h-2.5 w-20" />
+          </div>
+        </div>
+        <main className="flex-1 px-3 py-4">
+          <MessagesSkeleton />
         </main>
       </div>
     );
