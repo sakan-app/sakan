@@ -213,7 +213,24 @@ function EditProfilePage() {
       );
       return;
     }
-    save.mutate({ ...parsed.data, is_hidden: hidden });
+    const d = parsed.data;
+    save.mutate({
+      display_name: d.display_name,
+      birth_date: d.birth_date,
+      gender: d.gender ?? null,
+      looking_for: d.looking_for ?? null,
+      country_code: d.country_code ?? null,
+      city: d.city ?? null,
+      bio: d.bio ?? null,
+      occupation: d.occupation ?? null,
+      education: d.education ?? null,
+      marital_status: d.marital_status ?? null,
+      religiosity: d.religiosity ?? null,
+      height_cm: d.height_cm ?? null,
+      interests: d.interests ?? [],
+      spoken_languages: d.spoken_languages ?? [],
+      is_hidden: hidden,
+    });
   }
 
   if (profileQ.isPending) {
