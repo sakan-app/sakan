@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
+import { Route as ImpressumRouteImport } from './routes/impressum'
 import { Route as OfflineRouteImport } from './routes/offline'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as SearchRouteImport } from './routes/search'
@@ -69,6 +70,11 @@ const AboutRoute = AboutRouteImport.update({
 const AdminRouteRoute = AdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ImpressumRoute = ImpressumRouteImport.update({
+  id: '/impressum',
+  path: '/impressum',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OfflineRoute = OfflineRouteImport.update({
@@ -269,6 +275,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/impressum': typeof ImpressumRoute
   '/offline': typeof OfflineRoute
   '/pricing': typeof PricingRoute
   '/search': typeof SearchRoute
@@ -311,6 +318,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/impressum': typeof ImpressumRoute
   '/offline': typeof OfflineRoute
   '/pricing': typeof PricingRoute
   '/search': typeof SearchRoute
@@ -356,6 +364,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/impressum': typeof ImpressumRoute
   '/offline': typeof OfflineRoute
   '/pricing': typeof PricingRoute
   '/search': typeof SearchRoute
@@ -401,6 +410,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/about'
+    | '/impressum'
     | '/offline'
     | '/pricing'
     | '/search'
@@ -443,6 +453,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/impressum'
     | '/offline'
     | '/pricing'
     | '/search'
@@ -487,6 +498,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/admin'
     | '/about'
+    | '/impressum'
     | '/offline'
     | '/pricing'
     | '/search'
@@ -532,6 +544,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  ImpressumRoute: typeof ImpressumRoute
   OfflineRoute: typeof OfflineRoute
   PricingRoute: typeof PricingRoute
   SearchRoute: typeof SearchRoute
@@ -572,6 +585,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/impressum': {
+      id: '/impressum'
+      path: '/impressum'
+      fullPath: '/impressum'
+      preLoaderRoute: typeof ImpressumRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/offline': {
@@ -932,6 +952,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdminRouteRoute: AdminRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  ImpressumRoute: ImpressumRoute,
   OfflineRoute: OfflineRoute,
   PricingRoute: PricingRoute,
   SearchRoute: SearchRoute,
