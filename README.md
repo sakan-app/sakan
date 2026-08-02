@@ -367,7 +367,8 @@
 `/onboarding` · `/billing` · `/settings`
 
 **إدارة (`/admin`):** `dashboard` · `users` · `user/$id` · `verifications` · `reports` ·
-`matches` · `conversations` · `notifications` · `activity` · `analytics` · `settings`
+`matches` · `conversations` · `subscriptions` · `payments` · `notifications` ·
+`activity` · `analytics` · `settings`
 
 ---
 
