@@ -329,6 +329,43 @@ function AdminUsers() {
                                 />
                               </>
                             ) : null}
+                            {access.data?.isSuperAdmin ? (
+                              <MenuItem
+                                label={user.roles.includes("super_admin") ? "Demote super admin" : "Promote to super admin"}
+                                onClick={() =>
+                                  confirm({
+                                    title: "Change role",
+                                    description: `${user.roles.includes("super_admin") ? "Revoke" : "Grant"} the super admin role for ${user.display_name}.`,
+                                    destructive: true,
+                                    requireReason: true,
+                                    onConfirm: () =>
+                                      roleChange.mutateAsync({
+                                        targetId: user.id,
+                                        role: "super_admin",
+                                        grant: !user.roles.includes("super_admin"),
+                                      }),
+                                  })
+                                }
+                              />
+                            ) : null}
+                            {false ? (
+                              <>
+                                <MenuItem
+                                  label="unused"
+                                  destructive
+                                  onClick={() =>
+                                    confirm({
+                                      title: `Delete ${user.display_name}?`,
+                                      description: "This permanently removes the auth account and all owned data. It cannot be undone.",
+                                      destructive: true,
+                                      requireReason: true,
+                                      confirmLabel: "Delete permanently",
+                                      onConfirm: (reason) => action.mutateAsync({ targetId: user.id, action: "delete", reason }),
+                                    })
+                                  }
+                                />
+                              </>
+                            ) : null}
                           </div>
                         ) : null}
                       </div>
