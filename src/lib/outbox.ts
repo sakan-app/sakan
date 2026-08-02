@@ -86,7 +86,7 @@ export async function flushOutbox(): Promise<number> {
       const response = await fetch(entry.url, {
         method: entry.method ?? "POST",
         headers: { "Content-Type": "application/json", ...(entry.headers ?? {}) },
-        body: entry.body,
+        body: entry.body ?? null,
       });
       // Drop permanently rejected requests so the queue cannot deadlock.
       if (response.ok || (response.status >= 400 && response.status < 500)) {
