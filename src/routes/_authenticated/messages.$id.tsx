@@ -6,6 +6,7 @@ import {
   BadgeCheck,
   Loader2,
   MessageSquareOff,
+  Image as ImageIcon,
   Phone,
   Search,
   SearchX,
@@ -17,6 +18,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { Composer } from "@/components/chat/Composer";
+import { ChatWallpaper } from "@/components/chat/ChatWallpaper";
 import { ConversationSearchBar } from "@/components/chat/ConversationSearchBar";
 import { DeleteMessageDialog } from "@/components/chat/DeleteMessageDialog";
 import { ForwardSheet } from "@/components/chat/ForwardSheet";
@@ -26,6 +28,7 @@ import { MessageContextMenu, type ContextMenuAction } from "@/components/chat/Me
 import { MessageInfoSheet } from "@/components/chat/MessageInfoSheet";
 import { PinnedBanner } from "@/components/chat/PinnedBanner";
 import { SelectionBar } from "@/components/chat/SelectionBar";
+import { WallpaperPicker } from "@/components/chat/WallpaperPicker";
 import { useAuth } from "@/hooks/useAuth";
 import { formatLastSeen, useIsOnline } from "@/hooks/usePresence";
 import { useFeatureStrings } from "@/i18n/feature";
@@ -53,6 +56,8 @@ import {
   toggleReaction,
 } from "@/lib/chat/reactions";
 import { useConversationRealtime } from "@/lib/chat/realtime";
+import { resolveSettings, wallpapersQuery } from "@/lib/chat/wallpaper-queries";
+import { wallpaperStrings } from "@/lib/chat/wallpaper-strings";
 import type { ChatMessage, MessageKind } from "@/lib/chat/types";
 import { supabase } from "@/integrations/supabase/client";
 
