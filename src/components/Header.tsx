@@ -9,10 +9,10 @@ import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { useFeatureStrings } from "@/i18n/feature";
 
 const headerStrings = {
-  ar: { messages: "الرسائل" },
-  en: { messages: "Messages" },
-  de: { messages: "Nachrichten" },
-  ru: { messages: "Сообщения" },
+  ar: { messages: "الرسائل", pricing: "الباقات" },
+  en: { messages: "Messages", pricing: "Plans" },
+  de: { messages: "Nachrichten", pricing: "Pläne" },
+  ru: { messages: "Сообщения", pricing: "Тарифы" },
 };
 
 export function Header() {
