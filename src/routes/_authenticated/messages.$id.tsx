@@ -193,6 +193,7 @@ function ConversationPage() {
   const { user } = useAuth();
   const { locale } = useI18n();
   const s = useFeatureStrings(chatStrings);
+  const ws = useFeatureStrings(wallpaperStrings);
   const queryClient = useQueryClient();
   const userId = user?.id ?? "";
   const rtl = locale === "ar";
@@ -222,6 +223,10 @@ function ConversationPage() {
   const [debouncedTerm, setDebouncedTerm] = useState("");
   const [searchIndex, setSearchIndex] = useState(0);
   const [translateSignals, setTranslateSignals] = useState<Record<string, number>>({});
+  const [wallpaperOpen, setWallpaperOpen] = useState(false);
+
+  const wallpapersQ = useQuery(wallpapersQuery(userId));
+  const wallpaper = useMemo(() => resolveSettings(wallpapersQ.data, id), [wallpapersQ.data, id]);
 
   const reactionsQ = useQuery(conversationReactionsQuery(id));
   const reactionsByMessage = useMemo(() => groupReactions(reactionsQ.data), [reactionsQ.data]);
