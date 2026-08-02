@@ -11,7 +11,6 @@ import { useI18n } from "@/lib/i18n";
 import { useFeatureStrings } from "@/i18n/feature";
 import { socialStrings } from "@/lib/social/strings";
 import { matchesQuery, type MatchSort } from "@/lib/social/queries";
-import { useSocialRealtime } from "@/lib/social/realtime";
 import { COUNTRY_CODES, countryLabel } from "@/lib/countries";
 
 export const Route = createFileRoute("/_authenticated/matches")({
@@ -33,7 +32,6 @@ function MatchesPage() {
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [country, setCountry] = useState<string>("all");
 
-  useSocialRealtime();
 
   const filter = useMemo(
     () => ({ ...(verifiedOnly ? { verifiedOnly: true } : {}), ...(country !== "all" ? { country } : {}) }),
