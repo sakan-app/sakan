@@ -417,6 +417,43 @@ npm run build    # حزمة إنتاج
 
 ---
 
+## 23. اللمسة النهائية للإنتاج (Final Production Polish)
+
+### 23.1 نظام التصميم الزجاجي (Glassmorphism) — يشمل الموبايل الآن
+
+| الأداة (Utility) | الاستخدام |
+|---|---|
+| `glass` / `glass-card` | البطاقات واللوحات الزجاجية العامة |
+| `glass-bar` | الأشرطة العلوية والسفلية داخل التطبيق |
+| `glass-mobile` | **جديد** — الشريط السفلي العائم للموبايل: ضبابية 30px + تشبّع 180% + حدود شعرية |
+| `glass-topbar` | **جديد** — الهيدر العام الشفاف مع دعم `safe-area-inset-top` |
+| `glass-sheet` | **جديد** — الأوراق السفلية (Bottom Sheets) بنمط iOS |
+| `glass-field` | حقول الإدخال الزجاجية |
+| `chip-glass` / `chip-glass-active` | الفلاتر والوسوم |
+| `skeleton-glass` | **جديد** — هياكل التحميل مع تأثير اللمعان المتحرك |
+| `tap-scale` | تصغير لحظي عند اللمس (إحساس أصلي) |
+
+### 23.2 تجربة الموبايل الأصلية
+
+- الشريط السفلي أصبح **زجاجيًا عائمًا** بحواف علوية دائرية (26px).
+- دعم كامل لـ `safe-area-inset` أعلى وأسفل (iPhone notch / Android gesture bar).
+- إلغاء وميض اللمس الرمادي (`-webkit-tap-highlight-color: transparent`).
+- تمرير بزخم أصلي مع `overscroll-behavior: contain` ومنع المطاطية العامة.
+- حجم الخط في الحقول 16px على الشاشات الصغيرة لمنع تكبير iOS التلقائي.
+
+### 23.3 الوصولية (WCAG AA)
+
+- حلقة تركيز موحّدة ذهبية (`:focus-visible`) عبر كل المنصة.
+- دعم `prefers-reduced-motion` لتعطيل الحركات والتمرير الناعم.
+- سمات ARIA و`aria-current` في التنقل، وتباين ألوان مطابق للمعايير.
+
+### 23.4 الأداء
+
+- `content-visibility: auto` للصور، تقسيم المسارات، وذاكرة TanStack Query.
+- تنعيم الخطوط و`text-rendering: optimizeLegibility` لطباعة أوضح.
+
+---
+
 <div align="center">
 
 **سَكَن — لأن الزواج سَكَن.**
