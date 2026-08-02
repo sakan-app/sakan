@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as AuthIndexRouteImport } from './routes/auth.index'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as MemberIdRouteImport } from './routes/member.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +30,11 @@ const AuthIndexRoute = AuthIndexRouteImport.update({
   path: '/auth/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MemberIdRoute = MemberIdRouteImport.update({
   id: '/member/$id',
   path: '/member/$id',
@@ -38,12 +44,14 @@ const MemberIdRoute = MemberIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/search': typeof SearchRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/member/$id': typeof MemberIdRoute
   '/auth/': typeof AuthIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/search': typeof SearchRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/member/$id': typeof MemberIdRoute
   '/auth': typeof AuthIndexRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/search': typeof SearchRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/member/$id': typeof MemberIdRoute
   '/auth/': typeof AuthIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/search' | '/member/$id' | '/auth/'
+  fullPaths: '/' | '/search' | '/auth/callback' | '/member/$id' | '/auth/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/search' | '/member/$id' | '/auth'
-  id: '__root__' | '/' | '/search' | '/member/$id' | '/auth/'
+  to: '/' | '/search' | '/auth/callback' | '/member/$id' | '/auth'
+  id: '__root__' | '/' | '/search' | '/auth/callback' | '/member/$id' | '/auth/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SearchRoute: typeof SearchRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
   MemberIdRoute: typeof MemberIdRoute
   AuthIndexRoute: typeof AuthIndexRoute
 }
@@ -92,6 +102,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/member/$id': {
       id: '/member/$id'
       path: '/member/$id'
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SearchRoute: SearchRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
   MemberIdRoute: MemberIdRoute,
   AuthIndexRoute: AuthIndexRoute,
 }
