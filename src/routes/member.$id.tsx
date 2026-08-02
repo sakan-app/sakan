@@ -17,10 +17,14 @@ import {
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { memberQuery } from "@/lib/members";
+import { memberQuery, type MemberView } from "@/lib/members";
 import { useI18n } from "@/lib/i18n";
 import { countryFlag, countryLabel } from "@/lib/countries";
 import { useAuth } from "@/hooks/useAuth";
+import { startConversation } from "@/lib/chat/queries";
+import { chatStrings } from "@/lib/chat/strings";
+import { useFeatureStrings } from "@/i18n/feature";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/member/$id")({
   loader: async ({ params, context }) => {
@@ -68,13 +72,16 @@ function MemberProfile() {
   const { id } = Route.useParams();
   const { t } = useI18n();
   const { isAuthenticated } = useAuth();
+  const chatS = useFeatureStrings(chatStrings);
   const navigate = useNavigate();
   const memberQ = useQuery(memberQuery(id));
-  const member = memberQ.data;
+  const loaderMember = Route.useLoaderData() as MemberView | null | undefined;
+  // Fall back to loader data so SSR and the first client render agree.
+  const member: MemberView | null | undefined = memberQ.data ?? loaderMember;
   const [active, setActive] = useState(0);
   const [notice, setNotice] = useState<string | null>(null);
 
-  if (memberQ.isPending) {
+  if (memberQ.isPending && !member) {
     return (
       <div className="flex min-h-screen flex-col bg-cream">
         <Header />
@@ -120,7 +127,11 @@ function MemberProfile() {
       void navigate({ to: "/auth" });
       return;
     }
-    setNotice(t.member.chatSoon);
+    setNotice(null);
+    const memberId = member!.id;
+    void startConversation(memberId)
+      .then((conversationId) => navigate({ to: "/messages/$id", params: { id: conversationId } }))
+      .catch(() => toast.error(chatS.startChatError));
   }
 
   return (

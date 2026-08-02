@@ -232,3 +232,8 @@
     display: none;
   }
 }
+
+/* PWA shell additions */
+@utility pwa-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}

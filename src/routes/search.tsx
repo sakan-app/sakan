@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Loader2, MapPin, SearchX, SlidersHorizontal } from "lucide-react";
@@ -8,6 +9,14 @@ import { PAGE_SIZE, searchMembersQuery } from "@/lib/members";
 import { useI18n } from "@/lib/i18n";
 import { countryLabel } from "@/lib/countries";
 import { searchParamsSchema, type SearchParams } from "@/lib/validation";
+import { useAuth } from "@/hooks/useAuth";
+import { pushRecentSearch } from "@/lib/search-history";
+import { RecentSearchChips } from "@/components/search/RecentSearchChips";
+import { SavedSearchBar } from "@/components/search/SavedSearchBar";
+import { SearchRefine, useSearchRefine } from "@/components/search/SearchRefine";
+import { AiRecommendations } from "@/components/search/AiRecommendations";
+import { useFeatureStrings } from "@/i18n/feature";
+import { searchStrings } from "@/components/search/strings";
 
 export const Route = createFileRoute("/search")({
   validateSearch: (s: Record<string, unknown>): SearchParams =>
@@ -34,6 +43,8 @@ export const Route = createFileRoute("/search")({
 function SearchPage() {
   const criteria = Route.useSearch();
   const { t } = useI18n();
+  const s2 = useFeatureStrings(searchStrings);
+  const { user } = useAuth();
   const navigate = useNavigate({ from: "/search" });
   const membersQ = useQuery({
     ...searchMembersQuery(
@@ -53,9 +64,31 @@ function SearchPage() {
   const hasMore = criteria.page * PAGE_SIZE < total;
   const country =
     criteria.country === "all" ? t.search.allCountries : countryLabel(t, criteria.country);
+  const refine = useSearchRefine(results);
+  const refinedResults = refine.query.trim() ? refine.filtered : results;
+
+  useEffect(() => {
+    if (membersQ.isSuccess && total > 0) {
+      pushRecentSearch({
+        label: `${country} · ${criteria.minAge}-${criteria.maxAge}`,
+        params: {
+          lookingFor: criteria.lookingFor,
+          minAge: criteria.minAge,
+          maxAge: criteria.maxAge,
+          country: criteria.country,
+        },
+        savedAt: Date.now(),
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [membersQ.isSuccess, total]);
+
+  function applySearchParams(params: Partial<SearchParams>) {
+    void navigate({ search: (prev: SearchParams) => ({ ...prev, ...params, page: 1 }) });
+  }
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-cream pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0">
       <Header />
 
       <section className="bg-navy-deep py-8">
@@ -115,8 +148,22 @@ function SearchPage() {
         </div>
       </section>
 
+      {user && (
+        <section className="pt-8">
+          <div className="mx-auto flex max-w-[1360px] flex-col gap-3 px-6 lg:px-8">
+            <RecentSearchChips onApply={applySearchParams} />
+            <SavedSearchBar currentCriteria={criteria} onApply={applySearchParams} />
+          </div>
+        </section>
+      )}
+
       <section className="py-10">
         <div className="mx-auto max-w-[1360px] px-6 lg:px-8">
+          {user && results.length > 0 && (
+            <div className="mb-5">
+              <SearchRefine query={refine.query} onChange={refine.setQuery} results={results} />
+            </div>
+          )}
           {membersQ.isPending ? (
             <div className="flex justify-center py-16 text-navy/70">
               <Loader2 className="h-7 w-7 animate-spin text-gold-deep" />
@@ -141,11 +188,16 @@ function SearchPage() {
                 {t.search.editCriteria}
               </Link>
             </div>
+          ) : refinedResults.length === 0 ? (
+            <div className="mx-auto max-w-md rounded-xl border border-gold/30 bg-white p-10 text-center shadow-[var(--shadow-card)]">
+              <SearchX className="mx-auto h-12 w-12 text-gold-deep" />
+              <p className="mt-2 text-xs leading-6 text-muted-foreground">{s2.refine.noMatches}</p>
+            </div>
           ) : (
             <>
               {/* Mobile: horizontal carousel */}
               <div className="no-scrollbar -mx-6 flex gap-4 overflow-x-auto px-6 pb-2 sm:hidden">
-                {results.map((m) => (
+                {refinedResults.map((m) => (
                   <div key={m.id} className="w-[150px] shrink-0">
                     <MemberCard member={m} />
                   </div>
@@ -153,7 +205,7 @@ function SearchPage() {
               </div>
               {/* Desktop grid */}
               <div className="hidden gap-5 sm:grid sm:grid-cols-3 lg:grid-cols-4">
-                {results.map((m) => (
+                {refinedResults.map((m) => (
                   <MemberCard key={m.id} member={m} />
                 ))}
               </div>
@@ -174,6 +226,14 @@ function SearchPage() {
           )}
         </div>
       </section>
+
+      {user && (
+        <section className="pb-10">
+          <div className="mx-auto max-w-[1360px] px-6 lg:px-8">
+            <AiRecommendations />
+          </div>
+        </section>
+      )}
 
       <Footer />
     </div>

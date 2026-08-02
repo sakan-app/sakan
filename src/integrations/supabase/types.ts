@@ -95,6 +95,42 @@ export type Database = {
         }
         Relationships: []
       }
+      compatibility_scores: {
+        Row: {
+          candidate_id: string
+          considerations: string[]
+          created_at: string
+          id: string
+          language: Database["public"]["Enums"]["language_code"]
+          score: number
+          strengths: string[]
+          summary: string | null
+          user_id: string
+        }
+        Insert: {
+          candidate_id: string
+          considerations?: string[]
+          created_at?: string
+          id?: string
+          language?: Database["public"]["Enums"]["language_code"]
+          score: number
+          strengths?: string[]
+          summary?: string | null
+          user_id: string
+        }
+        Update: {
+          candidate_id?: string
+          considerations?: string[]
+          created_at?: string
+          id?: string
+          language?: Database["public"]["Enums"]["language_code"]
+          score?: number
+          strengths?: string[]
+          summary?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       consents: {
         Row: {
           consent_type: Database["public"]["Enums"]["consent_type"]
@@ -220,34 +256,61 @@ export type Database = {
       }
       messages: {
         Row: {
+          attachment_mime: string | null
+          attachment_name: string | null
+          attachment_path: string | null
+          attachment_size: number | null
           body: string
           conversation_id: string
           created_at: string
           deleted_at: string | null
+          delivered_at: string | null
           edited_at: string | null
           id: string
+          kind: Database["public"]["Enums"]["message_kind"]
+          moderation: Database["public"]["Enums"]["moderation_verdict"]
           read_at: string | null
           sender_id: string
+          source_language: Database["public"]["Enums"]["language_code"] | null
+          translations: Json
         }
         Insert: {
+          attachment_mime?: string | null
+          attachment_name?: string | null
+          attachment_path?: string | null
+          attachment_size?: number | null
           body: string
           conversation_id: string
           created_at?: string
           deleted_at?: string | null
+          delivered_at?: string | null
           edited_at?: string | null
           id?: string
+          kind?: Database["public"]["Enums"]["message_kind"]
+          moderation?: Database["public"]["Enums"]["moderation_verdict"]
           read_at?: string | null
           sender_id: string
+          source_language?: Database["public"]["Enums"]["language_code"] | null
+          translations?: Json
         }
         Update: {
+          attachment_mime?: string | null
+          attachment_name?: string | null
+          attachment_path?: string | null
+          attachment_size?: number | null
           body?: string
           conversation_id?: string
           created_at?: string
           deleted_at?: string | null
+          delivered_at?: string | null
           edited_at?: string | null
           id?: string
+          kind?: Database["public"]["Enums"]["message_kind"]
+          moderation?: Database["public"]["Enums"]["moderation_verdict"]
           read_at?: string | null
           sender_id?: string
+          source_language?: Database["public"]["Enums"]["language_code"] | null
+          translations?: Json
         }
         Relationships: [
           {
@@ -258,6 +321,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      moderation_flags: {
+        Row: {
+          categories: string[]
+          created_at: string
+          excerpt: string | null
+          id: string
+          reason: string | null
+          score: number | null
+          subject_id: string | null
+          subject_type: string
+          user_id: string
+          verdict: Database["public"]["Enums"]["moderation_verdict"]
+        }
+        Insert: {
+          categories?: string[]
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          reason?: string | null
+          score?: number | null
+          subject_id?: string | null
+          subject_type: string
+          user_id: string
+          verdict?: Database["public"]["Enums"]["moderation_verdict"]
+        }
+        Update: {
+          categories?: string[]
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          reason?: string | null
+          score?: number | null
+          subject_id?: string | null
+          subject_type?: string
+          user_id?: string
+          verdict?: Database["public"]["Enums"]["moderation_verdict"]
+        }
+        Relationships: []
       }
       notifications: {
         Row: {
@@ -533,6 +635,30 @@ export type Database = {
           },
         ]
       }
+      saved_searches: {
+        Row: {
+          created_at: string
+          criteria: Json
+          id: string
+          label: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          criteria?: Json
+          id?: string
+          label: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          criteria?: Json
+          id?: string
+          label?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           cancel_at_period_end: boolean
@@ -640,6 +766,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_or_create_conversation: {
+        Args: { other_user: string }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -653,6 +783,7 @@ export type Database = {
         Returns: boolean
       }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      touch_last_seen: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "user" | "moderator" | "admin"
@@ -661,6 +792,8 @@ export type Database = {
       language_code: "ar" | "en" | "de" | "ru"
       log_level: "debug" | "info" | "warn" | "error"
       marital_status: "single" | "divorced" | "widowed"
+      message_kind: "text" | "image" | "file"
+      moderation_verdict: "pending" | "approved" | "flagged" | "rejected"
       notification_type:
         | "like"
         | "match"
@@ -816,6 +949,8 @@ export const Constants = {
       language_code: ["ar", "en", "de", "ru"],
       log_level: ["debug", "info", "warn", "error"],
       marital_status: ["single", "divorced", "widowed"],
+      message_kind: ["text", "image", "file"],
+      moderation_verdict: ["pending", "approved", "flagged", "rejected"],
       notification_type: [
         "like",
         "match",
