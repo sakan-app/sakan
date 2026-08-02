@@ -72,7 +72,7 @@ export function useConversationRealtime({ conversationId, userId }: UseConversat
         },
       )
       .on("broadcast", { event: "typing" }, (payload) => {
-        const senderId = (payload.payload as { userId?: string })?.userId;
+        const senderId = (payload["payload"] as { userId?: string } | undefined)?.userId;
         if (!senderId || senderId === userId) return;
         setTypingUserId(senderId);
         if (typingTimeout.current) clearTimeout(typingTimeout.current);
