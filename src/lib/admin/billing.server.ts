@@ -3,6 +3,7 @@
  * Provider-agnostic: nothing here assumes Stripe; `provider` is a free-form column.
  */
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import type { Database } from "@/integrations/supabase/types";
 
 import { logAdminAction } from "./ops.server";
 
@@ -188,28 +189,29 @@ export async function runSubscriptionAction(params: {
     .maybeSingle();
   if (error || !before) throw new Error("subscription not found");
 
-  const patch: Record<string, unknown> = {};
+  type SubPatch = Partial<Database["public"]["Tables"]["subscriptions"]["Update"]>;
+  const patch: SubPatch = {};
   if (params.action === "set_status" && params.status) {
-    patch["status"] = params.status;
-    if (params.status === "canceled") patch["canceled_at"] = new Date().toISOString();
+    patch.status = params.status;
+    if (params.status === "canceled") patch.canceled_at = new Date().toISOString();
   }
   if (params.action === "change_plan" && params.planCode) {
-    patch["previous_plan_code"] = before.plan_code;
-    patch["plan_code"] = params.planCode;
+    patch.previous_plan_code = before.plan_code;
+    patch.plan_code = params.planCode;
   }
   if (params.action === "extend_period") {
     const base = before.current_period_end ? new Date(before.current_period_end) : new Date();
     base.setUTCDate(base.getUTCDate() + (params.days ?? 30));
-    patch["current_period_end"] = base.toISOString();
-    patch["status"] = "active";
+    patch.current_period_end = base.toISOString();
+    patch.status = "active";
   }
   if (params.action === "set_grace") {
     const until = new Date();
     until.setUTCDate(until.getUTCDate() + (params.days ?? 7));
-    patch["grace_until"] = until.toISOString();
+    patch.grace_until = until.toISOString();
   }
   if (params.action === "cancel_at_period_end") {
-    patch["cancel_at_period_end"] = !before.cancel_at_period_end;
+    patch.cancel_at_period_end = !before.cancel_at_period_end;
   }
   if (Object.keys(patch).length === 0) throw new Error("nothing to update");
 
@@ -221,7 +223,7 @@ export async function runSubscriptionAction(params: {
     action: `subscription.${params.action}`,
     targetTable: "subscriptions",
     targetId: params.subscriptionId,
-    details: { before: { ...before }, after: patch, reason: params.reason },
+    details: { before: { ...before }, after: patch as Record<string, unknown>, reason: params.reason },
   });
   return { ok: true };
 }
