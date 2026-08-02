@@ -77,7 +77,15 @@ function useMe() {
   return { profile: profileQ.data, avatarUrl: avatarQ.data ?? null };
 }
 
-function Avatar({ url, name, size = 36 }: { url: string | null; name?: string; size?: number }) {
+function Avatar({
+  url,
+  name,
+  size = 36,
+}: {
+  url: string | null;
+  name?: string | undefined;
+  size?: number;
+}) {
   return (
     <span
       className="grid shrink-0 place-items-center overflow-hidden rounded-full border border-white/15 bg-white/10"
