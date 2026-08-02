@@ -61,7 +61,7 @@ function Index() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate({ to: "/search", search: { iAm, lookingFor, minAge, maxAge, country } });
+    navigate({ to: "/search", search: { iAm, lookingFor, minAge, maxAge, country, sort: "recent" as const, page: 1 } });
   };
 
   const genderBtn = (active: boolean) =>
@@ -286,7 +286,7 @@ function Index() {
           )}
           <div className="mt-8 text-center">
             <button
-              onClick={() => navigate({ to: "/search", search: { iAm, lookingFor, minAge: 18, maxAge: 60, country: "all" } })}
+              onClick={() => navigate({ to: "/search", search: { iAm, lookingFor, minAge: 18, maxAge: 60, country: "all", sort: "recent" as const, page: 1 } })}
               className="btn-outline-gold border-gold-deep/50 px-8 py-2.5 text-sm font-semibold text-gold-deep"
             >
               {t.home.viewMore}

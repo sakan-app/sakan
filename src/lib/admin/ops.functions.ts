@@ -298,3 +298,98 @@ export const changeUserRoleV2 = createServerFn({ method: "POST" })
     });
     return { ok: true };
   });
+
+// ---------------------------------------------------------------------------
+// Billing — subscriptions & payments (provider-agnostic)
+// ---------------------------------------------------------------------------
+
+export const getBillingOverview = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { assertStaff } = await import("./admin.server");
+    const { getBillingOverview: run } = await import("./billing.server");
+    await assertStaff(context.supabase, context.userId);
+    return run();
+  });
+
+export const listSubscriptionsAdmin = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .validator(
+    z.object({
+      status: z.enum(["all", "active", "trialing", "past_due", "canceled", "expired"]).default("all"),
+      planCode: z.string().max(60).optional(),
+      search: z.string().max(200).optional(),
+      ...paging,
+    }),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertStaff } = await import("./admin.server");
+    const { listSubscriptions } = await import("./billing.server");
+    await assertStaff(context.supabase, context.userId);
+    return listSubscriptions(data);
+  });
+
+export const listPlansAdmin = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { assertStaff } = await import("./admin.server");
+    const { listPlans } = await import("./billing.server");
+    await assertStaff(context.supabase, context.userId);
+    return listPlans();
+  });
+
+export const runSubscriptionAction = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator(
+    z.object({
+      subscriptionId: z.string().uuid(),
+      action: z.enum(["set_status", "change_plan", "extend_period", "set_grace", "cancel_at_period_end"]),
+      status: z.enum(["active", "trialing", "past_due", "canceled", "expired"]).optional(),
+      planCode: z.string().max(60).optional(),
+      days: z.number().int().min(1).max(365).optional(),
+      reason: z.string().min(1).max(500),
+    }),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./admin.server");
+    const { runSubscriptionAction: run } = await import("./billing.server");
+    await assertAdmin(context.supabase, context.userId);
+    return run({ adminId: context.userId, ...data });
+  });
+
+export const listPaymentsAdmin = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .validator(
+    z.object({
+      status: z.enum(["all", "pending", "succeeded", "failed", "refunded"]).default("all"),
+      provider: z.string().max(60).optional(),
+      search: z.string().max(200).optional(),
+      ...paging,
+    }),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertStaff } = await import("./admin.server");
+    const { listPayments } = await import("./billing.server");
+    await assertStaff(context.supabase, context.userId);
+    return listPayments(data);
+  });
+
+export const markPaymentRefunded = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator(z.object({ paymentId: z.string().uuid(), reason: z.string().min(1).max(500) }))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./admin.server");
+    const { markPaymentRefunded: run } = await import("./billing.server");
+    await assertAdmin(context.supabase, context.userId);
+    return run({ adminId: context.userId, ...data });
+  });
+
+export const exportPaymentsCsv = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .validator(z.object({ status: z.enum(["all", "pending", "succeeded", "failed", "refunded"]).default("all") }))
+  .handler(async ({ data, context }) => {
+    const { assertStaff } = await import("./admin.server");
+    const { exportPaymentsCsv: run } = await import("./billing.server");
+    await assertStaff(context.supabase, context.userId);
+    return { csv: await run(data) };
+  });

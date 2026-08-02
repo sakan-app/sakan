@@ -261,11 +261,28 @@
 | `/admin/verifications` | طابور مراجعة الوثائق: معاينة الوثيقة والسيلفي، قبول، رفض، طلب معلومات، انتهاء صلاحية |
 | `/admin/reports` | مركز البلاغات: حل، تجاهل، تحذير، إيقاف، حظر نهائي |
 | `/admin/matches` | عرض للقراءة فقط لكل التوافقات وحالتها |
+| `/admin/subscriptions` | إدارة الاشتراكات: MRR / ARR، الإيراد الشهري، التوزيع حسب الخطة، فلاتر الحالة والخطة والعضو، وإجراءات: تمديد 30 يومًا، منح مهلة سماح 7 أيام، إلغاء الاشتراك |
+| `/admin/payments` | الفواتير والمعاملات: فلترة حسب الحالة، بحث برقم الفاتورة أو مرجع المزوّد، تعليم الاسترداد، وتصدير CSV — بمعمارية مستقلة عن مزوّد الدفع (لا يوجد أي ربط صلب بـ Stripe) |
 | `/admin/conversations` | مراجعة إشرافية للمحادثات مع بحث داخل الرسائل |
 | `/admin/notifications` | مراقبة الإشعارات + **بث إعلان** لكل الأعضاء / حسب الدولة / للمشتركين / للطاقم |
 | `/admin/activity` | **سجل تدقيق غير قابل للتعديل** لكل إجراء إداري + سجل النظام |
 | `/admin/analytics` | رسوم تفاعلية: نمو المستخدمين، التوزيع الجغرافي، اللغات، الرسائل، التوثيق، الإيراد |
 | `/admin/settings` | (سوبر أدمن فقط) بريد الدعم، اللغة الافتراضية، تفعيل التسجيل، وضع الصيانة، إلزام التوثيق، حدود الصور |
+
+### دوال الخادم الإدارية
+
+| الملف | الدور |
+|---|---|
+| `src/lib/admin/ops.functions.ts` | سطح RPC الوحيد للوحة التحكم (`createServerFn`) — كل نداء يعيد التحقق من الدور على الخادم عبر `assertStaff` / `assertAdmin` / `is_super_admin` |
+| `src/lib/admin/ops.server.ts` | منطق الخادم: الإحصاءات الحيّة، جداول المستخدمين، التوثيق، البلاغات، المحادثات، التحليلات، الإعدادات، `logAdminAction` |
+| `src/lib/admin/billing.server.ts` | منطق الفوترة الإداري: `getBillingOverview` (MRR/ARR/الإيراد/التوزيع حسب الخطة/إيراد 12 شهرًا)، `listSubscriptions`، `listPayments`، `listPlans`، `runSubscriptionAction`، `markPaymentRefunded`، `exportPaymentsCsv` |
+| `src/components/admin/ui.tsx` | مجموعة واجهة زجاجية موحّدة: Panel، StatCard، Pill، TableShell، Pagination، حالات التحميل/الخطأ/الفراغ |
+| `src/components/admin/ConfirmDialog.tsx` | نافذة تأكيد إلزامية للإجراءات الخطيرة مع حقل السبب |
+
+كل عمليات الفوترة الإدارية تُسجَّل في `admin_actions` بالأفعال:
+`subscription.set_status` · `subscription.change_plan` · `subscription.extend_period` ·
+`subscription.set_grace` · `subscription.cancel_at_period_end` · `payment.refund`
+مع القيمة السابقة والقيمة الجديدة والسبب.
 
 **ضمانات التشغيل:** كل إجراء خطير يمرّ عبر نافذة تأكيد تطلب **سببًا** يُحفظ في سجل التدقيق،
 وكل عملية إدارية تُسجَّل في `admin_actions` بلا إمكانية تعديل أو حذف.
@@ -350,7 +367,8 @@
 `/onboarding` · `/billing` · `/settings`
 
 **إدارة (`/admin`):** `dashboard` · `users` · `user/$id` · `verifications` · `reports` ·
-`matches` · `conversations` · `notifications` · `activity` · `analytics` · `settings`
+`matches` · `conversations` · `subscriptions` · `payments` · `notifications` ·
+`activity` · `analytics` · `settings`
 
 ---
 
