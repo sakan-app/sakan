@@ -21,6 +21,10 @@ import { memberQuery, type MemberView } from "@/lib/members";
 import { useI18n } from "@/lib/i18n";
 import { countryFlag, countryLabel } from "@/lib/countries";
 import { useAuth } from "@/hooks/useAuth";
+import { startConversation } from "@/lib/chat/queries";
+import { chatStrings } from "@/lib/chat/strings";
+import { useFeatureStrings } from "@/i18n/feature";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/member/$id")({
   loader: async ({ params, context }) => {
@@ -68,6 +72,7 @@ function MemberProfile() {
   const { id } = Route.useParams();
   const { t } = useI18n();
   const { isAuthenticated } = useAuth();
+  const chatS = useFeatureStrings(chatStrings);
   const navigate = useNavigate();
   const memberQ = useQuery(memberQuery(id));
   const loaderMember = Route.useLoaderData() as MemberView | null | undefined;
@@ -122,7 +127,11 @@ function MemberProfile() {
       void navigate({ to: "/auth" });
       return;
     }
-    setNotice(t.member.chatSoon);
+    setNotice(null);
+    const memberId = member!.id;
+    void startConversation(memberId)
+      .then((conversationId) => navigate({ to: "/messages/$id", params: { id: conversationId } }))
+      .catch(() => toast.error(chatS.startChatError));
   }
 
   return (
