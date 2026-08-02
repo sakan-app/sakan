@@ -71,6 +71,33 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_notes: {
+        Row: {
+          author_id: string
+          created_at: string
+          id: string
+          note: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          author_id: string
+          created_at?: string
+          id?: string
+          note: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          id?: string
+          note?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       billing_events: {
         Row: {
           actor_id: string | null
@@ -624,6 +651,54 @@ export type Database = {
         }
         Relationships: []
       }
+      platform_settings: {
+        Row: {
+          allowed_image_types: string[]
+          created_at: string
+          default_language: Database["public"]["Enums"]["language_code"]
+          id: boolean
+          maintenance_mode: boolean
+          max_gallery_photos: number
+          max_image_mb: number
+          notify_defaults: Json
+          registration_enabled: boolean
+          support_email: string
+          updated_at: string
+          updated_by: string | null
+          verification_required: boolean
+        }
+        Insert: {
+          allowed_image_types?: string[]
+          created_at?: string
+          default_language?: Database["public"]["Enums"]["language_code"]
+          id?: boolean
+          maintenance_mode?: boolean
+          max_gallery_photos?: number
+          max_image_mb?: number
+          notify_defaults?: Json
+          registration_enabled?: boolean
+          support_email?: string
+          updated_at?: string
+          updated_by?: string | null
+          verification_required?: boolean
+        }
+        Update: {
+          allowed_image_types?: string[]
+          created_at?: string
+          default_language?: Database["public"]["Enums"]["language_code"]
+          id?: boolean
+          maintenance_mode?: boolean
+          max_gallery_photos?: number
+          max_image_mb?: number
+          notify_defaults?: Json
+          registration_enabled?: boolean
+          support_email?: string
+          updated_at?: string
+          updated_by?: string | null
+          verification_required?: boolean
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -969,12 +1044,13 @@ export type Database = {
         Returns: boolean
       }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      is_super_admin: { Args: { _user_id: string }; Returns: boolean }
       touch_last_seen: { Args: never; Returns: undefined }
       user_plan: { Args: { _user_id: string }; Returns: string }
       user_plan_tier: { Args: { _user_id: string }; Returns: number }
     }
     Enums: {
-      app_role: "user" | "moderator" | "admin"
+      app_role: "user" | "moderator" | "admin" | "super_admin"
       billing_event_type:
         | "checkout"
         | "activated"
@@ -1017,7 +1093,7 @@ export type Database = {
         | "past_due"
         | "canceled"
         | "expired"
-      verification_status: "pending" | "approved" | "rejected"
+      verification_status: "pending" | "approved" | "rejected" | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1145,7 +1221,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["user", "moderator", "admin"],
+      app_role: ["user", "moderator", "admin", "super_admin"],
       billing_event_type: [
         "checkout",
         "activated",
@@ -1192,7 +1268,7 @@ export const Constants = {
         "canceled",
         "expired",
       ],
-      verification_status: ["pending", "approved", "rejected"],
+      verification_status: ["pending", "approved", "rejected", "expired"],
     },
   },
 } as const
