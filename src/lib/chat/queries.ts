@@ -134,12 +134,17 @@ export function messagesQuery(conversationId: string) {
 }
 
 /** Flattens infinite pages (newest-first pages) into an oldest-to-newest list for display. */
-export function flattenMessagePages(pages: MessagesPage[] | undefined): ChatMessage[] {
+export function flattenMessagePages(
+  pages: MessagesPage[] | undefined,
+  viewerId?: string,
+): ChatMessage[] {
   if (!pages) return [];
   const merged = pages.flatMap((page) => page.items);
   const byId = new Map<string, ChatMessage>();
   for (const m of merged) byId.set(m.id, m);
-  return [...byId.values()].sort((a, b) => a.created_at.localeCompare(b.created_at));
+  return [...byId.values()]
+    .filter((m) => !(viewerId && (m.deleted_for ?? []).includes(viewerId)))
+    .sort((a, b) => a.created_at.localeCompare(b.created_at));
 }
 
 export async function startConversation(otherUserId: string): Promise<string> {
