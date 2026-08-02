@@ -1,5 +1,20 @@
-import { Facebook, Instagram, Youtube, Twitter, Mail, Phone, MapPin } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Facebook, Instagram, Youtube, Twitter, Mail, Globe, MapPin } from "lucide-react";
 import logo from "@/assets/sakan-logo.png.asset.json";
+import { COMPANY, COMPANY_ADDRESS_LINES } from "@/lib/company";
+
+const SITE_LINKS = [
+  { to: "/about", label: "عن المنصة" },
+  { to: "/guide", label: "دليل قانون الزواج" },
+  { to: "/pricing", label: "باقات الاشتراك" },
+  { to: "/search", label: "ابحث عن شريك" },
+] as const;
+
+const LEGAL_LINKS = [
+  { to: "/privacy", label: "سياسة الخصوصية (GDPR)" },
+  { to: "/terms", label: "شروط الخدمة" },
+  { to: "/impressum", label: "Impressum" },
+] as const;
 
 export function Footer() {
   return (
@@ -31,8 +46,12 @@ export function Footer() {
         <div>
           <h3 className="mb-4 text-sm font-bold text-gold">روابط مهمة</h3>
           <ul className="space-y-2 text-sm text-cream/70">
-            {["عن المنصة", "قصص نجاح", "باقات الاشتراك", "اتصل بنا"].map((l) => (
-              <li key={l}>{l}</li>
+            {SITE_LINKS.map((l) => (
+              <li key={l.to}>
+                <Link to={l.to} className="transition-colors hover:text-gold">
+                  {l.label}
+                </Link>
+              </li>
             ))}
           </ul>
         </div>
@@ -40,11 +59,13 @@ export function Footer() {
         <div>
           <h3 className="mb-4 text-sm font-bold text-gold">قانوني</h3>
           <ul className="space-y-2 text-sm text-cream/70">
-            {["سياسة الخصوصية (GDPR)", "شروط الخدمة", "Impressum", "ملفات تعريف الارتباط (Cookies)"].map(
-              (l) => (
-                <li key={l}>{l}</li>
-              ),
-            )}
+            {LEGAL_LINKS.map((l) => (
+              <li key={l.to}>
+                <Link to={l.to} className="transition-colors hover:text-gold">
+                  {l.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -52,20 +73,45 @@ export function Footer() {
           <h3 className="mb-4 text-sm font-bold text-gold">تواصل معنا</h3>
           <ul className="space-y-3 text-sm text-cream/70">
             <li className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-gold" /> info@sakanapp.net
+              <Mail className="h-4 w-4 shrink-0 text-gold" />
+              <a className="latin hover:text-gold" href={`mailto:${COMPANY.infoEmail}`}>
+                {COMPANY.infoEmail}
+              </a>
             </li>
             <li className="flex items-center gap-2">
-              <Phone className="h-4 w-4 text-gold" /> +49 30 12345678
+              <Mail className="h-4 w-4 shrink-0 text-gold" />
+              <a className="latin hover:text-gold" href={`mailto:${COMPANY.serviceEmail}`}>
+                {COMPANY.serviceEmail}
+              </a>
             </li>
             <li className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-gold" /> برلين، ألمانيا
+              <Globe className="h-4 w-4 shrink-0 text-gold" />
+              <a
+                className="latin hover:text-gold"
+                href={COMPANY.website}
+                rel="noreferrer"
+                target="_blank"
+              >
+                {COMPANY.websiteLabel}
+              </a>
+            </li>
+            <li className="flex items-start gap-2">
+              <MapPin className="mt-1 h-4 w-4 shrink-0 text-gold" />
+              <address className="latin not-italic leading-6">
+                {COMPANY_ADDRESS_LINES.map((line) => (
+                  <span key={line} className="block">
+                    {line}
+                  </span>
+                ))}
+              </address>
             </li>
           </ul>
         </div>
       </div>
 
       <div className="border-t border-gold/10 py-4 text-center text-xs text-cream/50">
-        © جميع الحقوق محفوظة لمنصة سَكَن 2026
+        © {COMPANY.year} {COMPANY.brandAr} — {COMPANY.legalName} · {COMPANY.city},{" "}
+        {COMPANY.country}
       </div>
     </footer>
   );

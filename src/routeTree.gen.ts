@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
+import { Route as GuideRouteImport } from './routes/guide'
 import { Route as ImpressumRouteImport } from './routes/impressum'
 import { Route as OfflineRouteImport } from './routes/offline'
 import { Route as PricingRouteImport } from './routes/pricing'
@@ -72,6 +73,11 @@ const AboutRoute = AboutRouteImport.update({
 const AdminRouteRoute = AdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuideRoute = GuideRouteImport.update({
+  id: '/guide',
+  path: '/guide',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ImpressumRoute = ImpressumRouteImport.update({
@@ -287,6 +293,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/guide': typeof GuideRoute
   '/impressum': typeof ImpressumRoute
   '/offline': typeof OfflineRoute
   '/pricing': typeof PricingRoute
@@ -332,6 +339,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/guide': typeof GuideRoute
   '/impressum': typeof ImpressumRoute
   '/offline': typeof OfflineRoute
   '/pricing': typeof PricingRoute
@@ -380,6 +388,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/guide': typeof GuideRoute
   '/impressum': typeof ImpressumRoute
   '/offline': typeof OfflineRoute
   '/pricing': typeof PricingRoute
@@ -428,6 +437,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/about'
+    | '/guide'
     | '/impressum'
     | '/offline'
     | '/pricing'
@@ -473,6 +483,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/guide'
     | '/impressum'
     | '/offline'
     | '/pricing'
@@ -520,6 +531,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/admin'
     | '/about'
+    | '/guide'
     | '/impressum'
     | '/offline'
     | '/pricing'
@@ -568,6 +580,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  GuideRoute: typeof GuideRoute
   ImpressumRoute: typeof ImpressumRoute
   OfflineRoute: typeof OfflineRoute
   PricingRoute: typeof PricingRoute
@@ -611,6 +624,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guide': {
+      id: '/guide'
+      path: '/guide'
+      fullPath: '/guide'
+      preLoaderRoute: typeof GuideRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/impressum': {
@@ -992,6 +1012,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdminRouteRoute: AdminRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  GuideRoute: GuideRoute,
   ImpressumRoute: ImpressumRoute,
   OfflineRoute: OfflineRoute,
   PricingRoute: PricingRoute,
