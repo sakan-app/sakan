@@ -653,7 +653,7 @@ function ConversationPage() {
                     selectionMode={Boolean(selection)}
                     selected={selection?.includes(message.id) ?? false}
                     editing={editingId === message.id}
-                    onRetry={message.failed ? () => handleRetry(message) : undefined}
+                    {...(message.failed ? { onRetry: () => handleRetry(message) } : {})}
                     onReply={() => {
                       setReplyTo(message);
                       setComposerFocus((n) => n + 1);
