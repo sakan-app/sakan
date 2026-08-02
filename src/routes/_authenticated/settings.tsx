@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import {
   Bell,
   ChevronLeft,
@@ -6,13 +7,19 @@ import {
   Globe,
   HelpCircle,
   Heart,
+  Image as ImageIcon,
   LogOut,
   ShieldCheck,
   UserRound,
 } from "lucide-react";
+import { useState } from "react";
 
 import { GlassCard, Screen } from "@/components/app/AppShell";
 import { shellStrings } from "@/components/app/shell.strings";
+import { WallpaperPicker } from "@/components/chat/WallpaperPicker";
+import { resolveSettings, wallpapersQuery } from "@/lib/chat/wallpaper-queries";
+import { wallpaperStrings } from "@/lib/chat/wallpaper-strings";
+import { findWallpaper, t4 } from "@/lib/chat/wallpapers";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useFeatureStrings } from "@/i18n/feature";
@@ -92,10 +99,18 @@ function Row({
 
 function SettingsPage() {
   const s = useFeatureStrings(shellStrings);
+  const ws = useFeatureStrings(wallpaperStrings);
   const { t, locale, setLocale } = useI18n();
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const { plan } = useSubscription();
   const navigate = useNavigate();
+  const [wallpaperOpen, setWallpaperOpen] = useState(false);
+  const wallpapersQ = useQuery(wallpapersQuery(user?.id ?? ""));
+  const globalWallpaper = resolveSettings(wallpapersQ.data, null);
+  const wallpaperLabel =
+    globalWallpaper.wallpaperType === "custom"
+      ? ws.custom
+      : t4(findWallpaper(globalWallpaper.wallpaperId).name, locale);
 
   async function handleSignOut() {
     await signOut();
@@ -108,6 +123,12 @@ function SettingsPage() {
         <Row icon={UserRound} label={s.editProfile} to="/profile/edit" />
         <Row icon={Heart} label={s.favorites} to="/favorites" />
         <Row icon={Bell} label={s.notifications} to="/notifications" />
+        <Row
+          icon={ImageIcon}
+          label={ws.title}
+          value={wallpaperLabel}
+          onClick={() => setWallpaperOpen(true)}
+        />
       </Group>
 
       <Group title={s.billing}>
@@ -155,6 +176,14 @@ function SettingsPage() {
       <p className="mt-6 pb-4 text-center text-[11px] text-cream/35">
         SAKAN · <span className="latin">v1.0</span>
       </p>
+
+      {wallpaperOpen && (
+        <WallpaperPicker
+          conversationId={null}
+          current={globalWallpaper}
+          onClose={() => setWallpaperOpen(false)}
+        />
+      )}
     </Screen>
   );
 }
