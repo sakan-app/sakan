@@ -1,6 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, ArrowDown, Loader2, Search, UserRound } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowDown,
+  BadgeCheck,
+  Loader2,
+  MessageSquareOff,
+  Phone,
+  Search,
+  SearchX,
+  Sparkles,
+  UserRound,
+  Video,
+} from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -34,6 +46,12 @@ import {
   setMessagePinned,
   signStoragePath,
 } from "@/lib/chat/queries";
+import {
+  conversationReactionsQuery,
+  groupReactions,
+  REACTION_EMOJIS,
+  toggleReaction,
+} from "@/lib/chat/reactions";
 import { useConversationRealtime } from "@/lib/chat/realtime";
 import type { ChatMessage, MessageKind } from "@/lib/chat/types";
 import { supabase } from "@/integrations/supabase/client";
@@ -53,6 +71,8 @@ type ConversationHeaderInfo = {
   otherName: string;
   otherAvatarUrl: string | null;
   otherLastSeenAt: string | null;
+  otherVerified: boolean;
+  compatibilityScore: number | null;
 };
 
 function conversationInfoQuery(conversationId: string, userId: string) {
@@ -69,15 +89,25 @@ function conversationInfoQuery(conversationId: string, userId: string) {
       if (conv.user_low !== userId && conv.user_high !== userId) return null;
       const { data: profile } = await supabase
         .from("profiles")
-        .select("id, display_name, avatar_url, last_seen_at")
+        .select("id, display_name, avatar_url, last_seen_at, is_verified")
         .eq("id", otherUserId)
         .maybeSingle();
       const avatarUrl = profile?.avatar_url ? await signStoragePath("avatars", profile.avatar_url) : null;
+      const { data: compat } = await supabase
+        .from("compatibility_scores")
+        .select("score")
+        .eq("user_id", userId)
+        .eq("candidate_id", otherUserId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
       return {
         otherUserId,
         otherName: profile?.display_name ?? "",
         otherAvatarUrl: avatarUrl,
         otherLastSeenAt: profile?.last_seen_at ?? null,
+        otherVerified: Boolean(profile?.is_verified),
+        compatibilityScore: compat?.score ?? null,
       };
     },
     enabled: Boolean(conversationId && userId),
@@ -186,6 +216,10 @@ function ConversationPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedTerm, setDebouncedTerm] = useState("");
   const [searchIndex, setSearchIndex] = useState(0);
+  const [translateSignals, setTranslateSignals] = useState<Record<string, number>>({});
+
+  const reactionsQ = useQuery(conversationReactionsQuery(id));
+  const reactionsByMessage = useMemo(() => groupReactions(reactionsQ.data), [reactionsQ.data]);
 
   const messages = useMemo(
     () => flattenMessagePages(messagesQ.data?.pages, userId),
@@ -459,6 +493,36 @@ function ConversationPage() {
     toast.success(s.forwarded);
   }
 
+  async function handleReact(message: ChatMessage, emoji: string) {
+    if (!userId) return;
+    try {
+      await toggleReaction(queryClient, {
+        conversationId: id,
+        messageId: message.id,
+        userId,
+        emoji,
+      });
+    } catch {
+      toast.error(s.sendFailed);
+    }
+  }
+
+  async function handleReport(message: ChatMessage) {
+    try {
+      const { error } = await supabase.from("reports").insert({
+        reporter_id: userId,
+        reported_id: message.sender_id,
+        message_id: message.id,
+        reason: "chat_message",
+        details: message.body?.slice(0, 500) ?? null,
+      });
+      if (error) throw error;
+      toast.success(s.reported);
+    } catch {
+      toast.error(s.reportFailed);
+    }
+  }
+
   function handleMenuAction(action: ContextMenuAction, message: ChatMessage) {
     switch (action) {
       case "reply":
@@ -485,6 +549,12 @@ function ConversationPage() {
         break;
       case "info":
         setInfoMessage(message);
+        break;
+      case "translate":
+        setTranslateSignals((cur) => ({ ...cur, [message.id]: (cur[message.id] ?? 0) + 1 }));
+        break;
+      case "report":
+        void handleReport(message);
         break;
       case "pin":
       case "unpin":
@@ -596,11 +666,43 @@ function ConversationPage() {
             </span>
           )}
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-bold text-cream">{info.otherName}</p>
+            <p className="flex items-center gap-1 truncate text-sm font-bold text-cream">
+              <span className="truncate">{info.otherName}</span>
+              {info.otherVerified && (
+                <BadgeCheck aria-label={s.verifiedMember} className="h-4 w-4 shrink-0 text-gold" />
+              )}
+              {info.compatibilityScore != null && (
+                <span
+                  aria-label={s.compatibility}
+                  className="flex shrink-0 items-center gap-0.5 rounded-full border border-gold/40 px-1.5 py-0.5 text-[10px] font-semibold text-gold"
+                >
+                  <Sparkles className="h-3 w-3" />
+                  {info.compatibilityScore}%
+                </span>
+              )}
+            </p>
             <p className="truncate text-[11px] text-cream/50">
               {typingUserId ? s.typing : formatLastSeen(locale, info.otherLastSeenAt, online)}
             </p>
           </div>
+          <button
+            type="button"
+            aria-label={s.voiceCall}
+            title={`${s.voiceCall} — ${s.featureSoon}`}
+            disabled
+            className="hidden h-9 w-9 place-items-center rounded-full text-gold/45 sm:grid"
+          >
+            <Phone className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            aria-label={s.videoCall}
+            title={`${s.videoCall} — ${s.featureSoon}`}
+            disabled
+            className="hidden h-9 w-9 place-items-center rounded-full text-gold/45 sm:grid"
+          >
+            <Video className="h-5 w-5" />
+          </button>
           <button
             type="button"
             aria-label={s.searchInChat}
@@ -628,6 +730,14 @@ function ConversationPage() {
           )}
           {messagesQ.isPending ? (
             <MessagesSkeleton />
+          ) : messages.length === 0 ? (
+            <div className="fade-up flex h-full flex-col items-center justify-center gap-3 px-8 text-center">
+              <span className="grid h-14 w-14 place-items-center rounded-full border border-gold/25 bg-gold/10 text-gold">
+                <MessageSquareOff className="h-7 w-7" />
+              </span>
+              <h2 className="text-sm font-bold text-cream">{s.emptyTitle}</h2>
+              <p className="max-w-xs text-xs text-cream/60">{s.emptyText}</p>
+            </div>
           ) : (
             messages.map((message, index) => {
               const prev = messages[index - 1];
@@ -653,6 +763,11 @@ function ConversationPage() {
                     selectionMode={Boolean(selection)}
                     selected={selection?.includes(message.id) ?? false}
                     editing={editingId === message.id}
+                    reactions={reactionsByMessage.get(message.id) ?? []}
+                    viewerId={userId}
+                    otherName={info.otherName}
+                    translateSignal={translateSignals[message.id] ?? 0}
+                    onToggleReaction={(emoji) => void handleReact(message, emoji)}
                     {...(message.failed ? { onRetry: () => handleRetry(message) } : {})}
                     onReply={() => {
                       setReplyTo(message);
@@ -678,6 +793,12 @@ function ConversationPage() {
                 </div>
               );
             })
+          )}
+          {searchOpen && debouncedTerm.trim().length >= 2 && !searchQ.isPending && searchResults.length === 0 && (
+            <div className="fade-up flex flex-col items-center gap-2 py-8 text-center">
+              <SearchX className="h-6 w-6 text-gold/70" />
+              <p className="text-xs text-cream/60">{s.noSearchResults}</p>
+            </div>
           )}
           {typingUserId && <TypingBubble label={s.typing} />}
           <div ref={bottomRef} />
@@ -738,6 +859,12 @@ function ConversationPage() {
             !menu.message.deleted_at &&
             !menu.message.pending
           }
+          canTranslate={Boolean(menu.message.body) && !menu.message.deleted_at}
+          reactionEmojis={REACTION_EMOJIS}
+          myReaction={
+            (reactionsByMessage.get(menu.message.id) ?? []).find((r) => r.user_id === userId)?.emoji ?? null
+          }
+          onReact={(emoji) => void handleReact(menu.message, emoji)}
           onAction={(action) => handleMenuAction(action, menu.message)}
           onClose={() => setMenu(null)}
         />

@@ -100,6 +100,24 @@ export type ChatStrings = {
   messageActions: string;
   jumpToMessage: string;
   originalUnavailable: string;
+  react: string;
+  reactions: string;
+  removeReaction: string;
+  report: string;
+  reported: string;
+  reportFailed: string;
+  voiceCall: string;
+  videoCall: string;
+  moreActions: string;
+  verifiedMember: string;
+  compatibility: string;
+  featureSoon: string;
+  noSearchResults: string;
+  statusSending: string;
+  statusSent: string;
+  statusDelivered: string;
+  statusRead: string;
+  statusFailed: string;
 };
 
 export const chatStrings: FeatureDictionary<ChatStrings> = {
@@ -202,6 +220,24 @@ export const chatStrings: FeatureDictionary<ChatStrings> = {
     messageActions: "خيارات الرسالة",
     jumpToMessage: "الانتقال إلى الرسالة",
     originalUnavailable: "الرسالة الأصلية غير متاحة",
+    react: "تفاعل",
+    reactions: "التفاعلات",
+    removeReaction: "إزالة التفاعل",
+    report: "إبلاغ",
+    reported: "تم إرسال البلاغ",
+    reportFailed: "تعذّر إرسال البلاغ",
+    voiceCall: "مكالمة صوتية",
+    videoCall: "مكالمة فيديو",
+    moreActions: "خيارات أخرى",
+    verifiedMember: "عضو موثّق",
+    compatibility: "التوافق",
+    featureSoon: "قريبًا",
+    noSearchResults: "لا توجد نتائج مطابقة",
+    statusSending: "جارٍ الإرسال",
+    statusSent: "أُرسلت",
+    statusDelivered: "وصلت",
+    statusRead: "تمت القراءة",
+    statusFailed: "فشل الإرسال",
   },
   en: {
     title: "Messages",
@@ -302,6 +338,24 @@ export const chatStrings: FeatureDictionary<ChatStrings> = {
     messageActions: "Message actions",
     jumpToMessage: "Jump to message",
     originalUnavailable: "Original message unavailable",
+    react: "React",
+    reactions: "Reactions",
+    removeReaction: "Remove reaction",
+    report: "Report",
+    reported: "Report submitted",
+    reportFailed: "Could not submit the report",
+    voiceCall: "Voice call",
+    videoCall: "Video call",
+    moreActions: "More actions",
+    verifiedMember: "Verified member",
+    compatibility: "Compatibility",
+    featureSoon: "Coming soon",
+    noSearchResults: "No matching messages",
+    statusSending: "Sending",
+    statusSent: "Sent",
+    statusDelivered: "Delivered",
+    statusRead: "Read",
+    statusFailed: "Failed",
   },
   de: {
     title: "Nachrichten",
@@ -402,6 +456,24 @@ export const chatStrings: FeatureDictionary<ChatStrings> = {
     messageActions: "Nachrichtenaktionen",
     jumpToMessage: "Zur Nachricht springen",
     originalUnavailable: "Originalnachricht nicht verfügbar",
+    react: "Reagieren",
+    reactions: "Reaktionen",
+    removeReaction: "Reaktion entfernen",
+    report: "Melden",
+    reported: "Meldung gesendet",
+    reportFailed: "Meldung fehlgeschlagen",
+    voiceCall: "Sprachanruf",
+    videoCall: "Videoanruf",
+    moreActions: "Weitere Aktionen",
+    verifiedMember: "Verifiziertes Mitglied",
+    compatibility: "Übereinstimmung",
+    featureSoon: "Demnächst",
+    noSearchResults: "Keine passenden Nachrichten",
+    statusSending: "Wird gesendet",
+    statusSent: "Gesendet",
+    statusDelivered: "Zugestellt",
+    statusRead: "Gelesen",
+    statusFailed: "Fehlgeschlagen",
   },
   ru: {
     title: "Сообщения",
@@ -502,5 +574,23 @@ export const chatStrings: FeatureDictionary<ChatStrings> = {
     messageActions: "Действия с сообщением",
     jumpToMessage: "Перейти к сообщению",
     originalUnavailable: "Исходное сообщение недоступно",
+    react: "Реакция",
+    reactions: "Реакции",
+    removeReaction: "Убрать реакцию",
+    report: "Пожаловаться",
+    reported: "Жалоба отправлена",
+    reportFailed: "Не удалось отправить жалобу",
+    voiceCall: "Голосовой звонок",
+    videoCall: "Видеозвонок",
+    moreActions: "Ещё",
+    verifiedMember: "Проверенный участник",
+    compatibility: "Совместимость",
+    featureSoon: "Скоро",
+    noSearchResults: "Совпадений не найдено",
+    statusSending: "Отправка",
+    statusSent: "Отправлено",
+    statusDelivered: "Доставлено",
+    statusRead: "Прочитано",
+    statusFailed: "Ошибка",
   },
 };

@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { chatKeys, type MessagesPage } from "@/lib/chat/queries";
+import { reactionKeys } from "@/lib/chat/reactions";
 import type { ChatMessage, MessageRow } from "@/lib/chat/types";
 
 type UseConversationRealtimeArgs = {
@@ -69,6 +70,13 @@ export function useConversationRealtime({ conversationId, userId }: UseConversat
         { event: "UPDATE", schema: "public", table: "messages", filter: `conversation_id=eq.${conversationId}` },
         (payload) => {
           upsertPage(queryClient, conversationId, payload.new as MessageRow);
+        },
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "message_reactions", filter: `conversation_id=eq.${conversationId}` },
+        () => {
+          void queryClient.invalidateQueries({ queryKey: reactionKeys.conversation(conversationId) });
         },
       )
       .on("broadcast", { event: "typing" }, (payload) => {
