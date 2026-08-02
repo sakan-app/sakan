@@ -927,6 +927,14 @@ function ConversationPage() {
           onClose={() => setViewerStartId(null)}
         />
       )}
+
+      {wallpaperOpen && (
+        <WallpaperPicker
+          conversationId={id}
+          current={wallpaper}
+          onClose={() => setWallpaperOpen(false)}
+        />
+      )}
     </div>
   );
 }
