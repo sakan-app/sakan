@@ -43,6 +43,27 @@ export const Route = createFileRoute("/member/$id")({
       { property: "og:type", content: "profile" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    scripts: loaderData
+      ? [
+          {
+            type: "application/ld+json",
+            children: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ProfilePage",
+              mainEntity: {
+                "@type": "Person",
+                name: loaderData.name,
+                description: loaderData.bio ?? undefined,
+                address: {
+                  "@type": "PostalAddress",
+                  addressLocality: loaderData.city ?? undefined,
+                  addressCountry: loaderData.countryCode ?? undefined,
+                },
+              },
+            }),
+          },
+        ]
+      : [],
   }),
   component: MemberProfile,
   errorComponent: MemberError,

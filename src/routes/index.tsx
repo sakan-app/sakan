@@ -38,6 +38,35 @@ export const Route = createFileRoute("/")({
         content: "بحث ذكي، حسابات موثقة، وخصوصية كاملة — ابدأ رحلتك الآن.",
       },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              name: "سَكَن | SAKAN",
+              url: "https://sakan.app",
+              logo: "https://sakan.app/icons/icon-512.png",
+              description:
+                "منصة دولية للتعارف الجاد والزواج المستقر في أوروبا والعالم العربي.",
+            },
+            {
+              "@type": "WebSite",
+              name: "سَكَن | SAKAN",
+              url: "https://sakan.app",
+              inLanguage: ["ar", "en", "de", "ru"],
+              potentialAction: {
+                "@type": "SearchAction",
+                target: "https://sakan.app/search?country={search_term_string}",
+                "query-input": "required name=search_term_string",
+              },
+            },
+          ],
+        }),
+      },
+    ],
   }),
   component: Index,
 });

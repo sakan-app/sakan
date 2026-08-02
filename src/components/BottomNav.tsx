@@ -27,7 +27,7 @@ export function BottomNav() {
     <nav
       className="glass-mobile fixed inset-x-0 bottom-0 z-50 rounded-t-[26px] lg:hidden"
       style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0.25rem)" }}
-      aria-label={strings.home}
+      aria-label={strings.primaryNavigation}
     >
       <div className="relative mx-auto flex max-w-[560px] items-center justify-between px-4 pb-1 pt-2">
         <NavLink item={first} active={isActive(first.to)} label={strings[first.labelKey]} />

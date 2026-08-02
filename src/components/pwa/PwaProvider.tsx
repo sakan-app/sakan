@@ -1,5 +1,7 @@
 import { useEffect, type ReactNode } from "react";
 
+import { flushOutbox } from "@/lib/outbox";
+
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
@@ -16,6 +18,31 @@ export function clearDeferredInstallPrompt(): void {
 }
 
 export function PwaProvider({ children }: { children: ReactNode }) {
+  // Replay any offline-queued writes when the network or the SW says so.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const flush = () => {
+      void flushOutbox().catch(() => undefined);
+    };
+
+    function onMessage(event: MessageEvent) {
+      if (event.data?.type === "sakan:flush-outbox") flush();
+      if (event.data?.type === "sakan:navigate" && typeof event.data.url === "string") {
+        window.location.assign(event.data.url);
+      }
+    }
+
+    window.addEventListener("online", flush);
+    navigator.serviceWorker?.addEventListener("message", onMessage);
+    if (navigator.onLine) flush();
+
+    return () => {
+      window.removeEventListener("online", flush);
+      navigator.serviceWorker?.removeEventListener("message", onMessage);
+    };
+  }, []);
+
   useEffect(() => {
     if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
 
