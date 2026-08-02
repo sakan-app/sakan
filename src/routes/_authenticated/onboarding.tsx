@@ -16,6 +16,9 @@ import {
   type ProfileUpdate,
 } from "@/lib/profile-queries";
 import { COUNTRY_CODES } from "@/lib/countries";
+import { useFeatureStrings } from "@/i18n/feature";
+import { searchStrings } from "@/components/search/strings";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({
@@ -78,6 +81,8 @@ function OnboardingPage() {
   const [error, setError] = useState<string | null>(null);
   const [avatarPath, setAvatarPath] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  const modStrings = useFeatureStrings(searchStrings).moderation;
   const fileRef = useRef<HTMLInputElement>(null);
   const hydrated = useRef(false);
 
@@ -141,9 +146,23 @@ function OnboardingPage() {
 
   async function handleNext() {
     setError(null);
+    setNotice(null);
     if (step === 1) {
       const invalid = validateStep1();
       if (invalid) return setError(invalid);
+      try {
+        const { moderateText } = await import("@/lib/ai/moderation.functions");
+        const nameResult = await moderateText({
+          data: { text: form.display_name.trim(), subject: "name" },
+        });
+        if (nameResult.verdict === "rejected") {
+          setError(modStrings.rejectedText);
+          return;
+        }
+        if (nameResult.verdict === "flagged") setNotice(modStrings.flaggedText);
+      } catch {
+        /* moderation is best-effort */
+      }
       await save.mutateAsync({
         display_name: form.display_name.trim(),
         birth_date: form.birth_date,
@@ -157,8 +176,22 @@ function OnboardingPage() {
       return;
     }
     if (step === 2) {
+      const bio = form.bio.trim();
+      if (bio) {
+        try {
+          const { moderateText } = await import("@/lib/ai/moderation.functions");
+          const bioResult = await moderateText({ data: { text: bio, subject: "bio" } });
+          if (bioResult.verdict === "rejected") {
+            setError(modStrings.rejectedText);
+            return;
+          }
+          if (bioResult.verdict === "flagged") setNotice(modStrings.flaggedText);
+        } catch {
+          /* moderation is best-effort */
+        }
+      }
       await save.mutateAsync({
-        bio: form.bio.trim() || null,
+        bio: bio || null,
         occupation: form.occupation.trim() || null,
         education: form.education.trim() || null,
         marital_status: form.marital_status || null,
@@ -176,16 +209,32 @@ function OnboardingPage() {
 
   async function handleFile(file: File) {
     setError(null);
+    setNotice(null);
     const problem = validateAvatar(file);
     if (problem) {
       setError(problem === "size" ? t.onboarding.photoTooLarge : t.onboarding.photoType);
       return;
     }
     setUploading(true);
+    const previousAvatarPath = avatarPath;
     try {
       const path = await uploadAvatar(userId, file);
       await save.mutateAsync({ avatar_url: path });
       setAvatarPath(path);
+      try {
+        const { moderateImage } = await import("@/lib/ai/moderation.functions");
+        const result = await moderateImage({ data: { storagePath: path, bucket: "avatars" } });
+        if (result.verdict === "rejected") {
+          await supabase.storage.from("avatars").remove([path]);
+          await save.mutateAsync({ avatar_url: previousAvatarPath });
+          setAvatarPath(previousAvatarPath);
+          setError(modStrings.rejectedImage);
+        } else if (result.verdict === "flagged") {
+          setNotice(modStrings.flaggedImage);
+        }
+      } catch {
+        /* moderation is best-effort; ignore failures */
+      }
     } catch {
       setError(t.common.errorText);
     } finally {
@@ -416,6 +465,7 @@ function OnboardingPage() {
               )}
 
               {error && <p className="mt-4 text-center text-xs text-red-300">{error}</p>}
+              {notice && <p className="mt-4 text-center text-xs text-gold">{notice}</p>}
 
               <div className="mt-7 flex items-center justify-between gap-3">
                 <button

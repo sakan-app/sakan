@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { localeNames, localeOrder } from "@/i18n";
 import { COUNTRY_CODES } from "@/lib/countries";
 import {
@@ -22,6 +23,8 @@ import {
   type ProfileUpdate,
 } from "@/lib/profile-queries";
 import { profileFormSchema, validateImageFile } from "@/lib/validation";
+import { useFeatureStrings } from "@/i18n/feature";
+import { searchStrings } from "@/components/search/strings";
 
 export const Route = createFileRoute("/_authenticated/profile/edit")({
   head: () => ({
@@ -95,6 +98,7 @@ function EditProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const modStrings = useFeatureStrings(searchStrings).moderation;
   const avatarInput = useRef<HTMLInputElement>(null);
   const galleryInput = useRef<HTMLInputElement>(null);
   const hydrated = useRef(false);
@@ -155,12 +159,29 @@ function EditProfilePage() {
       return;
     }
     setError(null);
+    setNotice(null);
     setUploading(true);
+    const previousAvatarPath = avatarPath;
     try {
       const path = await uploadAvatar(userId, file);
       setAvatarPath(path);
       await updateMyProfile(userId, { avatar_url: path });
       void queryClient.invalidateQueries({ queryKey: ["profile", userId] });
+      try {
+        const { moderateImage } = await import("@/lib/ai/moderation.functions");
+        const result = await moderateImage({ data: { storagePath: path, bucket: "avatars" } });
+        if (result.verdict === "rejected") {
+          await supabase.storage.from("avatars").remove([path]);
+          setAvatarPath(previousAvatarPath);
+          await updateMyProfile(userId, { avatar_url: previousAvatarPath });
+          void queryClient.invalidateQueries({ queryKey: ["profile", userId] });
+          setError(modStrings.rejectedImage);
+        } else if (result.verdict === "flagged") {
+          setNotice(modStrings.flaggedImage);
+        }
+      } catch {
+        /* moderation is best-effort; ignore failures */
+      }
     } catch {
       setError(t.common.errorText);
     } finally {
@@ -175,10 +196,26 @@ function EditProfilePage() {
       return;
     }
     setError(null);
+    setNotice(null);
     setUploading(true);
     try {
-      await uploadGalleryPhoto(userId, file, galleryQ.data?.length ?? 0);
+      const path = await uploadGalleryPhoto(userId, file, galleryQ.data?.length ?? 0);
       void queryClient.invalidateQueries({ queryKey: ["gallery", userId] });
+      try {
+        const { moderateImage } = await import("@/lib/ai/moderation.functions");
+        const result = await moderateImage({ data: { storagePath: path, bucket: "gallery" } });
+        if (result.verdict === "rejected") {
+          const galleryRow = (galleryQ.data ?? []).find((p) => p.path === path);
+          if (galleryRow) await deleteGalleryPhoto(galleryRow.id, path);
+          else await supabase.storage.from("gallery").remove([path]);
+          void queryClient.invalidateQueries({ queryKey: ["gallery", userId] });
+          setError(modStrings.rejectedImage);
+        } else if (result.verdict === "flagged") {
+          setNotice(modStrings.flaggedImage);
+        }
+      } catch {
+        /* moderation is best-effort; ignore failures */
+      }
     } catch {
       setError(t.common.errorText);
     } finally {
@@ -186,7 +223,7 @@ function EditProfilePage() {
     }
   }
 
-  function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setError(null);
     setNotice(null);
@@ -214,6 +251,26 @@ function EditProfilePage() {
       return;
     }
     const d = parsed.data;
+
+    try {
+      const { moderateText } = await import("@/lib/ai/moderation.functions");
+      const [nameResult, bioResult] = await Promise.all([
+        moderateText({ data: { text: d.display_name, subject: "name" } }),
+        d.bio
+          ? moderateText({ data: { text: d.bio, subject: "bio" } })
+          : Promise.resolve(null),
+      ]);
+      if (nameResult.verdict === "rejected" || bioResult?.verdict === "rejected") {
+        setError(modStrings.rejectedText);
+        return;
+      }
+      if (nameResult.verdict === "flagged" || bioResult?.verdict === "flagged") {
+        setNotice(modStrings.flaggedText);
+      }
+    } catch {
+      /* moderation is best-effort; continue saving if it fails */
+    }
+
     save.mutate({
       display_name: d.display_name,
       birth_date: d.birth_date,
