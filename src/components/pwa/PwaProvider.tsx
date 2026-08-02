@@ -24,6 +24,22 @@ export function PwaProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
 
+    // A service worker must never control Vite's development preview: cached
+    // module URLs can retain incompatible React dependency hashes after HMR.
+    if (import.meta.env.DEV) {
+      void navigator.serviceWorker.getRegistrations().then((registrations) =>
+        Promise.all(registrations.map((registration) => registration.unregister())),
+      );
+      if ("caches" in window) {
+        void caches.keys().then((keys) =>
+          Promise.all(
+            keys.filter((key) => key.startsWith("sakan-")).map((key) => caches.delete(key)),
+          ),
+        );
+      }
+      return;
+    }
+
     function onBeforeInstallPrompt(event: Event) {
       event.preventDefault();
       deferredInstallPrompt = event as BeforeInstallPromptEvent;
