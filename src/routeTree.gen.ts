@@ -33,8 +33,10 @@ import { Route as AdminConversationsRouteImport } from './routes/admin/conversat
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as AdminMatchesRouteImport } from './routes/admin/matches'
 import { Route as AdminNotificationsRouteImport } from './routes/admin/notifications'
+import { Route as AdminPaymentsRouteImport } from './routes/admin/payments'
 import { Route as AdminReportsRouteImport } from './routes/admin/reports'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
+import { Route as AdminSubscriptionsRouteImport } from './routes/admin/subscriptions'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminVerificationsRouteImport } from './routes/admin/verifications'
 import { Route as AuthIndexRouteImport } from './routes/auth.index'
@@ -166,6 +168,11 @@ const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
   path: '/notifications',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminReportsRoute = AdminReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -174,6 +181,11 @@ const AdminReportsRoute = AdminReportsRouteImport.update({
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminSubscriptionsRoute = AdminSubscriptionsRouteImport.update({
+  id: '/subscriptions',
+  path: '/subscriptions',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
@@ -252,8 +264,10 @@ export interface FileRoutesByFullPath {
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/matches': typeof AdminMatchesRoute
   '/admin/notifications': typeof AdminNotificationsRoute
+  '/admin/payments': typeof AdminPaymentsRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/subscriptions': typeof AdminSubscriptionsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/verifications': typeof AdminVerificationsRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -288,8 +302,10 @@ export interface FileRoutesByTo {
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/matches': typeof AdminMatchesRoute
   '/admin/notifications': typeof AdminNotificationsRoute
+  '/admin/payments': typeof AdminPaymentsRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/subscriptions': typeof AdminSubscriptionsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/verifications': typeof AdminVerificationsRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -327,8 +343,10 @@ export interface FileRoutesById {
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/matches': typeof AdminMatchesRoute
   '/admin/notifications': typeof AdminNotificationsRoute
+  '/admin/payments': typeof AdminPaymentsRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/subscriptions': typeof AdminSubscriptionsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/verifications': typeof AdminVerificationsRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -366,8 +384,10 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/admin/matches'
     | '/admin/notifications'
+    | '/admin/payments'
     | '/admin/reports'
     | '/admin/settings'
+    | '/admin/subscriptions'
     | '/admin/users'
     | '/admin/verifications'
     | '/auth/callback'
@@ -402,8 +422,10 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/admin/matches'
     | '/admin/notifications'
+    | '/admin/payments'
     | '/admin/reports'
     | '/admin/settings'
+    | '/admin/subscriptions'
     | '/admin/users'
     | '/admin/verifications'
     | '/auth/callback'
@@ -440,8 +462,10 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/admin/matches'
     | '/admin/notifications'
+    | '/admin/payments'
     | '/admin/reports'
     | '/admin/settings'
+    | '/admin/subscriptions'
     | '/admin/users'
     | '/admin/verifications'
     | '/auth/callback'
@@ -640,6 +664,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminNotificationsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/payments': {
+      id: '/admin/payments'
+      path: '/payments'
+      fullPath: '/admin/payments'
+      preLoaderRoute: typeof AdminPaymentsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/reports': {
       id: '/admin/reports'
       path: '/reports'
@@ -652,6 +683,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/admin/settings'
       preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/subscriptions': {
+      id: '/admin/subscriptions'
+      path: '/subscriptions'
+      fullPath: '/admin/subscriptions'
+      preLoaderRoute: typeof AdminSubscriptionsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/users': {
@@ -776,8 +814,10 @@ interface AdminRouteRouteChildren {
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminMatchesRoute: typeof AdminMatchesRoute
   AdminNotificationsRoute: typeof AdminNotificationsRoute
+  AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminReportsRoute: typeof AdminReportsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminSubscriptionsRoute: typeof AdminSubscriptionsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminVerificationsRoute: typeof AdminVerificationsRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -791,8 +831,10 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminDashboardRoute: AdminDashboardRoute,
   AdminMatchesRoute: AdminMatchesRoute,
   AdminNotificationsRoute: AdminNotificationsRoute,
+  AdminPaymentsRoute: AdminPaymentsRoute,
   AdminReportsRoute: AdminReportsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
+  AdminSubscriptionsRoute: AdminSubscriptionsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminVerificationsRoute: AdminVerificationsRoute,
   AdminIndexRoute: AdminIndexRoute,
