@@ -51,7 +51,7 @@ function AuthPage() {
   // Guest-only route: signed-in visitors go straight to their profile.
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      void navigate({ to: "/profile", replace: true });
+      void navigate({ to: "/home", replace: true });
     }
   }, [isAuthenticated, isLoading, navigate]);
 
@@ -97,7 +97,7 @@ function AuthPage() {
           password,
         });
         if (err) throw err;
-        void navigate({ to: "/profile", replace: true });
+        void navigate({ to: "/home", replace: true });
       } else if (mode === "signup") {
         const { data, error: err } = await supabase.auth.signUp({
           email: email.trim(),
@@ -136,7 +136,7 @@ function AuthPage() {
       });
       if (result.error) throw result.error;
       if (result.redirected) return;
-      void navigate({ to: "/profile", replace: true });
+      void navigate({ to: "/home", replace: true });
     } catch (err) {
       setError(authErrorMessage(err, t));
     } finally {

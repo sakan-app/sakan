@@ -2,8 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Bookmark, Loader2 } from "lucide-react";
 
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { MemberCard } from "@/components/MemberCard";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatureStrings } from "@/i18n/feature";
@@ -29,11 +27,10 @@ function FavoritesPage() {
   const entries = favoritesQ.data ?? [];
 
   return (
-    <div className="flex min-h-screen flex-col bg-cream pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0">
-      <Header />
-      <main className="mx-auto w-full max-w-[1360px] flex-1 px-6 py-10 lg:px-8">
-        <h1 className="text-2xl font-black text-navy">{s.favorites.title}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{s.favorites.subtitle}</p>
+    <div className="w-full">
+      <main className="w-full pt-4">
+        <h1 className="text-2xl font-black text-cream">{s.favorites.title}</h1>
+        <p className="mt-1 text-sm text-cream/60">{s.favorites.subtitle}</p>
 
         <div className="mt-8">
           {favoritesQ.isPending ? (
@@ -41,19 +38,19 @@ function FavoritesPage() {
               <Loader2 className="h-7 w-7 animate-spin text-gold-deep" />
             </div>
           ) : favoritesQ.isError ? (
-            <div className="mx-auto max-w-md rounded-xl border border-gold/30 bg-white p-10 text-center shadow-[var(--shadow-card)]">
-              <h2 className="text-lg font-bold text-navy">{s.errorTitle}</h2>
-              <p className="mt-2 text-xs leading-6 text-muted-foreground">{s.errorText}</p>
+            <div className="mx-auto max-w-md glass-card p-10 text-center ">
+              <h2 className="text-lg font-bold text-cream">{s.errorTitle}</h2>
+              <p className="mt-2 text-xs leading-6 text-cream/60">{s.errorText}</p>
               <button onClick={() => void favoritesQ.refetch()} className="btn-gold mt-6 px-6 py-2.5 text-sm">
                 {s.retry}
               </button>
             </div>
           ) : entries.length === 0 ? (
-            <div className="mx-auto max-w-md rounded-xl border border-gold/30 bg-white p-10 text-center shadow-[var(--shadow-card)]">
+            <div className="mx-auto max-w-md glass-card p-10 text-center ">
               <Bookmark className="mx-auto h-12 w-12 text-gold-deep" />
-              <h2 className="mt-4 text-lg font-bold text-navy">{s.favorites.empty}</h2>
-              <p className="mt-2 text-xs leading-6 text-muted-foreground">{s.favorites.emptyText}</p>
-              <Link to="/search" className="btn-gold mt-6 inline-block px-6 py-2.5 text-sm">
+              <h2 className="mt-4 text-lg font-bold text-cream">{s.favorites.empty}</h2>
+              <p className="mt-2 text-xs leading-6 text-cream/60">{s.favorites.emptyText}</p>
+              <Link to="/discover" className="btn-gold mt-6 inline-block px-6 py-2.5 text-sm">
                 {s.favorites.title}
               </Link>
             </div>
@@ -75,7 +72,6 @@ function FavoritesPage() {
           )}
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

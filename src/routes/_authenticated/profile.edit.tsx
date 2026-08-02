@@ -3,8 +3,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Camera, Loader2, Trash2, UserRound } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { localeNames, localeOrder } from "@/i18n";
@@ -292,21 +290,18 @@ function EditProfilePage() {
 
   if (profileQ.isPending) {
     return (
-      <div className="flex min-h-screen flex-col bg-cream">
-        <Header />
+      <div className="w-full">
         <main className="flex flex-1 items-center justify-center">
           <Loader2 className="h-7 w-7 animate-spin text-gold-deep" aria-label={t.common.loading} />
         </main>
-        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-cream">
-      <Header />
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
-        <div className="panel-navy p-6 sm:p-8">
+    <div className="w-full">
+      <main className="mx-auto w-full max-w-3xl pt-4">
+        <div className="glass-card p-6 sm:p-8">
           <h1 className="text-2xl font-black text-cream">{t.profile.editTitle}</h1>
 
           {/* Avatar */}
@@ -599,7 +594,6 @@ function EditProfilePage() {
           </form>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }
