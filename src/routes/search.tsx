@@ -92,7 +92,7 @@ function SearchPage() {
               value={criteria.sort}
               onChange={(event) =>
                 void navigate({
-                  search: (prev) => ({
+                  search: (prev: SearchParams) => ({
                     ...prev,
                     sort: event.target.value as SearchParams["sort"],
                     page: 1,
@@ -161,7 +161,7 @@ function SearchPage() {
                 <div className="mt-8 text-center">
                   <button
                     onClick={() =>
-                      void navigate({ search: (prev) => ({ ...prev, page: prev.page + 1 }) })
+                      void navigate({ search: (prev: SearchParams) => ({ ...prev, page: prev.page + 1 }) })
                     }
                     disabled={membersQ.isFetching}
                     className="btn-outline-gold px-8 py-2.5 text-sm font-semibold disabled:opacity-60"
