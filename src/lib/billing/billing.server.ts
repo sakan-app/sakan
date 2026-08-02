@@ -58,7 +58,7 @@ async function logEvent(row: {
   from_plan_code?: string | null;
   amount_cents?: number | null;
   currency?: string;
-  detail?: Record<string, unknown>;
+  detail?: Record<string, string | number | boolean | null>;
 }) {
   await supabaseAdmin.from("billing_events").insert(row);
 }
