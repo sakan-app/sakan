@@ -323,7 +323,7 @@ function EditProfilePage() {
               <Field label={t.onboarding.displayName} id="display_name">
                 <input
                   id="display_name"
-                  className="field"
+                  className="field-navy w-full"
                   value={form.display_name}
                   onChange={(e) => set("display_name", e.target.value)}
                   required
@@ -333,7 +333,7 @@ function EditProfilePage() {
                 <input
                   id="birth_date"
                   type="date"
-                  className="field"
+                  className="field-navy w-full"
                   value={form.birth_date}
                   onChange={(e) => set("birth_date", e.target.value)}
                   required
@@ -342,7 +342,7 @@ function EditProfilePage() {
               <Field label={t.onboarding.gender} id="gender">
                 <select
                   id="gender"
-                  className="field"
+                  className="field-navy w-full"
                   value={form.gender}
                   onChange={(e) => set("gender", e.target.value as FormState["gender"])}
                 >
@@ -354,7 +354,7 @@ function EditProfilePage() {
               <Field label={t.onboarding.lookingFor} id="looking_for">
                 <select
                   id="looking_for"
-                  className="field"
+                  className="field-navy w-full"
                   value={form.looking_for}
                   onChange={(e) => set("looking_for", e.target.value as FormState["looking_for"])}
                 >
@@ -366,7 +366,7 @@ function EditProfilePage() {
               <Field label={t.onboarding.country} id="country_code">
                 <select
                   id="country_code"
-                  className="field"
+                  className="field-navy w-full"
                   value={form.country_code}
                   onChange={(e) => set("country_code", e.target.value)}
                 >
@@ -381,7 +381,7 @@ function EditProfilePage() {
               <Field label={t.onboarding.city} id="city">
                 <input
                   id="city"
-                  className="field"
+                  className="field-navy w-full"
                   value={form.city}
                   onChange={(e) => set("city", e.target.value)}
                 />
@@ -389,7 +389,7 @@ function EditProfilePage() {
               <Field label={t.onboarding.occupation} id="occupation">
                 <input
                   id="occupation"
-                  className="field"
+                  className="field-navy w-full"
                   value={form.occupation}
                   onChange={(e) => set("occupation", e.target.value)}
                 />
@@ -397,7 +397,7 @@ function EditProfilePage() {
               <Field label={t.onboarding.education} id="education">
                 <input
                   id="education"
-                  className="field"
+                  className="field-navy w-full"
                   value={form.education}
                   onChange={(e) => set("education", e.target.value)}
                 />
@@ -405,7 +405,7 @@ function EditProfilePage() {
               <Field label={t.onboarding.maritalStatus} id="marital_status">
                 <select
                   id="marital_status"
-                  className="field"
+                  className="field-navy w-full"
                   value={form.marital_status}
                   onChange={(e) =>
                     set("marital_status", e.target.value as FormState["marital_status"])
@@ -420,7 +420,7 @@ function EditProfilePage() {
               <Field label={t.onboarding.religiosity} id="religiosity">
                 <select
                   id="religiosity"
-                  className="field"
+                  className="field-navy w-full"
                   value={form.religiosity}
                   onChange={(e) => set("religiosity", e.target.value as FormState["religiosity"])}
                 >
@@ -437,7 +437,7 @@ function EditProfilePage() {
                   type="number"
                   min={120}
                   max={230}
-                  className="field"
+                  className="field-navy w-full"
                   value={form.height_cm}
                   onChange={(e) => set("height_cm", e.target.value)}
                 />
@@ -445,7 +445,7 @@ function EditProfilePage() {
               <Field label={t.onboarding.spokenLanguages} id="spoken_languages">
                 <input
                   id="spoken_languages"
-                  className="field"
+                  className="field-navy w-full"
                   value={form.spoken_languages}
                   onChange={(e) => set("spoken_languages", e.target.value)}
                 />
@@ -457,7 +457,7 @@ function EditProfilePage() {
                 id="bio"
                 rows={4}
                 maxLength={1200}
-                className="field"
+                className="field-navy w-full"
                 placeholder={t.onboarding.bioPlaceholder}
                 value={form.bio}
                 onChange={(e) => set("bio", e.target.value)}
@@ -467,7 +467,7 @@ function EditProfilePage() {
             <Field label={t.onboarding.interests} id="interests" hint={t.onboarding.interestsHint}>
               <input
                 id="interests"
-                className="field"
+                className="field-navy w-full"
                 value={form.interests}
                 onChange={(e) => set("interests", e.target.value)}
               />
@@ -478,7 +478,7 @@ function EditProfilePage() {
             <Field label={t.profile.preferredLanguage} id="locale">
               <select
                 id="locale"
-                className="field"
+                className="field-navy w-full"
                 value={locale}
                 onChange={(e) => setLocale(e.target.value as typeof locale)}
               >
