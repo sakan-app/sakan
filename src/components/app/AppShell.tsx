@@ -17,7 +17,14 @@ import {
   Sparkles,
   UserRound,
 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 
 import logo from "@/assets/sakan-logo.png.asset.json";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
@@ -543,7 +550,7 @@ export function AppShell() {
       />
       <div
         className="lg:pe-4 lg:[padding-inline-start:var(--shell-inset)]"
-        style={{ "--shell-inset": `${shellInset}px` } as React.CSSProperties}
+        style={{ "--shell-inset": `${shellInset}px` } as CSSProperties}
       >
         <MobileBar />
         <Toolbar />
