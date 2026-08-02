@@ -37,6 +37,7 @@ import { Route as MemberIdRouteImport } from './routes/member.$id'
 import { Route as AuthenticatedMessagesIndexRouteImport } from './routes/_authenticated/messages.index'
 import { Route as AuthenticatedMessagesIdRouteImport } from './routes/_authenticated/messages.$id'
 import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
+import { Route as AdminUserIdRouteImport } from './routes/admin/user.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -180,6 +181,11 @@ const AuthenticatedProfileEditRoute =
     path: '/edit',
     getParentRoute: () => AuthenticatedProfileRoute,
   } as any)
+const AdminUserIdRoute = AdminUserIdRouteImport.update({
+  id: '/user/$id',
+  path: '/user/$id',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -208,6 +214,7 @@ export interface FileRoutesByFullPath {
   '/auth/': typeof AuthIndexRoute
   '/messages/$id': typeof AuthenticatedMessagesIdRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
+  '/admin/user/$id': typeof AdminUserIdRoute
   '/messages/': typeof AuthenticatedMessagesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -236,6 +243,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthIndexRoute
   '/messages/$id': typeof AuthenticatedMessagesIdRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
+  '/admin/user/$id': typeof AdminUserIdRoute
   '/messages': typeof AuthenticatedMessagesIndexRoute
 }
 export interface FileRoutesById {
@@ -267,6 +275,7 @@ export interface FileRoutesById {
   '/auth/': typeof AuthIndexRoute
   '/_authenticated/messages/$id': typeof AuthenticatedMessagesIdRoute
   '/_authenticated/profile/edit': typeof AuthenticatedProfileEditRoute
+  '/admin/user/$id': typeof AdminUserIdRoute
   '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
 }
 export interface FileRouteTypes {
@@ -298,6 +307,7 @@ export interface FileRouteTypes {
     | '/auth/'
     | '/messages/$id'
     | '/profile/edit'
+    | '/admin/user/$id'
     | '/messages/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -326,6 +336,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/messages/$id'
     | '/profile/edit'
+    | '/admin/user/$id'
     | '/messages'
   id:
     | '__root__'
@@ -356,6 +367,7 @@ export interface FileRouteTypes {
     | '/auth/'
     | '/_authenticated/messages/$id'
     | '/_authenticated/profile/edit'
+    | '/admin/user/$id'
     | '/_authenticated/messages/'
   fileRoutesById: FileRoutesById
 }
@@ -572,6 +584,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileEditRouteImport
       parentRoute: typeof AuthenticatedProfileRoute
     }
+    '/admin/user/$id': {
+      id: '/admin/user/$id'
+      path: '/user/$id'
+      fullPath: '/admin/user/$id'
+      preLoaderRoute: typeof AdminUserIdRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
@@ -622,6 +641,7 @@ interface AdminRouteRouteChildren {
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminUserIdRoute: typeof AdminUserIdRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
@@ -629,6 +649,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminDashboardRoute: AdminDashboardRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminUserIdRoute: AdminUserIdRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
