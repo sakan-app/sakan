@@ -124,30 +124,105 @@ function Avatar({
 
 /* ----------------------------------------------------------------- sidebar */
 
-function Sidebar() {
+function useSidebarState() {
+  const [width, setWidth] = useState(248);
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    const storedWidth = Number(window.localStorage.getItem(SIDEBAR_WIDTH_KEY));
+    if (Number.isFinite(storedWidth) && storedWidth >= SIDEBAR_MIN && storedWidth <= SIDEBAR_MAX) {
+      setWidth(storedWidth);
+    }
+    setCollapsed(window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "1");
+  }, []);
+
+  const persistWidth = useCallback((next: number) => {
+    const clamped = Math.min(SIDEBAR_MAX, Math.max(SIDEBAR_MIN, Math.round(next)));
+    setWidth(clamped);
+    window.localStorage.setItem(SIDEBAR_WIDTH_KEY, String(clamped));
+  }, []);
+
+  const toggleCollapsed = useCallback(() => {
+    setCollapsed((prev) => {
+      window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, prev ? "0" : "1");
+      return !prev;
+    });
+  }, []);
+
+  return { width, collapsed, persistWidth, toggleCollapsed };
+}
+
+function Sidebar({
+  width,
+  collapsed,
+  onResize,
+  onToggle,
+}: {
+  width: number;
+  collapsed: boolean;
+  onResize: (next: number) => void;
+  onToggle: () => void;
+}) {
   const s = useFeatureStrings(shellStrings);
   const pathname = useActivePath();
   const unread = useUnreadMessages();
+  const notifications = useUnreadCount();
   const { profile, avatarUrl } = useMe();
+  const { dir } = useI18n();
+  const dragging = useRef(false);
+
+  useEffect(() => {
+    function onMove(event: PointerEvent) {
+      if (!dragging.current) return;
+      const next = dir === "rtl" ? window.innerWidth - event.clientX - 16 : event.clientX - 16;
+      onResize(next);
+    }
+    function onUp() {
+      dragging.current = false;
+      document.body.classList.remove("select-none");
+    }
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+  }, [dir, onResize]);
+
+  const badgeFor = (key: string) =>
+    key === "messages" ? unread : key === "notifications" ? notifications : 0;
+
+  const CollapseIcon = dir === "rtl" ? ChevronRight : ChevronLeft;
 
   return (
-    <aside className="fixed inset-y-4 start-4 z-40 hidden w-[15.5rem] flex-col overflow-hidden rounded-[26px] glass lg:flex">
-      <div className="flex items-center gap-2.5 px-5 pb-4 pt-5">
-        <img src={logo.url} alt="" className="h-9 w-9 object-contain" aria-hidden />
-        <span className="text-base font-bold text-cream">
-          سكن <span className="latin text-[11px] text-gold">SAKAN</span>
-        </span>
+    <aside
+      className="fixed inset-y-4 start-4 z-40 hidden flex-col overflow-hidden rounded-[26px] glass transition-[width] duration-200 ease-out lg:flex"
+      style={{ width: collapsed ? SIDEBAR_COLLAPSED : width }}
+    >
+      <div
+        className={`flex items-center gap-2.5 pb-4 pt-5 ${collapsed ? "justify-center px-2" : "px-5"}`}
+      >
+        <img src={logo.url} alt="" className="h-9 w-9 shrink-0 object-contain" aria-hidden />
+        {!collapsed && (
+          <span className="truncate text-base font-bold text-cream">
+            سكن <span className="latin text-[11px] text-gold">SAKAN</span>
+          </span>
+        )}
       </div>
 
-      <nav className="flex-1 space-y-1 overflow-y-auto px-3" aria-label={s.menu}>
-        {TABS.map((item) => (
+      <nav
+        className={`flex-1 space-y-1 overflow-y-auto ${collapsed ? "px-2" : "px-3"}`}
+        aria-label={s.menu}
+      >
+        {SIDEBAR_PRIMARY.map((item) => (
           <SidebarLink
             key={item.to}
             to={item.to}
             icon={item.icon}
-            label={s[item.key]}
+            label={s[item.key] as string}
             active={isActivePath(pathname, item.to)}
-            badge={item.key === "messages" ? unread : 0}
+            badge={badgeFor(item.key)}
+            collapsed={collapsed}
           />
         ))}
         <div className="my-3 h-px bg-white/10" />
@@ -158,22 +233,59 @@ function Sidebar() {
             icon={item.icon}
             label={s[item.key] as string}
             active={isActivePath(pathname, item.to)}
+            collapsed={collapsed}
           />
         ))}
       </nav>
 
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-label={collapsed ? s.expand : s.collapse}
+        aria-expanded={!collapsed}
+        className={`mx-3 mb-1 flex items-center gap-2 rounded-2xl px-3 py-2 text-[11px] font-semibold text-cream/60 transition hover:bg-white/10 hover:text-cream ${
+          collapsed ? "justify-center" : ""
+        }`}
+      >
+        <CollapseIcon className={`h-4 w-4 transition-transform ${collapsed ? "rotate-180" : ""}`} />
+        {!collapsed && <span>{s.collapse}</span>}
+      </button>
+
       <Link
         to="/profile"
-        className="m-3 flex items-center gap-3 rounded-2xl px-3 py-2.5 glass-tile"
+        className={`m-3 flex items-center gap-3 rounded-2xl py-2.5 glass-tile ${
+          collapsed ? "justify-center px-2" : "px-3"
+        }`}
       >
         <Avatar url={avatarUrl} name={profile?.display_name} size={34} />
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-xs font-bold text-cream">
-            {profile?.display_name ?? "—"}
+        {!collapsed && (
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-xs font-bold text-cream">
+              {profile?.display_name ?? "—"}
+            </span>
+            <span className="block truncate text-[11px] text-cream/50">{s.profile}</span>
           </span>
-          <span className="block truncate text-[11px] text-cream/50">{s.profile}</span>
-        </span>
+        )}
       </Link>
+
+      {!collapsed && (
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          aria-label={s.resizeSidebar}
+          tabIndex={0}
+          onPointerDown={(event) => {
+            event.preventDefault();
+            dragging.current = true;
+            document.body.classList.add("select-none");
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "ArrowRight") onResize(width + (dir === "rtl" ? -16 : 16));
+            if (event.key === "ArrowLeft") onResize(width + (dir === "rtl" ? 16 : -16));
+          }}
+          className="absolute inset-y-0 end-0 w-1.5 cursor-col-resize bg-transparent transition hover:bg-[color-mix(in_oklab,var(--gold)_35%,transparent)] focus-visible:bg-[color-mix(in_oklab,var(--gold)_45%,transparent)] focus-visible:outline-none"
+        />
+      )}
     </aside>
   );
 }
@@ -184,20 +296,24 @@ function SidebarLink({
   label,
   active,
   badge = 0,
+  collapsed = false,
 }: {
   to: string;
   icon: typeof Home;
   label: string;
   active: boolean;
   badge?: number;
+  collapsed?: boolean;
 }) {
   return (
     <Link
       to={to}
       aria-current={active ? "page" : undefined}
-      className={`relative flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm transition-colors ${
-        active ? "text-gold" : "text-cream/70 hover:text-cream"
-      }`}
+      title={collapsed ? label : undefined}
+      aria-label={collapsed ? label : undefined}
+      className={`relative flex items-center gap-3 rounded-2xl py-2.5 text-sm transition-colors ${
+        collapsed ? "justify-center px-2" : "px-3"
+      } ${active ? "text-gold" : "text-cream/70 hover:text-cream"}`}
     >
       {active && (
         <motion.span
@@ -207,9 +323,16 @@ function SidebarLink({
           aria-hidden
         />
       )}
-      <Icon className="relative h-[18px] w-[18px]" />
-      <span className="relative flex-1 font-semibold">{label}</span>
-      {badge > 0 && (
+      <span className="relative">
+        <Icon className="h-[18px] w-[18px]" />
+        {collapsed && badge > 0 && (
+          <span className="absolute -end-2 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-gold px-1 text-[9px] font-bold text-navy-deep">
+            {badge > 9 ? "9+" : badge}
+          </span>
+        )}
+      </span>
+      {!collapsed && <span className="relative flex-1 truncate font-semibold">{label}</span>}
+      {!collapsed && badge > 0 && (
         <span className="relative grid h-5 min-w-5 place-items-center rounded-full bg-gold px-1.5 text-[10px] font-bold text-navy-deep">
           {badge > 99 ? "99+" : badge}
         </span>

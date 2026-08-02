@@ -296,10 +296,18 @@ export async function changeUserRole(params: {
   grant: boolean;
 }) {
   if (params.grant) {
-    const { error } = await supabaseAdmin
+    const { data: existing } = await supabaseAdmin
       .from("user_roles")
-      .upsert({ user_id: params.targetId, role: params.role }, { onConflict: "user_id,role" });
-    if (error) throw new Error(error.message);
+      .select("id")
+      .eq("user_id", params.targetId)
+      .eq("role", params.role)
+      .maybeSingle();
+    if (!existing) {
+      const { error } = await supabaseAdmin
+        .from("user_roles")
+        .insert({ user_id: params.targetId, role: params.role });
+      if (error) throw new Error(error.message);
+    }
   } else {
     const { error } = await supabaseAdmin
       .from("user_roles")

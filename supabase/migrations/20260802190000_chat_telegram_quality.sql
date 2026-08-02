@@ -5,9 +5,7 @@
 -- ============================================================
 
 -- 1. Attachment metadata + voice kind ---------------------------------------
-DO $$ BEGIN
-  ALTER TYPE public.message_kind ADD VALUE IF NOT EXISTS 'voice';
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+ALTER TYPE public.message_kind ADD VALUE IF NOT EXISTS 'voice';
 
 ALTER TABLE public.messages
   ADD COLUMN IF NOT EXISTS attachment_duration_seconds integer,
