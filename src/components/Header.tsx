@@ -107,6 +107,9 @@ export function Header() {
           {isAuthenticated && <NotificationBell />}
           {isAuthenticated ? (
             <div className="hidden items-center gap-2 sm:flex">
+              <Link to="/pricing" className="text-xs font-semibold text-cream/85 hover:text-gold">
+                {bs.pricingTitle}
+              </Link>
               <Link to="/messages" className="text-xs font-semibold text-cream/85 hover:text-gold">
                 {hs.messages}
               </Link>
@@ -121,12 +124,14 @@ export function Header() {
               </button>
             </div>
           ) : (
-            <Link
-              to="/auth"
-              className="btn-outline-gold hidden px-4 py-2 text-xs font-semibold sm:block"
-            >
-              {t.nav.login}
-            </Link>
+            <div className="hidden items-center gap-2 sm:flex">
+              <Link to="/pricing" className="text-xs font-semibold text-cream/85 hover:text-gold">
+                {bs.pricingTitle}
+              </Link>
+              <Link to="/auth" className="btn-outline-gold px-4 py-2 text-xs font-semibold">
+                {t.nav.login}
+              </Link>
+            </div>
           )}
         </div>
       </div>
