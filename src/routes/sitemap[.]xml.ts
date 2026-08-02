@@ -6,6 +6,11 @@ const PUBLIC_ROUTES = [
   { path: "/", priority: "1.0", changefreq: "daily" },
   { path: "/search", priority: "0.8", changefreq: "hourly" },
   { path: "/pricing", priority: "0.7", changefreq: "weekly" },
+  { path: "/about", priority: "0.7", changefreq: "monthly" },
+  { path: "/guide", priority: "0.7", changefreq: "monthly" },
+  { path: "/privacy", priority: "0.4", changefreq: "yearly" },
+  { path: "/terms", priority: "0.4", changefreq: "yearly" },
+  { path: "/impressum", priority: "0.4", changefreq: "yearly" },
   { path: "/auth", priority: "0.3", changefreq: "monthly" },
 ];
 
