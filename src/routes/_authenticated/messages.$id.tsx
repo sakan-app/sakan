@@ -721,6 +721,15 @@ function ConversationPage() {
           >
             <Search className="h-5 w-5" />
           </button>
+          <button
+            type="button"
+            aria-label={ws.changeWallpaper}
+            title={ws.changeWallpaper}
+            onClick={() => setWallpaperOpen(true)}
+            className="grid h-9 w-9 place-items-center rounded-full text-gold hover:bg-gold/10"
+          >
+            <ImageIcon className="h-5 w-5" />
+          </button>
         </div>
       )}
 
@@ -732,7 +741,8 @@ function ConversationPage() {
       />
 
       <div className="relative flex-1 overflow-hidden">
-        <div ref={scrollRef} onScroll={handleScroll} className="h-full space-y-2 overflow-y-auto px-3 py-4">
+        <ChatWallpaper settings={wallpaper} />
+        <div ref={scrollRef} onScroll={handleScroll} className="relative h-full space-y-2 overflow-y-auto px-3 py-4">
           {messagesQ.isFetchingNextPage && (
             <div className="flex justify-center py-2">
               <Loader2 className="h-4 w-4 animate-spin text-gold-deep" />
