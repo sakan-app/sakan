@@ -210,3 +210,69 @@ export function buildModerateImageMessages(imageUrl: string) {
     },
   ];
 }
+
+export const openerSchema = {
+  name: "conversation_openers",
+  schema: {
+    type: "object",
+    properties: {
+      openers: { type: "array", items: { type: "string" }, minItems: 3, maxItems: 3 },
+    },
+    required: ["openers"],
+    additionalProperties: false,
+  },
+} as const;
+
+export function buildOpenerMessages(
+  me: CompatibilityProfile,
+  candidate: CompatibilityProfile,
+  language: Locale,
+) {
+  const langName = LANGUAGE_NAMES[language];
+  return [
+    {
+      role: "system" as const,
+      content:
+        "You write short, warm, respectful conversation openers for a serious matrimonial platform called SAKAN. " +
+        "Given the requester's profile and a candidate's profile, suggest 3 distinct opening messages the requester could send. " +
+        "Each should reference something concrete from the candidate's profile (interests, occupation, bio), stay under 220 characters, " +
+        "and respect a modest, family-oriented tone. " +
+        `Respond ONLY with strict JSON matching the given schema, and write every opener in ${langName}.`,
+    },
+    {
+      role: "user" as const,
+      content: `Requester profile:\n${describeProfile(me)}\n\nCandidate profile:\n${describeProfile(candidate)}`,
+    },
+  ];
+}
+
+export const profileQualitySchema = {
+  name: "profile_quality_suggestions",
+  schema: {
+    type: "object",
+    properties: {
+      score: { type: "number" },
+      suggestions: { type: "array", items: { type: "string" }, minItems: 1, maxItems: 5 },
+    },
+    required: ["score", "suggestions"],
+    additionalProperties: false,
+  },
+} as const;
+
+export function buildProfileQualityMessages(profile: CompatibilityProfile & { hasPhotos: boolean }, language: Locale) {
+  const langName = LANGUAGE_NAMES[language];
+  return [
+    {
+      role: "system" as const,
+      content:
+        "You are a profile coach for a serious matrimonial platform called SAKAN. " +
+        "Review the user's profile and give a completeness/attractiveness score from 0 to 100, " +
+        "plus up to 5 short, specific, actionable suggestions to improve it (e.g. add a bio detail, mention interests, add photos). " +
+        `Respond ONLY with strict JSON matching the given schema, and write every suggestion in ${langName}.`,
+    },
+    {
+      role: "user" as const,
+      content: `${describeProfile(profile)}\nHas at least one photo: ${profile.hasPhotos ? "yes" : "no"}`,
+    },
+  ];
+}

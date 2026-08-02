@@ -166,7 +166,7 @@ function Sidebar({
   const s = useFeatureStrings(shellStrings);
   const pathname = useActivePath();
   const unread = useUnreadMessages();
-  const notifications = useUnreadCount();
+  const notifications = useUnreadCount().data ?? 0;
   const { profile, avatarUrl } = useMe();
   const { dir } = useI18n();
   const dragging = useRef(false);

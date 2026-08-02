@@ -9,7 +9,7 @@ const PUBLIC_ROUTES = [
   { path: "/auth", priority: "0.3", changefreq: "monthly" },
 ];
 
-export const Route = createFileRoute("/api/sitemap")({
+export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
