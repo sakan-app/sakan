@@ -351,12 +351,16 @@ export type Database = {
           conversation_id: string
           created_at: string
           deleted_at: string | null
+          deleted_for: string[]
           delivered_at: string | null
           edited_at: string | null
           id: string
           kind: Database["public"]["Enums"]["message_kind"]
           moderation: Database["public"]["Enums"]["moderation_verdict"]
+          pinned_at: string | null
+          pinned_by: string | null
           read_at: string | null
+          reply_to_id: string | null
           sender_id: string
           source_language: Database["public"]["Enums"]["language_code"] | null
           translations: Json
@@ -370,12 +374,16 @@ export type Database = {
           conversation_id: string
           created_at?: string
           deleted_at?: string | null
+          deleted_for?: string[]
           delivered_at?: string | null
           edited_at?: string | null
           id?: string
           kind?: Database["public"]["Enums"]["message_kind"]
           moderation?: Database["public"]["Enums"]["moderation_verdict"]
+          pinned_at?: string | null
+          pinned_by?: string | null
           read_at?: string | null
+          reply_to_id?: string | null
           sender_id: string
           source_language?: Database["public"]["Enums"]["language_code"] | null
           translations?: Json
@@ -389,12 +397,16 @@ export type Database = {
           conversation_id?: string
           created_at?: string
           deleted_at?: string | null
+          deleted_for?: string[]
           delivered_at?: string | null
           edited_at?: string | null
           id?: string
           kind?: Database["public"]["Enums"]["message_kind"]
           moderation?: Database["public"]["Enums"]["moderation_verdict"]
+          pinned_at?: string | null
+          pinned_by?: string | null
           read_at?: string | null
+          reply_to_id?: string | null
           sender_id?: string
           source_language?: Database["public"]["Enums"]["language_code"] | null
           translations?: Json
@@ -405,6 +417,13 @@ export type Database = {
             columns: ["conversation_id"]
             isOneToOne: false
             referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_reply_to_id_fkey"
+            columns: ["reply_to_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
             referencedColumns: ["id"]
           },
         ]

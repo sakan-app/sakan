@@ -134,12 +134,17 @@ export function messagesQuery(conversationId: string) {
 }
 
 /** Flattens infinite pages (newest-first pages) into an oldest-to-newest list for display. */
-export function flattenMessagePages(pages: MessagesPage[] | undefined): ChatMessage[] {
+export function flattenMessagePages(
+  pages: MessagesPage[] | undefined,
+  viewerId?: string,
+): ChatMessage[] {
   if (!pages) return [];
   const merged = pages.flatMap((page) => page.items);
   const byId = new Map<string, ChatMessage>();
   for (const m of merged) byId.set(m.id, m);
-  return [...byId.values()].sort((a, b) => a.created_at.localeCompare(b.created_at));
+  return [...byId.values()]
+    .filter((m) => !(viewerId && (m.deleted_for ?? []).includes(viewerId)))
+    .sort((a, b) => a.created_at.localeCompare(b.created_at));
 }
 
 export async function startConversation(otherUserId: string): Promise<string> {
@@ -218,6 +223,7 @@ export type SendMessageArgs = {
   attachmentName?: string | null;
   attachmentSize?: number | null;
   attachmentMime?: string | null;
+  replyToId?: string | null;
 };
 
 /** Optimistically inserts the message into the cache, then persists it. */
@@ -241,6 +247,10 @@ export async function sendMessage(queryClient: QueryClient, args: SendMessageArg
     translations: {},
     source_language: null,
     moderation: "pending",
+    reply_to_id: args.replyToId ?? null,
+    pinned_at: null,
+    pinned_by: null,
+    deleted_for: [],
     created_at: now,
     pending: true,
   };
@@ -257,6 +267,7 @@ export async function sendMessage(queryClient: QueryClient, args: SendMessageArg
       attachment_name: args.attachmentName ?? null,
       attachment_size: args.attachmentSize ?? null,
       attachment_mime: args.attachmentMime ?? null,
+      reply_to_id: args.replyToId ?? null,
     })
     .select("*")
     .single();
@@ -286,4 +297,160 @@ export async function markConversationRead(conversationId: string, userId: strin
     .eq("conversation_id", conversationId)
     .neq("sender_id", userId)
     .is("read_at", null);
+}
+
+/* ==========================================================================
+   Premium chat operations: edit, delete, pin, search, jump-to-message
+   ========================================================================== */
+
+type MessagesCache = { pages: MessagesPage[]; pageParams: unknown[] } | undefined;
+
+/** Applies a partial patch to a single cached message. */
+export function patchMessageInCache(
+  queryClient: QueryClient,
+  conversationId: string,
+  messageId: string,
+  patch: Partial<ChatMessage>,
+) {
+  queryClient.setQueryData<MessagesCache>(chatKeys.messages(conversationId), (old) => {
+    if (!old) return old;
+    return {
+      ...old,
+      pages: old.pages.map((page) => ({
+        ...page,
+        items: page.items.map((m) => (m.id === messageId ? { ...m, ...patch } : m)),
+      })),
+    };
+  });
+}
+
+export async function editMessage(
+  queryClient: QueryClient,
+  args: { conversationId: string; messageId: string; body: string },
+) {
+  const editedAt = new Date().toISOString();
+  patchMessageInCache(queryClient, args.conversationId, args.messageId, {
+    body: args.body,
+    edited_at: editedAt,
+  });
+  const { error } = await supabase
+    .from("messages")
+    .update({ body: args.body, edited_at: editedAt })
+    .eq("id", args.messageId);
+  if (error) throw error;
+}
+
+export async function deleteMessageForEveryone(
+  queryClient: QueryClient,
+  args: { conversationId: string; messageId: string },
+) {
+  const deletedAt = new Date().toISOString();
+  patchMessageInCache(queryClient, args.conversationId, args.messageId, {
+    deleted_at: deletedAt,
+    body: "",
+    pinned_at: null,
+  });
+  const { error } = await supabase
+    .from("messages")
+    .update({ deleted_at: deletedAt, body: "", pinned_at: null, pinned_by: null })
+    .eq("id", args.messageId);
+  if (error) throw error;
+}
+
+export async function deleteMessageForMe(
+  queryClient: QueryClient,
+  args: { conversationId: string; messageId: string; userId: string },
+) {
+  const { data, error: readError } = await supabase
+    .from("messages")
+    .select("deleted_for")
+    .eq("id", args.messageId)
+    .maybeSingle();
+  if (readError) throw readError;
+  const next = [...new Set([...(data?.deleted_for ?? []), args.userId])];
+  patchMessageInCache(queryClient, args.conversationId, args.messageId, { deleted_for: next });
+  const { error } = await supabase
+    .from("messages")
+    .update({ deleted_for: next })
+    .eq("id", args.messageId);
+  if (error) throw error;
+}
+
+export async function setMessagePinned(
+  queryClient: QueryClient,
+  args: { conversationId: string; messageId: string; userId: string; pinned: boolean },
+) {
+  const pinnedAt = args.pinned ? new Date().toISOString() : null;
+  patchMessageInCache(queryClient, args.conversationId, args.messageId, {
+    pinned_at: pinnedAt,
+    pinned_by: args.pinned ? args.userId : null,
+  });
+  const { error } = await supabase
+    .from("messages")
+    .update({ pinned_at: pinnedAt, pinned_by: args.pinned ? args.userId : null })
+    .eq("id", args.messageId);
+  if (error) throw error;
+}
+
+export function pinnedMessagesQuery(conversationId: string) {
+  return queryOptions({
+    queryKey: ["chat", "pinned", conversationId] as const,
+    queryFn: async (): Promise<ChatMessage[]> => {
+      const { data, error } = await supabase
+        .from("messages")
+        .select("*")
+        .eq("conversation_id", conversationId)
+        .not("pinned_at", "is", null)
+        .is("deleted_at", null)
+        .order("pinned_at", { ascending: false })
+        .limit(20);
+      if (error) throw error;
+      return (data ?? []) as ChatMessage[];
+    },
+    enabled: Boolean(conversationId),
+  });
+}
+
+/** Server-side conversation search (body, attachment names). */
+export async function searchConversation(conversationId: string, term: string): Promise<ChatMessage[]> {
+  const trimmed = term.trim();
+  if (trimmed.length < 2) return [];
+  const escaped = trimmed.replace(/[%_]/g, (c) => `\\${c}`);
+  const { data, error } = await supabase
+    .from("messages")
+    .select("*")
+    .eq("conversation_id", conversationId)
+    .is("deleted_at", null)
+    .or(`body.ilike.%${escaped}%,attachment_name.ilike.%${escaped}%`)
+    .order("created_at", { ascending: false })
+    .limit(100);
+  if (error) throw error;
+  return (data ?? []) as ChatMessage[];
+}
+
+/** Fetches a single message (used for reply previews of unloaded history). */
+export async function fetchMessageById(messageId: string): Promise<ChatMessage | null> {
+  const { data, error } = await supabase.from("messages").select("*").eq("id", messageId).maybeSingle();
+  if (error) return null;
+  return (data as ChatMessage) ?? null;
+}
+
+/** Merges an arbitrary message into the cache so jump-to-message can render it. */
+export function mergeMessagesIntoCache(
+  queryClient: QueryClient,
+  conversationId: string,
+  messages: ChatMessage[],
+) {
+  if (messages.length === 0) return;
+  queryClient.setQueryData<MessagesCache>(chatKeys.messages(conversationId), (old) => {
+    if (!old || old.pages.length === 0) {
+      return { pages: [{ items: messages, nextCursor: null }], pageParams: [null] };
+    }
+    const known = new Set(old.pages.flatMap((p) => p.items.map((m) => m.id)));
+    const missing = messages.filter((m) => !known.has(m.id));
+    if (missing.length === 0) return old;
+    const pages = [...old.pages];
+    pages[0] = { ...pages[0]!, items: [...missing, ...pages[0]!.items] };
+    return { ...old, pages };
+  });
 }
