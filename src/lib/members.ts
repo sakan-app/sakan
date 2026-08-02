@@ -145,6 +145,17 @@ export type MemberFilters = {
   minAge?: number | undefined;
   maxAge?: number | undefined;
   country?: string | undefined;
+  sort?: MemberSort | undefined;
+};
+
+export type MemberSort = "recent" | "newest" | "complete";
+
+export const PAGE_SIZE = 24;
+
+const SORT_COLUMN: Record<MemberSort, string> = {
+  recent: "last_seen_at",
+  newest: "created_at",
+  complete: "completeness",
 };
 
 function birthRange(minAge?: number, maxAge?: number) {
@@ -158,14 +169,14 @@ function birthRange(minAge?: number, maxAge?: number) {
   };
 }
 
-async function fetchMembers(filters: MemberFilters, limit: number) {
+async function fetchMembers(filters: MemberFilters, limit: number, offset = 0) {
   let query = supabase
     .from("profiles")
-    .select(PUBLIC_COLUMNS)
+    .select(PUBLIC_COLUMNS, { count: "exact" })
     .eq("is_active", true)
     .eq("is_hidden", false)
-    .order("last_seen_at", { ascending: false })
-    .limit(limit);
+    .order(SORT_COLUMN[filters.sort ?? "recent"], { ascending: false })
+    .range(offset, offset + limit - 1);
 
   if (filters.lookingFor) query = query.eq("gender", filters.lookingFor);
   if (filters.country && filters.country !== "all") {
@@ -175,23 +186,26 @@ async function fetchMembers(filters: MemberFilters, limit: number) {
   if (newest) query = query.lte("birth_date", newest);
   if (oldest) query = query.gte("birth_date", oldest);
 
-  const { data, error } = await query;
+  const { data, error, count } = await query;
   if (error) throw error;
-  return toMemberViews((data ?? []) as PublicProfile[]);
+  const items = await toMemberViews((data ?? []) as PublicProfile[]);
+  return { items, total: count ?? items.length };
 }
 
 export const activeMembersQuery = (limit = 12) =>
   queryOptions({
     queryKey: ["members", "active", limit],
-    queryFn: () => fetchMembers({}, limit),
+    queryFn: async () => (await fetchMembers({}, limit)).items,
     staleTime: 60_000,
+    retry: 2,
   });
 
-export const searchMembersQuery = (filters: MemberFilters) =>
+export const searchMembersQuery = (filters: MemberFilters, page = 1) =>
   queryOptions({
-    queryKey: ["members", "search", filters],
-    queryFn: () => fetchMembers(filters, 48),
+    queryKey: ["members", "search", filters, page],
+    queryFn: () => fetchMembers(filters, PAGE_SIZE, (page - 1) * PAGE_SIZE),
     staleTime: 30_000,
+    retry: 2,
   });
 
 export const memberQuery = (id: string) =>
