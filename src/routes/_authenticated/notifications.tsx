@@ -11,7 +11,6 @@ import {
   useMarkAllAsRead,
   useMarkAsRead,
   useNotificationsList,
-  useNotificationsRealtime,
   type NotificationItem,
   type NotificationType,
 } from "@/hooks/useNotifications";
@@ -69,7 +68,6 @@ function NotificationsPage() {
   const navigate = useNavigate();
   const [unreadOnly, setUnreadOnly] = useState(false);
 
-  useNotificationsRealtime();
   const listQ = useNotificationsList();
   const markAsRead = useMarkAsRead();
   const markAllAsRead = useMarkAllAsRead();
