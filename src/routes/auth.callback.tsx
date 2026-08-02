@@ -37,7 +37,7 @@ function AuthCallback() {
           .eq("id", data.session.user.id)
           .maybeSingle();
         void navigate({
-          to: profile?.onboarding_complete ? "/profile" : "/onboarding",
+          to: profile?.onboarding_complete ? "/home" : "/onboarding",
           replace: true,
         });
       } else {
