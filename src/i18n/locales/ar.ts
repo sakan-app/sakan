@@ -224,6 +224,6 @@ export const ar = {
     city: "برلين، ألمانيا",
     rights: "© جميع الحقوق محفوظة لمنصة سَكَن 2026",
   },
-} as const;
+};
 
 export type Dictionary = typeof ar;
