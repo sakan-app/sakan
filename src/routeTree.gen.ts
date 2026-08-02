@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as OfflineRouteImport } from './routes/offline'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as AuthenticatedBillingRouteImport } from './routes/_authenticated/billing'
 import { Route as AuthenticatedDiscoverRouteImport } from './routes/_authenticated/discover'
@@ -54,6 +55,11 @@ const PricingRoute = PricingRouteImport.update({
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/offline': typeof OfflineRoute
   '/pricing': typeof PricingRoute
   '/search': typeof SearchRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/billing': typeof AuthenticatedBillingRoute
   '/discover': typeof AuthenticatedDiscoverRoute
@@ -173,6 +180,7 @@ export interface FileRoutesByTo {
   '/offline': typeof OfflineRoute
   '/pricing': typeof PricingRoute
   '/search': typeof SearchRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/billing': typeof AuthenticatedBillingRoute
   '/discover': typeof AuthenticatedDiscoverRoute
@@ -198,6 +206,7 @@ export interface FileRoutesById {
   '/offline': typeof OfflineRoute
   '/pricing': typeof PricingRoute
   '/search': typeof SearchRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/_authenticated/billing': typeof AuthenticatedBillingRoute
   '/_authenticated/discover': typeof AuthenticatedDiscoverRoute
@@ -223,6 +232,7 @@ export interface FileRouteTypes {
     | '/offline'
     | '/pricing'
     | '/search'
+    | '/sitemap.xml'
     | '/unauthorized'
     | '/billing'
     | '/discover'
@@ -246,6 +256,7 @@ export interface FileRouteTypes {
     | '/offline'
     | '/pricing'
     | '/search'
+    | '/sitemap.xml'
     | '/unauthorized'
     | '/billing'
     | '/discover'
@@ -270,6 +281,7 @@ export interface FileRouteTypes {
     | '/offline'
     | '/pricing'
     | '/search'
+    | '/sitemap.xml'
     | '/unauthorized'
     | '/_authenticated/billing'
     | '/_authenticated/discover'
@@ -295,6 +307,7 @@ export interface RootRouteChildren {
   OfflineRoute: typeof OfflineRoute
   PricingRoute: typeof PricingRoute
   SearchRoute: typeof SearchRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
@@ -337,6 +350,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/unauthorized': {
@@ -509,6 +529,7 @@ const rootRouteChildren: RootRouteChildren = {
   OfflineRoute: OfflineRoute,
   PricingRoute: PricingRoute,
   SearchRoute: SearchRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   UnauthorizedRoute: UnauthorizedRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
@@ -518,13 +539,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
