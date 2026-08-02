@@ -1,29 +1,25 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Loader2, MapPin, SearchX, SlidersHorizontal } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MemberCard } from "@/components/MemberCard";
-import { searchMembersQuery, type Gender } from "@/lib/members";
+import { PAGE_SIZE, searchMembersQuery } from "@/lib/members";
 import { useI18n } from "@/lib/i18n";
 import { countryLabel } from "@/lib/countries";
-
-type Search = {
-  iAm: Gender;
-  lookingFor: Gender;
-  minAge: number;
-  maxAge: number;
-  country: string;
-};
+import { searchParamsSchema, type SearchParams } from "@/lib/validation";
 
 export const Route = createFileRoute("/search")({
-  validateSearch: (s: Record<string, unknown>): Search => ({
-    iAm: s["iAm"] === "female" ? "female" : "male",
-    lookingFor: s["lookingFor"] === "male" ? "male" : "female",
-    minAge: Number(s["minAge"]) || 18,
-    maxAge: Number(s["maxAge"]) || 60,
-    country: typeof s["country"] === "string" ? s["country"] : "all",
-  }),
+  validateSearch: (s: Record<string, unknown>): SearchParams =>
+    searchParamsSchema.parse({
+      iAm: s["iAm"],
+      lookingFor: s["lookingFor"],
+      minAge: s["minAge"],
+      maxAge: s["maxAge"],
+      country: s["country"],
+      sort: s["sort"],
+      page: s["page"],
+    }),
   head: () => ({
     meta: [
       { title: "نتائج البحث | سَكَن" },
@@ -38,15 +34,23 @@ export const Route = createFileRoute("/search")({
 function SearchPage() {
   const criteria = Route.useSearch();
   const { t } = useI18n();
-  const membersQ = useQuery(
-    searchMembersQuery({
-      lookingFor: criteria.lookingFor,
-      minAge: criteria.minAge,
-      maxAge: criteria.maxAge,
-      country: criteria.country,
-    }),
-  );
-  const results = membersQ.data ?? [];
+  const navigate = useNavigate({ from: "/search" });
+  const membersQ = useQuery({
+    ...searchMembersQuery(
+      {
+        lookingFor: criteria.lookingFor,
+        minAge: criteria.minAge,
+        maxAge: criteria.maxAge,
+        country: criteria.country,
+        sort: criteria.sort,
+      },
+      criteria.page,
+    ),
+    placeholderData: keepPreviousData,
+  });
+  const results = membersQ.data?.items ?? [];
+  const total = membersQ.data?.total ?? 0;
+  const hasMore = criteria.page * PAGE_SIZE < total;
   const country =
     criteria.country === "all" ? t.search.allCountries : countryLabel(t, criteria.country);
 
@@ -76,9 +80,38 @@ function SearchPage() {
             ))}
           </div>
           <p className="mt-4 text-center text-xs text-cream/60">
-            {t.search.foundPre} <span className="font-bold text-gold">{results.length}</span>{" "}
+            {t.search.foundPre} <span className="font-bold text-gold">{total}</span>{" "}
             {t.search.foundPost}
           </p>
+          <div className="mt-4 flex items-center justify-center gap-2 text-xs">
+            <label htmlFor="sort" className="text-cream/60">
+              {t.search.sortLabel}
+            </label>
+            <select
+              id="sort"
+              value={criteria.sort}
+              onChange={(event) =>
+                void navigate({
+                  search: (prev) => ({
+                    ...prev,
+                    sort: event.target.value as SearchParams["sort"],
+                    page: 1,
+                  }),
+                })
+              }
+              className="rounded-full border border-gold/30 bg-transparent px-3 py-1 text-cream/80 outline-none focus-visible:ring-2 focus-visible:ring-gold"
+            >
+              <option className="text-navy" value="recent">
+                {t.search.sortRecent}
+              </option>
+              <option className="text-navy" value="newest">
+                {t.search.sortNewest}
+              </option>
+              <option className="text-navy" value="complete">
+                {t.search.sortComplete}
+              </option>
+            </select>
+          </div>
         </div>
       </section>
 
@@ -124,6 +157,19 @@ function SearchPage() {
                   <MemberCard key={m.id} member={m} />
                 ))}
               </div>
+              {hasMore && (
+                <div className="mt-8 text-center">
+                  <button
+                    onClick={() =>
+                      void navigate({ search: (prev) => ({ ...prev, page: prev.page + 1 }) })
+                    }
+                    disabled={membersQ.isFetching}
+                    className="btn-outline-gold px-8 py-2.5 text-sm font-semibold disabled:opacity-60"
+                  >
+                    {membersQ.isFetching ? t.common.loading : t.search.loadMore}
+                  </button>
+                </div>
+              )}
             </>
           )}
         </div>
