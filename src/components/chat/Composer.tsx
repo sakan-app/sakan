@@ -1,10 +1,11 @@
-import { Loader2, Paperclip, Send } from "lucide-react";
-import { useRef, useState } from "react";
+import { Camera, CornerUpLeft, Loader2, Paperclip, Send, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 import { EmojiPicker } from "@/components/chat/EmojiPicker";
 import { useAuth } from "@/hooks/useAuth";
 import { uploadChatAttachment } from "@/lib/chat/queries";
 import type { ChatStrings } from "@/lib/chat/strings";
+import type { ChatMessage } from "@/lib/chat/types";
 import { MAX_IMAGE_BYTES } from "@/lib/validation";
 
 const ALLOWED_ATTACHMENT_TYPES = [
@@ -28,15 +29,35 @@ type ComposerProps = {
   }) => void;
   onTyping: () => void;
   disabled?: boolean;
+  replyTo?: ChatMessage | null;
+  replyToName?: string;
+  onCancelReply?: () => void;
+  focusToken?: number;
 };
 
-export function Composer({ strings, onSendText, onSendAttachment, onTyping, disabled }: ComposerProps) {
+export function Composer({
+  strings,
+  onSendText,
+  onSendAttachment,
+  onTyping,
+  disabled,
+  replyTo,
+  replyToName,
+  onCancelReply,
+  focusToken,
+}: ComposerProps) {
   const { user } = useAuth();
   const [text, setText] = useState("");
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [dragActive, setDragActive] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const cameraInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (focusToken) textareaRef.current?.focus();
+  }, [focusToken]);
 
   function autoGrow(el: HTMLTextAreaElement) {
     el.style.height = "auto";
@@ -60,9 +81,7 @@ export function Composer({ strings, onSendText, onSendAttachment, onTyping, disa
     }
   }
 
-  async function handleFilePick(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    e.target.value = "";
+  async function uploadFile(file: File | null | undefined) {
     if (!file || !user) return;
     setError(null);
 
@@ -92,10 +111,68 @@ export function Composer({ strings, onSendText, onSendAttachment, onTyping, disa
     }
   }
 
+  async function handleFilePick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    await uploadFile(file);
+  }
+
+  async function handlePaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
+    const item = [...e.clipboardData.items].find((i) => i.type.startsWith("image/"));
+    if (!item) return;
+    const file = item.getAsFile();
+    if (!file) return;
+    e.preventDefault();
+    const named =
+      file.name && file.name !== "image.png"
+        ? file
+        : new File([file], `screenshot-${Date.now()}.png`, { type: file.type });
+    await uploadFile(named);
+  }
+
   const remaining = 2000 - text.length;
 
   return (
-    <div className="sticky bottom-0 z-10 border-t border-gold/15 bg-navy-deep px-3 py-2.5 pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-2.5">
+    <div
+      onDragOver={(e) => {
+        e.preventDefault();
+        setDragActive(true);
+      }}
+      onDragLeave={() => setDragActive(false)}
+      onDrop={(e) => {
+        e.preventDefault();
+        setDragActive(false);
+        void uploadFile(e.dataTransfer.files?.[0]);
+      }}
+      className={`sticky bottom-0 z-10 border-t px-3 py-2.5 pb-[calc(4.5rem+env(safe-area-inset-bottom))] transition-colors lg:pb-2.5 ${
+        dragActive ? "border-gold bg-gold/10" : "border-gold/15 bg-navy-deep"
+      }`}
+    >
+      {dragActive && (
+        <p className="mb-1.5 text-center text-[11px] font-semibold text-gold">{strings.dropToSend}</p>
+      )}
+      {replyTo && (
+        <div className="fade-up mb-2 flex items-center gap-2 rounded-xl border-s-2 border-s-gold bg-cream/8 px-2.5 py-1.5">
+          <CornerUpLeft className="h-3.5 w-3.5 shrink-0 text-gold rtl:-scale-x-100" />
+          <span className="min-w-0 flex-1">
+            <span className="block text-[10px] font-semibold text-gold/85">
+              {strings.replyingTo} {replyToName ?? ""}
+            </span>
+            <span className="block truncate text-[11px] text-cream/75">
+              {replyTo.body ||
+                (replyTo.kind === "image" ? strings.photoMessage : strings.fileMessage)}
+            </span>
+          </span>
+          <button
+            type="button"
+            aria-label={strings.cancel}
+            onClick={onCancelReply}
+            className="grid h-7 w-7 place-items-center rounded-full text-cream/70 hover:bg-cream/10"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
       {error && (
         <p role="alert" className="mb-1.5 text-[11px] text-red-400">
           {error}
@@ -119,6 +196,23 @@ export function Composer({ strings, onSendText, onSendAttachment, onTyping, disa
         >
           {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Paperclip className="h-5 w-5" />}
         </button>
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={(e) => void handleFilePick(e)}
+        />
+        <button
+          type="button"
+          aria-label={strings.openImage}
+          disabled={uploading || disabled}
+          onClick={() => cameraInputRef.current?.click()}
+          className="hidden h-9 w-9 shrink-0 place-items-center rounded-full text-gold/80 hover:bg-gold/10 disabled:opacity-50 max-lg:grid"
+        >
+          <Camera className="h-5 w-5" />
+        </button>
         <textarea
           ref={textareaRef}
           rows={1}
@@ -131,6 +225,7 @@ export function Composer({ strings, onSendText, onSendAttachment, onTyping, disa
             onTyping();
           }}
           onKeyDown={handleKeyDown}
+          onPaste={(e) => void handlePaste(e)}
           maxLength={2000}
           aria-label={strings.writeMessage}
           className="field-navy max-h-40 flex-1 resize-none py-2 text-sm"
