@@ -314,73 +314,12 @@ export type Database = {
         }
         Relationships: []
       }
-      conversation_pins: {
-        Row: {
-          conversation_id: string
-          pinned_at: string
-          user_id: string
-        }
-        Insert: {
-          conversation_id: string
-          pinned_at?: string
-          user_id: string
-        }
-        Update: {
-          conversation_id?: string
-          pinned_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "conversation_pins_conversation_id_fkey"
-            columns: ["conversation_id"]
-            isOneToOne: false
-            referencedRelation: "conversations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      message_reactions: {
-        Row: {
-          created_at: string
-          emoji: string
-          id: string
-          message_id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          emoji: string
-          id?: string
-          message_id: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          emoji?: string
-          id?: string
-          message_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "message_reactions_message_id_fkey"
-            columns: ["message_id"]
-            isOneToOne: false
-            referencedRelation: "messages"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       messages: {
         Row: {
-          attachment_duration_seconds: number | null
-          attachment_height: number | null
           attachment_mime: string | null
           attachment_name: string | null
           attachment_path: string | null
           attachment_size: number | null
-          attachment_width: number | null
           body: string
           conversation_id: string
           created_at: string
@@ -396,13 +335,10 @@ export type Database = {
           translations: Json
         }
         Insert: {
-          attachment_duration_seconds?: number | null
-          attachment_height?: number | null
           attachment_mime?: string | null
           attachment_name?: string | null
           attachment_path?: string | null
           attachment_size?: number | null
-          attachment_width?: number | null
           body: string
           conversation_id: string
           created_at?: string
@@ -418,13 +354,10 @@ export type Database = {
           translations?: Json
         }
         Update: {
-          attachment_duration_seconds?: number | null
-          attachment_height?: number | null
           attachment_mime?: string | null
           attachment_name?: string | null
           attachment_path?: string | null
           attachment_size?: number | null
-          attachment_width?: number | null
           body?: string
           conversation_id?: string
           created_at?: string
@@ -521,63 +454,6 @@ export type Database = {
           title?: string
           type?: Database["public"]["Enums"]["notification_type"]
           user_id?: string
-        }
-        Relationships: []
-      }
-      notification_preferences: {
-        Row: {
-          created_at: string
-          like_enabled: boolean
-          match_enabled: boolean
-          message_enabled: boolean
-          profile_view_enabled: boolean
-          system_enabled: boolean
-          updated_at: string
-          user_id: string
-          verification_enabled: boolean
-        }
-        Insert: {
-          created_at?: string
-          like_enabled?: boolean
-          match_enabled?: boolean
-          message_enabled?: boolean
-          profile_view_enabled?: boolean
-          system_enabled?: boolean
-          updated_at?: string
-          user_id: string
-          verification_enabled?: boolean
-        }
-        Update: {
-          created_at?: string
-          like_enabled?: boolean
-          match_enabled?: boolean
-          message_enabled?: boolean
-          profile_view_enabled?: boolean
-          system_enabled?: boolean
-          updated_at?: string
-          user_id?: string
-          verification_enabled?: boolean
-        }
-        Relationships: []
-      }
-      profile_views: {
-        Row: {
-          created_at: string
-          id: string
-          viewed_id: string
-          viewer_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          viewed_id: string
-          viewer_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          viewed_id?: string
-          viewer_id?: string | null
         }
         Relationships: []
       }
@@ -1118,7 +994,7 @@ export type Database = {
       language_code: "ar" | "en" | "de" | "ru"
       log_level: "debug" | "info" | "warn" | "error"
       marital_status: "single" | "divorced" | "widowed"
-      message_kind: "text" | "image" | "file" | "voice"
+      message_kind: "text" | "image" | "file"
       moderation_verdict: "pending" | "approved" | "flagged" | "rejected"
       notification_type:
         | "like"
@@ -1290,7 +1166,7 @@ export const Constants = {
       language_code: ["ar", "en", "de", "ru"],
       log_level: ["debug", "info", "warn", "error"],
       marital_status: ["single", "divorced", "widowed"],
-      message_kind: ["text", "image", "file", "voice"],
+      message_kind: ["text", "image", "file"],
       moderation_verdict: ["pending", "approved", "flagged", "rejected"],
       notification_type: [
         "like",
