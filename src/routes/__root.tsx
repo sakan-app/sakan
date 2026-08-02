@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -145,6 +146,12 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  // The authenticated app shell owns its own chrome (sidebar + floating tab bar),
+  // so the marketing bottom nav and its spacer are suppressed inside it.
+  const inAppShell = APP_SHELL_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`),
+  );
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -154,11 +161,11 @@ function RootComponent() {
             <LocaleSync />
             <RealtimeBridge />
             <OfflineBanner />
-            <div className="pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0">
+            <div className={inAppShell ? "" : "pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0"}>
               {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
               <Outlet />
             </div>
-            <BottomNav />
+            {!inAppShell && <BottomNav />}
             <InstallPrompt />
             <Toaster richColors position="top-center" />
           </PwaProvider>
