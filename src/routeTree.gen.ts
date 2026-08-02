@@ -34,6 +34,7 @@ import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as AdminMatchesRouteImport } from './routes/admin/matches'
 import { Route as AdminNotificationsRouteImport } from './routes/admin/notifications'
 import { Route as AdminReportsRouteImport } from './routes/admin/reports'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminVerificationsRouteImport } from './routes/admin/verifications'
 import { Route as AuthIndexRouteImport } from './routes/auth.index'
@@ -170,6 +171,11 @@ const AdminReportsRoute = AdminReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -247,6 +253,7 @@ export interface FileRoutesByFullPath {
   '/admin/matches': typeof AdminMatchesRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/reports': typeof AdminReportsRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/verifications': typeof AdminVerificationsRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -282,6 +289,7 @@ export interface FileRoutesByTo {
   '/admin/matches': typeof AdminMatchesRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/reports': typeof AdminReportsRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/verifications': typeof AdminVerificationsRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -320,6 +328,7 @@ export interface FileRoutesById {
   '/admin/matches': typeof AdminMatchesRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/reports': typeof AdminReportsRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/verifications': typeof AdminVerificationsRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -358,6 +367,7 @@ export interface FileRouteTypes {
     | '/admin/matches'
     | '/admin/notifications'
     | '/admin/reports'
+    | '/admin/settings'
     | '/admin/users'
     | '/admin/verifications'
     | '/auth/callback'
@@ -393,6 +403,7 @@ export interface FileRouteTypes {
     | '/admin/matches'
     | '/admin/notifications'
     | '/admin/reports'
+    | '/admin/settings'
     | '/admin/users'
     | '/admin/verifications'
     | '/auth/callback'
@@ -430,6 +441,7 @@ export interface FileRouteTypes {
     | '/admin/matches'
     | '/admin/notifications'
     | '/admin/reports'
+    | '/admin/settings'
     | '/admin/users'
     | '/admin/verifications'
     | '/auth/callback'
@@ -635,6 +647,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminReportsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/users': {
       id: '/admin/users'
       path: '/users'
@@ -758,6 +777,7 @@ interface AdminRouteRouteChildren {
   AdminMatchesRoute: typeof AdminMatchesRoute
   AdminNotificationsRoute: typeof AdminNotificationsRoute
   AdminReportsRoute: typeof AdminReportsRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminVerificationsRoute: typeof AdminVerificationsRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -772,6 +792,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminMatchesRoute: AdminMatchesRoute,
   AdminNotificationsRoute: AdminNotificationsRoute,
   AdminReportsRoute: AdminReportsRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminVerificationsRoute: AdminVerificationsRoute,
   AdminIndexRoute: AdminIndexRoute,
