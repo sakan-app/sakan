@@ -6,7 +6,6 @@ const PUBLIC_ROUTES = [
   { path: "/", priority: "1.0", changefreq: "daily" },
   { path: "/search", priority: "0.8", changefreq: "hourly" },
   { path: "/pricing", priority: "0.7", changefreq: "weekly" },
-  { path: "/featured", priority: "0.6", changefreq: "weekly" },
   { path: "/auth", priority: "0.3", changefreq: "monthly" },
 ];
 
