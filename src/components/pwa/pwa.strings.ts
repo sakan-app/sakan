@@ -6,6 +6,7 @@ export interface NavStrings {
   quickPromotion: string;
   favorites: string;
   profile: string;
+  primaryNavigation: string;
 }
 
 export const navStrings: FeatureDictionary<NavStrings> = {
@@ -15,6 +16,7 @@ export const navStrings: FeatureDictionary<NavStrings> = {
     quickPromotion: "ترويج سريع",
     favorites: "المفضلة",
     profile: "ملفي",
+    primaryNavigation: "التنقل الرئيسي",
   },
   en: {
     home: "Home",
@@ -22,6 +24,7 @@ export const navStrings: FeatureDictionary<NavStrings> = {
     quickPromotion: "Quick promotion",
     favorites: "Favorites",
     profile: "Profile",
+    primaryNavigation: "Primary navigation",
   },
   de: {
     home: "Start",
@@ -29,6 +32,7 @@ export const navStrings: FeatureDictionary<NavStrings> = {
     quickPromotion: "Schnelle Bewerbung",
     favorites: "Favoriten",
     profile: "Profil",
+    primaryNavigation: "Hauptnavigation",
   },
   ru: {
     home: "Главная",
@@ -36,6 +40,7 @@ export const navStrings: FeatureDictionary<NavStrings> = {
     quickPromotion: "Быстрое продвижение",
     favorites: "Избранное",
     profile: "Профиль",
+    primaryNavigation: "Основная навигация",
   },
 };
 
