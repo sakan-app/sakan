@@ -47,15 +47,21 @@ export function MessageBubble({ message, isOwn, strings, locale, onRetry }: Prop
     minute: "2-digit",
   });
 
+  const isEmojiOnly =
+    Boolean(message.body) &&
+    message.kind === "text" &&
+    message.body.trim().length <= 8 &&
+    /^\p{Extended_Pictographic}(\p{Extended_Pictographic}|\uFE0F|\u200D)*$/u.test(message.body.trim());
+
   return (
     <div className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
       <div
-        className={`max-w-[78%] rounded-2xl px-3.5 py-2.5 text-sm shadow-sm ${
-          isOwn ? "bg-gradient-gold text-navy-deep" : "panel-navy text-cream"
+        className={`max-w-[78%] rounded-2xl px-3.5 py-2.5 text-sm ${
+          isOwn ? "bubble-out msg-enter-out" : "bubble-in msg-enter-in"
         }`}
       >
         {message.deleted_at ? (
-          <p className="italic opacity-70">{strings.deleted}</p>
+          <p className="italic">{strings.deleted}</p>
         ) : (
           <>
             {message.kind === "image" && attachmentQ.data && (
@@ -82,20 +88,28 @@ export function MessageBubble({ message, isOwn, strings, locale, onRetry }: Prop
                 <Download className="h-3.5 w-3.5 shrink-0" />
               </a>
             )}
-            {message.body && <p className="whitespace-pre-wrap break-words">{translated ?? message.body}</p>}
+            {message.body && (
+              <p
+                className={`whitespace-pre-wrap break-words [overflow-wrap:anywhere] ${
+                  isEmojiOnly ? "text-center text-3xl leading-tight" : ""
+                }`}
+              >
+                {translated ?? message.body}
+              </p>
+            )}
           </>
         )}
 
         <div
           className={`mt-1 flex items-center gap-1.5 text-[10px] ${
-            isOwn ? "justify-end text-navy-deep/70" : "text-cream/50"
+            isOwn ? "bubble-meta-out justify-end" : "bubble-meta-in"
           }`}
         >
           {!message.deleted_at && message.kind === "text" && message.body && (
             <button
               type="button"
               onClick={() => void handleTranslate()}
-              className="flex items-center gap-1 opacity-80 hover:opacity-100"
+              className="flex items-center gap-1 underline-offset-2 transition-opacity hover:opacity-100 focus-visible:underline"
             >
               {translating ? (
                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -109,11 +123,11 @@ export function MessageBubble({ message, isOwn, strings, locale, onRetry }: Prop
           {isOwn && !message.pending && !message.failed && (
             <span>
               {message.read_at ? (
-                <CheckCheck className="h-3.5 w-3.5 text-navy-deep" />
+                <CheckCheck className="h-3.5 w-3.5" />
               ) : message.delivered_at ? (
-                <CheckCheck className="h-3.5 w-3.5 opacity-60" />
+                <CheckCheck className="h-3.5 w-3.5" />
               ) : (
-                <Check className="h-3.5 w-3.5 opacity-60" />
+                <Check className="h-3.5 w-3.5" />
               )}
             </span>
           )}

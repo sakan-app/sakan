@@ -92,9 +92,15 @@ export function Composer({ strings, onSendText, onSendAttachment, onTyping, disa
     }
   }
 
+  const remaining = 2000 - text.length;
+
   return (
     <div className="sticky bottom-0 z-10 border-t border-gold/15 bg-navy-deep px-3 py-2.5 pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-2.5">
-      {error && <p className="mb-1.5 text-[11px] text-red-400">{error}</p>}
+      {error && (
+        <p role="alert" className="mb-1.5 text-[11px] text-red-400">
+          {error}
+        </p>
+      )}
       <div className="flex items-end gap-2">
         <EmojiPicker onSelect={(emoji) => setText((prev) => prev + emoji)} />
         <input
@@ -125,6 +131,8 @@ export function Composer({ strings, onSendText, onSendAttachment, onTyping, disa
             onTyping();
           }}
           onKeyDown={handleKeyDown}
+          maxLength={2000}
+          aria-label={strings.writeMessage}
           className="field-navy max-h-40 flex-1 resize-none py-2 text-sm"
         />
         <button
@@ -132,11 +140,16 @@ export function Composer({ strings, onSendText, onSendAttachment, onTyping, disa
           aria-label={strings.send}
           onClick={handleSend}
           disabled={disabled || !text.trim()}
-          className="btn-gold grid h-9 w-9 shrink-0 place-items-center rounded-full p-0 disabled:opacity-50"
+          className="btn-gold tap-scale grid h-9 w-9 shrink-0 place-items-center rounded-full p-0 transition-transform disabled:cursor-not-allowed disabled:opacity-40"
         >
           <Send className="h-4 w-4" />
         </button>
       </div>
+      {remaining <= 200 && (
+        <p aria-live="polite" className="mt-1 text-end text-[10px] tabular-nums text-cream/45">
+          {remaining}
+        </p>
+      )}
     </div>
   );
 }

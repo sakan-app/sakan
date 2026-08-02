@@ -70,8 +70,38 @@ function conversationInfoQuery(conversationId: string, userId: string) {
 
 function DaySeparator({ label }: { label: string }) {
   return (
-    <div className="my-3 flex items-center justify-center">
-      <span className="rounded-full bg-cream/5 px-3 py-1 text-[11px] text-cream/50">{label}</span>
+    <div className="fade-up my-3 flex items-center justify-center">
+      <span className="rounded-full bg-cream/8 px-3 py-1 text-[11px] font-medium text-cream/65">{label}</span>
+    </div>
+  );
+}
+
+function TypingBubble({ label }: { label: string }) {
+  return (
+    <div className="msg-enter-in flex justify-start" aria-live="polite">
+      <div className="bubble-in flex items-center gap-1.5 rounded-2xl px-3.5 py-3">
+        <span className="sr-only">{label}</span>
+        {[0, 1, 2].map((i) => (
+          <span
+            key={i}
+            className="typing-dot h-1.5 w-1.5 rounded-full bg-cream/70"
+            style={{ animationDelay: `${i * 0.15}s` }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MessagesSkeleton() {
+  const widths = ["58%", "42%", "70%", "36%", "64%"];
+  return (
+    <div className="space-y-3 py-2">
+      {widths.map((w, i) => (
+        <div key={i} className={`flex ${i % 2 === 0 ? "justify-start" : "justify-end"}`}>
+          <div className="skeleton-glass h-11 rounded-2xl" style={{ width: w }} />
+        </div>
+      ))}
     </div>
   );
 }
@@ -177,9 +207,16 @@ function ConversationPage() {
 
   if (infoQ.isPending) {
     return (
-      <div className="w-full">
-        <main className="flex flex-1 items-center justify-center">
-          <Loader2 className="h-7 w-7 animate-spin text-gold-deep" />
+      <div className="flex h-screen flex-col bg-navy">
+        <div className="flex items-center gap-3 border-b border-gold/15 bg-navy-deep px-3 py-2.5">
+          <div className="skeleton-glass h-9 w-9 rounded-full" />
+          <div className="space-y-1.5">
+            <div className="skeleton-glass h-3 w-32" />
+            <div className="skeleton-glass h-2.5 w-20" />
+          </div>
+        </div>
+        <main className="flex-1 px-3 py-4">
+          <MessagesSkeleton />
         </main>
       </div>
     );
@@ -230,9 +267,7 @@ function ConversationPage() {
           </div>
         )}
         {messagesQ.isPending ? (
-          <div className="flex justify-center py-16">
-            <Loader2 className="h-7 w-7 animate-spin text-gold-deep" />
-          </div>
+          <MessagesSkeleton />
         ) : (
           messages.map((message, index) => {
             const prev = messages[index - 1];
@@ -260,6 +295,7 @@ function ConversationPage() {
             );
           })
         )}
+        {typingUserId && <TypingBubble label={s.typing} />}
         <div ref={bottomRef} />
       </div>
 

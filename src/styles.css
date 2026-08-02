@@ -440,6 +440,113 @@
   }
 }
 
+/* ==========================================================================
+   Chat surface — opaque, high-contrast message bubbles (no glass over text)
+   ========================================================================== */
+
+/* Outgoing bubble: deep bronze-gold gradient carrying pure white text.
+   Fully opaque on purpose — glass/blur behind message text caused the
+   "invisible message" bug, so no transparency is allowed here. */
+@utility bubble-out {
+  position: relative;
+  background: linear-gradient(140deg, oklch(0.5 0.108 74), oklch(0.42 0.098 70));
+  color: oklch(1 0 0);
+  border: 1px solid oklch(0.58 0.11 78);
+  box-shadow: 0 10px 26px -18px oklch(0.08 0.04 265 / 0.9);
+  opacity: 1;
+  backdrop-filter: none;
+  & p,
+  & span,
+  & a,
+  & button,
+  & time {
+    color: inherit;
+  }
+}
+
+/* Incoming bubble: opaque navy with cream text (AA contrast). */
+@utility bubble-in {
+  position: relative;
+  background: oklch(0.255 0.058 265.5);
+  color: var(--cream);
+  border: 1px solid color-mix(in oklab, var(--cream) 12%, transparent);
+  box-shadow: 0 10px 26px -20px oklch(0.08 0.04 265 / 0.9);
+  opacity: 1;
+  backdrop-filter: none;
+}
+
+/* Meta row (time, receipts, actions) — dimmed but never below AA. */
+@utility bubble-meta-out {
+  color: oklch(1 0 0 / 0.82);
+}
+
+@utility bubble-meta-in {
+  color: color-mix(in oklab, var(--cream) 62%, transparent);
+}
+
+/* Message entry / send / receive motion */
+@keyframes sakan-msg-in-start {
+  from {
+    opacity: 0;
+    transform: translateY(8px) translateX(-6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes sakan-msg-in-end {
+  from {
+    opacity: 0;
+    transform: translateY(8px) translateX(6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility msg-enter-out {
+  animation: sakan-msg-in-end 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@utility msg-enter-in {
+  animation: sakan-msg-in-start 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes sakan-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility fade-up {
+  animation: sakan-fade-up 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes sakan-typing-dot {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  30% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+@utility typing-dot {
+  animation: sakan-typing-dot 1.2s infinite ease-in-out;
+}
+
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
