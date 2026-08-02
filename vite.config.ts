@@ -7,6 +7,15 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
+  vite: {
+    // Keep every hook-based dependency on the same optimized React instance.
+    // Explicit entries also prevent a partially stale dev prebundle from giving
+    // React, React DOM, and Sonner different dependency hashes.
+    optimizeDeps: {
+      include: ["react", "react/jsx-runtime", "react-dom", "react-dom/client", "sonner"],
+      force: true,
+    },
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
