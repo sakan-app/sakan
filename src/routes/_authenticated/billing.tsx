@@ -44,7 +44,7 @@ function BillingPage() {
 
   return (
     <div className="w-full">
-      <main className="mx-auto w-full max-w-[1160px] flex-1 px-6 py-10 lg:px-8">
+      <main className="w-full pt-4">
         <h1 className="text-2xl font-black text-cream">{s.billingTitle}</h1>
         <p className="mt-1 text-sm text-cream/60">{s.billingSubtitle}</p>
 
@@ -53,7 +53,7 @@ function BillingPage() {
             <Loader2 className="h-7 w-7 animate-spin text-gold-deep" />
           </div>
         ) : (
-          <section className="mt-8 rounded-2xl border border-gold/30 bg-white p-7 ">
+          <section className="mt-8 rounded-2xl glass-card border-white/10 p-7 ">
             <div className="grid gap-6 sm:grid-cols-3">
               <div>
                 <p className="text-xs font-bold uppercase text-cream/60">{s.plan}</p>
@@ -126,7 +126,7 @@ function BillingPage() {
 
         <section className="mt-12">
           <h2 className="text-xl font-black text-cream">{s.invoices}</h2>
-          <div className="mt-4 overflow-x-auto rounded-2xl border border-gold/30 bg-white ">
+          <div className="mt-4 overflow-x-auto rounded-2xl glass-card border-white/10 ">
             {invoicesQ.isPending ? (
               <div className="flex justify-center py-10">
                 <Loader2 className="h-6 w-6 animate-spin text-gold-deep" />
@@ -166,14 +166,14 @@ function BillingPage() {
           <h2 className="text-xl font-black text-cream">{s.history}</h2>
           <ul className="mt-4 space-y-2">
             {(eventsQ.data ?? []).length === 0 ? (
-              <li className="rounded-xl border border-gold/30 bg-white p-6 text-center text-sm text-cream/60">
+              <li className="rounded-xl glass-card border-white/10 p-6 text-center text-sm text-cream/60">
                 {s.noHistory}
               </li>
             ) : (
               (eventsQ.data ?? []).map((event) => (
                 <li
                   key={event.id}
-                  className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-gold/20 bg-white px-5 py-3 text-sm"
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-xl glass-card border-white/10 px-5 py-3 text-sm"
                 >
                   <span className="font-bold text-cream">
                     {s.events[event.type] ?? event.type}

@@ -300,7 +300,7 @@ function EditProfilePage() {
 
   return (
     <div className="w-full">
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
+      <main className="mx-auto w-full max-w-3xl pt-4">
         <div className="glass-card p-6 sm:p-8">
           <h1 className="text-2xl font-black text-cream">{t.profile.editTitle}</h1>
 

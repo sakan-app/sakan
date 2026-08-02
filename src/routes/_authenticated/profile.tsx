@@ -41,7 +41,7 @@ function MyProfilePage() {
 
   return (
     <div className="w-full">
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
+      <main className="mx-auto w-full max-w-3xl pt-4">
         {profileQ.isPending ? (
           <div className="flex justify-center py-20">
             <Loader2 className="h-7 w-7 animate-spin text-gold-deep" />

@@ -148,7 +148,7 @@ function MessagesIndexPage() {
 
   return (
     <div className="w-full">
-      <main className="mx-auto w-full max-w-[720px] flex-1 px-4 py-8 lg:px-0">
+      <main className="mx-auto w-full max-w-[720px] pt-4">
         <h1 className="text-2xl font-black text-cream">{s.title}</h1>
 
         <div className="glass-card mt-4 p-4">

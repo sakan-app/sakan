@@ -28,7 +28,7 @@ function FavoritesPage() {
 
   return (
     <div className="w-full">
-      <main className="mx-auto w-full max-w-[1360px] flex-1 px-6 py-10 lg:px-8">
+      <main className="w-full pt-4">
         <h1 className="text-2xl font-black text-cream">{s.favorites.title}</h1>
         <p className="mt-1 text-sm text-cream/60">{s.favorites.subtitle}</p>
 

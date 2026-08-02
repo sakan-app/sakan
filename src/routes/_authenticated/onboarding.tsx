@@ -245,7 +245,7 @@ function OnboardingPage() {
 
   return (
     <div className="w-full">
-      <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-10">
+      <main className="mx-auto w-full max-w-2xl pt-4">
         <h1 className="text-center text-2xl font-bold text-cream">{t.onboarding.title}</h1>
         <p className="mt-2 text-center text-sm text-cream/70">{t.onboarding.subtitle}</p>
 

@@ -132,7 +132,7 @@ function NotificationsPage() {
                 return (
                   <li
                     key={item.id}
-                    className={`flex items-start gap-3 rounded-xl border border-gold/25 bg-white p-4  ${
+                    className={`flex items-start gap-3 rounded-xl glass-card border-white/10 p-4  ${
                       item.readAt ? "" : "bg-gold/5"
                     }`}
                   >
