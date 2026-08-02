@@ -107,7 +107,7 @@ function HomeFeed() {
             <StatTile
               icon={Heart}
               value={likedMeQ.data?.length ?? 0}
-              label={soc.likes.likedMe}
+              label={soc.like}
               to="/matches"
             />
             <StatTile
