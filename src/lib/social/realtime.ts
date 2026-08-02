@@ -44,7 +44,7 @@ export function useSocialRealtime() {
     };
 
     const channel = supabase
-      .channel(`social-${userId}`)
+      .channel(`social-${userId}-${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "likes", filter: `liker_id=eq.${userId}` },
