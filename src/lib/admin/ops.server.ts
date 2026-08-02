@@ -607,6 +607,12 @@ export async function listMatches(params: { active: "all" | "active" | "inactive
   return {
     rows: (data ?? []).map((row) => ({
       ...row,
+      user_a: row.user_low,
+      user_b: row.user_high,
+      created_at: row.matched_at,
+      messageCount: 0,
+      profileA: byId.get(row.user_low) ?? null,
+      profileB: byId.get(row.user_high) ?? null,
       low: byId.get(row.user_low) ?? null,
       high: byId.get(row.user_high) ?? null,
     })),
@@ -658,6 +664,10 @@ export async function listConversations(params: { search?: string | undefined; p
   return {
     rows: (data ?? []).map((row) => ({
       ...row,
+      participantA: byId.get(row.user_low) ?? null,
+      participantB: byId.get(row.user_high) ?? null,
+      is_blocked: false,
+      lastMessage: null as string | null,
       low: byId.get(row.user_low) ?? null,
       high: byId.get(row.user_high) ?? null,
       messageCount: countById.get(row.id) ?? 0,
@@ -674,13 +684,19 @@ export async function getConversationMessages(params: { conversationId: string; 
   const { data, error } = await query.order("created_at", { ascending: true }).limit(500);
   if (error) throw new Error(error.message);
 
-  const rows = await Promise.all(
+  const senderIds = Array.from(new Set((data ?? []).map((m) => m.sender_id)));
+  const { data: profiles } = senderIds.length
+    ? await supabaseAdmin.from("profiles").select("id, display_name").in("id", senderIds)
+    : { data: [] };
+  const nameById = new Map((profiles ?? []).map((p) => [p.id, p.display_name]));
+
+  return Promise.all(
     (data ?? []).map(async (m) => ({
       ...m,
-      attachmentUrl: m.attachment_path ? await signPath("chat-media", m.attachment_path) : null,
+      senderName: nameById.get(m.sender_id) ?? null,
+      attachment_url: m.attachment_path ? await signPath("chat-media", m.attachment_path) : null,
     })),
   );
-  return { rows };
 }
 
 // ---------------------------------------------------------------------------
@@ -703,7 +719,23 @@ export async function listNotifications(params: {
 
   const { data, error, count } = await query.order("created_at", { ascending: false }).range(from, from + pageSize - 1);
   if (error) throw new Error(error.message);
-  return { rows: data ?? [], total: count ?? 0, page, pageSize };
+
+  const userIds = Array.from(new Set((data ?? []).map((r) => r.user_id)));
+  const { data: profiles } = userIds.length
+    ? await supabaseAdmin.from("profiles").select("id, display_name").in("id", userIds)
+    : { data: [] };
+  const nameById = new Map((profiles ?? []).map((p) => [p.id, p.display_name]));
+
+  return {
+    rows: (data ?? []).map((r) => ({
+      ...r,
+      recipientName: nameById.get(r.user_id) ?? null,
+      is_read: r.read_at !== null,
+    })),
+    total: count ?? 0,
+    page,
+    pageSize,
+  };
 }
 
 export async function broadcastNotification(params: {
@@ -877,6 +909,7 @@ export async function listActivity(params: {
       rows: (data ?? []).map((r) => ({
         id: r.id,
         actor_id: r.user_id,
+        actorName: null as string | null,
         action: r.event,
         target_table: null as string | null,
         target_id: null as string | null,
