@@ -190,6 +190,12 @@ export type PushAttempt = {
   outcome: "accepted" | "expired" | "rejected" | "timeout" | "network_error";
 };
 
+class PushHttpError extends Error {
+  constructor(readonly status: number) {
+    super(`push_status_${status}`);
+  }
+}
+
 /** Sends to one endpoint. Returns the HTTP status Stripe-style for logging. */
 async function sendToSubscription(
   subscription: SubscriptionRow,
@@ -222,7 +228,7 @@ async function sendWithRetry(subscription: SubscriptionRow, payload: PushPayload
     try {
       const status = await sendToSubscription(subscription, payload);
       if (status !== 408 && status !== 429 && status < 500) return status;
-      lastError = new Error(`push_status_${status}`);
+      lastError = new PushHttpError(status);
     } catch (error) {
       lastError = error;
     }
@@ -292,11 +298,13 @@ export async function sendPushToUser(
         if (!attempts.some((attempt) => attempt.subscriptionId === subscription.id)) {
           attempts.push({
             subscriptionId: subscription.id,
-            status: null,
-            outcome: error instanceof DOMException &&
-              (error.name === "TimeoutError" || error.name === "AbortError")
-              ? "timeout"
-              : "network_error",
+            status: error instanceof PushHttpError ? error.status : null,
+            outcome: error instanceof PushHttpError
+              ? "rejected"
+              : error instanceof DOMException &&
+                  (error.name === "TimeoutError" || error.name === "AbortError")
+                ? "timeout"
+                : "network_error",
           });
         }
         const count = (subscription.failure_count ?? 0) + 1;
