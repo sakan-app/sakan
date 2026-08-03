@@ -276,3 +276,88 @@ export function buildProfileQualityMessages(profile: CompatibilityProfile & { ha
     },
   ];
 }
+
+export const suggestionsSchema = {
+  name: "suggestions_result",
+  schema: {
+    type: "object",
+    properties: { suggestions: { type: "array", items: { type: "string" } } },
+    required: ["suggestions"],
+    additionalProperties: false,
+  },
+} as const;
+
+/** Opening lines for a brand-new conversation with a candidate. */
+export function buildIceBreakerMessages(
+  me: CompatibilityProfile,
+  candidate: CompatibilityProfile,
+  language: Locale,
+) {
+  const langName = LANGUAGE_NAMES[language];
+  return [
+    {
+      role: "system" as const,
+      content:
+        "You help members of SAKAN, a serious marriage-oriented platform, start respectful conversations. " +
+        `Write every suggestion in ${langName}. Respond ONLY with strict JSON matching the schema. ` +
+        "Suggestions must be culturally respectful, never flirtatious or physical, one or two sentences each, " +
+        "and grounded only in facts present in the profiles.",
+    },
+    {
+      role: "user" as const,
+      content:
+        `Sender:\n${describeProfile(me)}\n\nRecipient:\n${describeProfile(candidate)}\n\n` +
+        "Give exactly 4 opening messages the sender could send.",
+    },
+  ];
+}
+
+/** Short reply options for the last few messages in a conversation. */
+export function buildSmartReplyMessages(
+  transcript: Array<{ fromMe: boolean; body: string }>,
+  language: Locale,
+) {
+  const langName = LANGUAGE_NAMES[language];
+  const lines = transcript
+    .map((m) => `${m.fromMe ? "Me" : "Them"}: ${m.body}`)
+    .join("\n");
+  return [
+    {
+      role: "system" as const,
+      content:
+        "You suggest short, polite replies for a member of SAKAN, a serious marriage-oriented platform. " +
+        `Write every suggestion in ${langName}. Respond ONLY with strict JSON matching the schema. ` +
+        "Each reply is at most 20 words, respectful, and moves the conversation forward.",
+    },
+    { role: "user" as const, content: `Conversation so far:\n${lines}\n\nGive exactly 3 replies I could send next.` },
+  ];
+}
+
+export const bioSchema = {
+  name: "bio_result",
+  schema: {
+    type: "object",
+    properties: {
+      bio: { type: "string" },
+      notes: { type: "array", items: { type: "string" } },
+    },
+    required: ["bio", "notes"],
+    additionalProperties: false,
+  },
+} as const;
+
+/** Rewrites a member bio while keeping every stated fact. */
+export function buildBioMessages(profile: CompatibilityProfile, language: Locale) {
+  const langName = LANGUAGE_NAMES[language];
+  return [
+    {
+      role: "system" as const,
+      content:
+        "You improve member bios for SAKAN, a serious marriage-oriented platform. " +
+        `Write the bio in ${langName}. Respond ONLY with strict JSON matching the schema. ` +
+        "Keep every fact the member stated, invent nothing, stay respectful and modest, " +
+        "and keep the bio between 60 and 600 characters. Notes are up to 3 short tips.",
+    },
+    { role: "user" as const, content: `Member profile:\n${describeProfile(profile)}` },
+  ];
+}
