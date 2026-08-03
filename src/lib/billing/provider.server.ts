@@ -31,6 +31,10 @@ export type PaymentProvider = {
   live: boolean;
   createCheckout(req: CheckoutRequest): Promise<CheckoutResult>;
   cancel(providerRef: string | null): Promise<void>;
+  /** Turns auto-renew back on at the provider. */
+  resume(providerRef: string | null): Promise<void>;
+  /** Hosted self-service portal, when the provider offers one. */
+  portal(userId: string, returnUrl: string): Promise<string | null>;
 };
 
 /**
@@ -48,6 +52,12 @@ const manualProvider: PaymentProvider = {
   async cancel() {
     /* nothing to do */
   },
+  async resume() {
+    /* nothing to do */
+  },
+  async portal() {
+    return null;
+  },
 };
 
 /**
@@ -61,10 +71,14 @@ function stripeProvider(): PaymentProvider | null {
     id: "stripe",
     live: stripeIsLive(),
     async createCheckout(req) {
+      const { ensureStripeCustomer } = await import("./customers.server");
+      const customer = await ensureStripeCustomer(req.userId);
       const session = await stripeRequest<{ id: string; url: string }>(
         "/checkout/sessions",
         {
           mode: "subscription",
+          customer,
+          customer_update: { address: "auto", name: "auto" },
           success_url: `${req.returnUrl}?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
           cancel_url: `${req.returnUrl}?checkout=canceled`,
           client_reference_id: req.userId,
@@ -103,6 +117,29 @@ function stripeProvider(): PaymentProvider | null {
       await stripeRequest(`/subscriptions/${providerRef}`, {
         cancel_at_period_end: true,
       });
+    },
+    async resume(providerRef) {
+      if (!providerRef || !providerRef.startsWith("sub_")) return;
+      const sub = await stripeRequest<{ status: string }>(
+        `/subscriptions/${providerRef}`,
+        undefined,
+        "GET",
+      );
+      // A subscription Stripe already ended cannot be resumed — the caller
+      // must start a new checkout instead.
+      if (sub.status === "canceled" || sub.status === "incomplete_expired") {
+        throw new Error("subscription_already_ended");
+      }
+      await stripeRequest(`/subscriptions/${providerRef}`, { cancel_at_period_end: false });
+    },
+    async portal(userId, returnUrl) {
+      const { ensureStripeCustomer } = await import("./customers.server");
+      const customer = await ensureStripeCustomer(userId);
+      const session = await stripeRequest<{ url: string }>("/billing_portal/sessions", {
+        customer,
+        return_url: returnUrl,
+      });
+      return session.url;
     },
   };
 }
