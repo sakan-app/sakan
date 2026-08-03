@@ -137,6 +137,33 @@ export type Database = {
         }
         Relationships: []
       }
+      billing_customers: {
+        Row: {
+          created_at: string
+          customer_id: string
+          id: string
+          provider: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          id?: string
+          provider?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          id?: string
+          provider?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       billing_events: {
         Row: {
           actor_id: string | null
@@ -1191,6 +1218,7 @@ export type Database = {
           plan_code: string
           previous_plan_code: string | null
           provider: string | null
+          provider_customer_id: string | null
           provider_ref: string | null
           started_at: string
           status: Database["public"]["Enums"]["subscription_status"]
@@ -1211,6 +1239,7 @@ export type Database = {
           plan_code: string
           previous_plan_code?: string | null
           provider?: string | null
+          provider_customer_id?: string | null
           provider_ref?: string | null
           started_at?: string
           status?: Database["public"]["Enums"]["subscription_status"]
@@ -1231,6 +1260,7 @@ export type Database = {
           plan_code?: string
           previous_plan_code?: string | null
           provider?: string | null
+          provider_customer_id?: string | null
           provider_ref?: string | null
           started_at?: string
           status?: Database["public"]["Enums"]["subscription_status"]
@@ -1358,6 +1388,7 @@ export type Database = {
           plan_code: string
           previous_plan_code: string | null
           provider: string | null
+          provider_customer_id: string | null
           provider_ref: string | null
           started_at: string
           status: Database["public"]["Enums"]["subscription_status"]
@@ -1392,6 +1423,7 @@ export type Database = {
       }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       is_super_admin: { Args: { _user_id: string }; Returns: boolean }
+      sweep_billing_lifecycle: { Args: { _grace_days?: number }; Returns: Json }
       touch_last_seen: { Args: never; Returns: undefined }
       user_plan: { Args: { _user_id: string }; Returns: string }
       user_plan_tier: { Args: { _user_id: string }; Returns: number }

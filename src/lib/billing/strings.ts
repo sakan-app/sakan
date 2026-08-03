@@ -27,6 +27,7 @@ export type BillingStrings = {
   cancel: string;
   cancelConfirm: string;
   resume: string;
+  managePayment: string;
   canceledNotice: string;
   graceNotice: string;
   changePlan: string;
@@ -74,6 +75,7 @@ export const billingStrings: FeatureDictionary<BillingStrings> = {
     cancel: "إلغاء الاشتراك",
     cancelConfirm: "سيبقى اشتراكك فعّالًا حتى نهاية الفترة الحالية. هل تريد المتابعة؟",
     resume: "استئناف الاشتراك",
+    managePayment: "إدارة الدفع والفواتير",
     canceledNotice: "تم إلغاء التجديد التلقائي — تبقى مزاياك حتى نهاية الفترة.",
     graceNotice: "تعذّر تحصيل الدفعة. لديك فترة سماح قبل إيقاف المزايا.",
     changePlan: "تغيير الباقة",
@@ -142,6 +144,7 @@ export const billingStrings: FeatureDictionary<BillingStrings> = {
     cancel: "Cancel subscription",
     cancelConfirm: "Your plan stays active until the end of the current period. Continue?",
     resume: "Resume subscription",
+    managePayment: "Manage payment & invoices",
     canceledNotice: "Auto-renew is off — your benefits last until the period ends.",
     graceNotice: "We couldn't collect your payment. You're in a grace period.",
     changePlan: "Change plan",
@@ -210,6 +213,7 @@ export const billingStrings: FeatureDictionary<BillingStrings> = {
     cancel: "Abo kündigen",
     cancelConfirm: "Dein Plan bleibt bis zum Periodenende aktiv. Fortfahren?",
     resume: "Abo fortsetzen",
+    managePayment: "Zahlung & Rechnungen verwalten",
     canceledNotice: "Automatische Verlängerung ist aus — Vorteile bleiben bis Periodenende.",
     graceNotice: "Zahlung fehlgeschlagen. Du bist in der Kulanzfrist.",
     changePlan: "Plan wechseln",
@@ -278,6 +282,7 @@ export const billingStrings: FeatureDictionary<BillingStrings> = {
     cancel: "Annuler l'abonnement",
     cancelConfirm: "Votre formule restera active jusqu'à la fin de la période. Continuer ?",
     resume: "Reprendre l'abonnement",
+    managePayment: "Gérer paiement et factures",
     canceledNotice: "Renouvellement automatique désactivé — accès jusqu'à la fin de la période.",
     graceNotice: "Le paiement a échoué. Une période de grâce est en cours.",
     changePlan: "Changer de formule",

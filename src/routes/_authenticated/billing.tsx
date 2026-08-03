@@ -10,6 +10,7 @@ import { useFeatureStrings } from "@/i18n/feature";
 import {
   billingHistoryQuery,
   invoicesQuery,
+  useBillingPortal,
   useCancelSubscription,
   useResumeSubscription,
 } from "@/lib/billing/queries";
@@ -40,6 +41,7 @@ function BillingPage() {
   const eventsQ = useQuery(billingHistoryQuery(userId));
   const cancel = useCancelSubscription(userId);
   const resume = useResumeSubscription(userId);
+  const portal = useBillingPortal();
 
   const fmtDate = (value: string | null) =>
     value ? new Date(value).toLocaleDateString(locale === "ar" ? "ar-EG" : locale) : "—";
@@ -114,6 +116,16 @@ function BillingPage() {
                     {cancel.isPending ? s.processing : s.cancel}
                   </button>
                 )}
+                <button
+                  type="button"
+                  className="btn-outline-gold px-5 py-2 text-sm disabled:opacity-60"
+                  disabled={portal.isPending}
+                  onClick={() =>
+                    portal.mutate(undefined, { onError: () => toast.error(s.error) })
+                  }
+                >
+                  {portal.isPending ? s.processing : s.managePayment}
+                </button>
               </div>
             ) : null}
           </section>

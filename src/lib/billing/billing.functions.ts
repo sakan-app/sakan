@@ -43,6 +43,16 @@ export const resumeSubscription = createServerFn({ method: "POST" })
     return resume(context.userId);
   });
 
+/** Hosted Stripe portal: payment methods, invoices, cancel/resume. */
+export const createPortalSession = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator(z.object({ returnUrl: z.string().url().max(500) }))
+  .handler(async ({ data, context }) => {
+    const { billingPortalUrl } = await import("./billing.server");
+    await enforceRateLimit(`billing_portal:${context.userId}`, 20, 60 * 60_000);
+    return billingPortalUrl(context.userId, data.returnUrl);
+  });
+
 /** Refreshes lapsed subscriptions (grace period → expired) for the caller. */
 export const refreshBillingState = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
