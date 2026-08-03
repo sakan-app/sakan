@@ -5,7 +5,8 @@ import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 
 import { useAuth } from "@/hooks/useAuth";
-import { useIsOnline } from "@/hooks/usePresence";
+import { useIsAway, useIsOnline } from "@/hooks/usePresence";
+import { PresenceIndicator, resolvePresence } from "@/components/presence/PresenceIndicator";
 import { useFeatureStrings } from "@/i18n/feature";
 import { useI18n } from "@/lib/i18n";
 import { chatStrings } from "@/lib/chat/strings";
@@ -44,6 +45,8 @@ function ConversationRow({ item }: { item: ConversationListItem }) {
   const { locale } = useI18n();
   const s = useFeatureStrings(chatStrings);
   const online = useIsOnline(item.otherUserId, item.otherLastSeenAt);
+  const away = useIsAway(item.otherUserId);
+  const presence = resolvePresence(item.otherPresence, online, away);
   const preview =
     item.lastMessageKind === "image"
       ? s.photoMessage
@@ -71,9 +74,7 @@ function ConversationRow({ item }: { item: ConversationListItem }) {
             <UserRound className="h-6 w-6" />
           </span>
         )}
-        {online && (
-          <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-navy-deep bg-emerald-400" />
-        )}
+        <PresenceIndicator state={presence} size="lg" overlay hideOffline />
       </span>
       <span className="min-w-0 flex-1">
         <span className="flex items-center justify-between gap-2">

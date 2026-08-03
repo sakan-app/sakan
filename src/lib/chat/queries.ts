@@ -60,7 +60,7 @@ export function conversationsQuery(userId: string) {
       const otherIds = conversations.map((c) => (c.user_low === userId ? c.user_high : c.user_low));
 
       const [{ data: profiles }, { data: messages }] = await Promise.all([
-        supabase.from("profiles").select("id, display_name, avatar_url, last_seen_at").in("id", otherIds),
+        supabase.from("profiles").select("id, display_name, avatar_url, last_seen_at, presence_status, hide_last_seen").in("id", otherIds),
         supabase
           .from("messages")
           .select("id, conversation_id, sender_id, body, kind, created_at, read_at, deleted_at")
@@ -93,7 +93,9 @@ export function conversationsQuery(userId: string) {
           otherName: profile?.display_name ?? "",
           otherAvatarPath: profile?.avatar_url ?? null,
           otherAvatarUrl: profile?.avatar_url ? (signedAvatars.get(profile.avatar_url) ?? null) : null,
-          otherLastSeenAt: profile?.last_seen_at ?? null,
+          otherLastSeenAt: profile?.hide_last_seen ? null : (profile?.last_seen_at ?? null),
+          otherPresence:
+            !profile || profile.presence_status === "invisible" ? null : profile.presence_status,
           lastMessageBody: latest && !latest.deleted_at ? latest.body : null,
           lastMessageKind: latest?.kind ?? null,
           lastMessageAt: latest?.created_at ?? c.last_message_at,
