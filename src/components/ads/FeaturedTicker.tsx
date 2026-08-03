@@ -1,6 +1,7 @@
 import { memo, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { Link } from "@tanstack/react-router";
 import { Sparkles } from "lucide-react";
 
 import { useFeatureStrings } from "@/i18n/feature";
@@ -85,14 +86,28 @@ export const FeaturedTicker = memo(function FeaturedTicker() {
     </span>
   );
 
-  const inner = current.targetUrl ? (
+  const trackClick = () => {
+    void trackAdEvent({ data: { adId: current.id, metric: "clicks" } }).catch(() => {});
+  };
+
+  // A paid featured profile always opens the member page instantly; an external
+  // target URL is only used as a fallback for non-member creatives.
+  const inner = current.userId ? (
+    <Link
+      to="/member/$id"
+      params={{ id: current.userId }}
+      onClick={trackClick}
+      aria-label={current.headline ?? s.viewProfile}
+      className="inline-flex"
+    >
+      {content}
+    </Link>
+  ) : current.targetUrl ? (
     <a
       href={current.targetUrl}
       target="_blank"
       rel="nofollow noopener noreferrer sponsored"
-      onClick={() => {
-        void trackAdEvent({ data: { adId: current.id, metric: "clicks" } }).catch(() => {});
-      }}
+      onClick={trackClick}
       className="inline-flex"
     >
       {content}
@@ -108,6 +123,9 @@ export const FeaturedTicker = memo(function FeaturedTicker() {
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setHovered(true)}
       onBlur={() => setHovered(false)}
+      onTouchStart={() => setHovered(true)}
+      onTouchEnd={() => setHovered(false)}
+      onTouchCancel={() => setHovered(false)}
       className="relative overflow-hidden border-y border-gold/15 bg-navy/60 backdrop-blur-xl"
     >
       <div className="pointer-events-none absolute inset-y-0 start-0 z-10 flex items-center gap-1.5 bg-gradient-to-r from-navy-deep via-navy-deep/90 to-transparent px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-gold">
@@ -168,16 +186,21 @@ export const FeaturedTicker = memo(function FeaturedTicker() {
                 {s.onAir} · {s.loopsLeft}: {loopsLeft}
               </p>
             </div>
-            {current.targetUrl ? (
+            {current.userId ? (
+              <Link
+                to="/member/$id"
+                params={{ id: current.userId }}
+                onClick={trackClick}
+                className="btn-outline-gold shrink-0 px-3 py-1.5 text-[11px]"
+              >
+                {s.viewProfile}
+              </Link>
+            ) : current.targetUrl ? (
               <a
                 href={current.targetUrl}
                 target="_blank"
                 rel="nofollow noopener noreferrer sponsored"
-                onClick={() => {
-                  void trackAdEvent({ data: { adId: current.id, metric: "clicks" } }).catch(
-                    () => {},
-                  );
-                }}
+                onClick={trackClick}
                 className="btn-outline-gold shrink-0 px-3 py-1.5 text-[11px]"
               >
                 {s.viewProfile}

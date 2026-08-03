@@ -105,7 +105,7 @@ function Index() {
   };
 
   const genderBtn = (active: boolean) =>
-    `flex flex-1 items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors ${
+    `flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg border px-1.5 py-2 text-center text-[12px] leading-tight transition-colors ${
       active
         ? "border-gold bg-gold/15 font-bold text-gold"
         : "border-gold/25 text-cream/70 hover:border-gold/50"
@@ -129,26 +129,26 @@ function Index() {
             <form onSubmit={submit} className="glass-card fade-up rounded-3xl p-5">
               <div className="mb-4 text-center text-xs text-gold/70">{t.home.searchBadge}</div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="min-w-0">
                   <label className="mb-2 block text-xs font-semibold text-cream/80">{t.home.iAm}</label>
-                  <div className="flex gap-2">
+                  <div className="flex min-w-0 gap-1.5">
                     <button type="button" className={genderBtn(iAm === "male")} onClick={() => setIAm("male")}>
-                      <User className="h-4 w-4" /> {t.home.male}
+                      <User className="hidden h-4 w-4 shrink-0 sm:block" /> <span>{t.home.male}</span>
                     </button>
                     <button type="button" className={genderBtn(iAm === "female")} onClick={() => setIAm("female")}>
-                      <User className="h-4 w-4" /> {t.home.female}
+                      <User className="hidden h-4 w-4 shrink-0 sm:block" /> <span>{t.home.female}</span>
                     </button>
                   </div>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <label className="mb-2 block text-xs font-semibold text-cream/80">{t.home.lookingFor}</label>
-                  <div className="flex gap-2">
+                  <div className="flex min-w-0 gap-1.5">
                     <button type="button" className={genderBtn(lookingFor === "male")} onClick={() => setLookingFor("male")}>
-                      <User className="h-4 w-4" /> {t.home.male}
+                      <User className="hidden h-4 w-4 shrink-0 sm:block" /> <span>{t.home.male}</span>
                     </button>
                     <button type="button" className={genderBtn(lookingFor === "female")} onClick={() => setLookingFor("female")}>
-                      <User className="h-4 w-4" /> {t.home.female}
+                      <User className="hidden h-4 w-4 shrink-0 sm:block" /> <span>{t.home.female}</span>
                     </button>
                   </div>
                 </div>
@@ -177,7 +177,7 @@ function Index() {
                 <label className="mb-2 block text-xs font-semibold text-cream/80">{t.home.residence}</label>
                 <div className="relative">
                   <MapPin className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gold" />
-                  <select className="field-navy" value={country} onChange={(e) => setCountry(e.target.value)}>
+                  <select className="field-navy ps-9" value={country} onChange={(e) => setCountry(e.target.value)}>
                     <option value="all">{t.home.chooseCountry}</option>
                     {COUNTRY_CODES.map((code) => (
                       <option key={code} value={code}>{t.countries[code]}</option>
