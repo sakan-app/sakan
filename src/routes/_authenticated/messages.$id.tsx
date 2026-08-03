@@ -7,12 +7,10 @@ import {
   Loader2,
   MessageSquareOff,
   Image as ImageIcon,
-  Phone,
   Search,
   SearchX,
   Sparkles,
   UserRound,
-  Video,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
