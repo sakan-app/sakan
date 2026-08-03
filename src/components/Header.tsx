@@ -12,7 +12,7 @@ const headerStrings = {
   ar: { messages: "الرسائل", pricing: "الباقات" },
   en: { messages: "Messages", pricing: "Plans" },
   de: { messages: "Nachrichten", pricing: "Pläne" },
-  ru: { messages: "Сообщения", pricing: "Тарифы" },
+  fr: { messages: "Messages", pricing: "Offres" },
 };
 
 export function Header() {

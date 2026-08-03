@@ -17,6 +17,11 @@ import {
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { Link } from "@tanstack/react-router";
+import { useFeatureStrings } from "@/i18n/feature";
+import { billingStrings } from "@/lib/billing/strings";
+import { plansQuery } from "@/lib/billing/queries";
+import { formatPrice } from "@/lib/billing/types";
 import { FeaturedTicker } from "@/components/ads/FeaturedTicker";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { MemberCard } from "@/components/MemberCard";
@@ -58,7 +63,7 @@ export const Route = createFileRoute("/")({
               "@type": "WebSite",
               name: "سَكَن | SAKAN",
               url: "https://www.sakanapp.net",
-              inLanguage: ["ar", "en", "de", "ru"],
+              inLanguage: ["ar", "en", "de", "fr"],
               potentialAction: {
                 "@type": "SearchAction",
                 target: "https://www.sakanapp.net/search?country={search_term_string}",
@@ -78,7 +83,9 @@ const storyFlags = ["🇩🇪", "🇦🇹", "🇩🇪"];
 
 function Index() {
   const navigate = useNavigate();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const bs = useFeatureStrings(billingStrings);
+  const plans = useQuery(plansQuery());
   const [iAm, setIAm] = useState<Gender>("male");
   const [lookingFor, setLookingFor] = useState<Gender>("female");
   const [minAge, setMinAge] = useState(25);
@@ -109,10 +116,15 @@ function Index() {
 
       {/* HERO */}
       <section className="relative overflow-hidden bg-navy-deep">
-        <div className="grid lg:grid-cols-[420px_minmax(0,1fr)_1.1fr]">
+        {/* Ambient light */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-40 start-1/4 h-[520px] w-[520px] rounded-full bg-gold/10 blur-[140px]"
+        />
+        <div className="relative grid lg:grid-cols-[420px_minmax(0,1fr)_1.1fr]">
           {/* SEARCH PANEL */}
           <div className="order-2 w-full px-4 pb-8 lg:order-none lg:self-center lg:px-6 lg:pb-0">
-            <form onSubmit={submit} className="panel-navy p-5">
+            <form onSubmit={submit} className="glass-card fade-up rounded-3xl p-5">
               <div className="mb-4 text-center text-xs text-gold/70">{t.home.searchBadge}</div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -356,6 +368,55 @@ function Index() {
           <p className="mt-8 flex items-center justify-center gap-2 text-xs text-muted-foreground">
             <ShieldCheck className="h-4 w-4 text-gold-deep" /> {t.home.verifiedNote}
           </p>
+        </div>
+      </section>
+
+      {/* PLANS PREVIEW */}
+      <section className="bg-navy-deep py-16">
+        <div className="mx-auto max-w-[1360px] px-6 lg:px-8">
+          <h2 className="text-center text-2xl font-black text-cream">{bs.pricingTitle}</h2>
+          <p className="mt-2 text-center text-sm text-cream/60">{bs.pricingSubtitle}</p>
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {(plans.data ?? []).map((plan) => (
+              <article
+                key={plan.code}
+                className={`glass-card fade-up rounded-3xl p-6 ${
+                  plan.code === "premium" ? "ring-1 ring-gold/40" : ""
+                }`}
+              >
+                <div className="flex items-baseline justify-between gap-2">
+                  <h3 className="text-lg font-black text-cream">{plan.name[locale]}</h3>
+                  {plan.code === "premium" ? (
+                    <span className="chip-glass px-2 py-0.5 text-[10px] uppercase tracking-wider text-gold">
+                      {bs.mostPopular}
+                    </span>
+                  ) : null}
+                </div>
+                <p className="mt-1 text-xs text-cream/60">{plan.tagline[locale]}</p>
+                <p className="mt-4 text-3xl font-black text-gold">
+                  {plan.priceMonthlyCents === 0
+                    ? bs.free
+                    : formatPrice(plan.priceMonthlyCents, plan.currency, locale)}
+                  {plan.priceMonthlyCents > 0 ? (
+                    <span className="text-xs font-semibold text-cream/50"> {bs.perMonth}</span>
+                  ) : null}
+                </p>
+                <ul className="mt-4 grid gap-2 text-xs text-cream/75">
+                  {plan.features[locale].map((feature) => (
+                    <li key={feature} className="flex items-start gap-2">
+                      <BadgeCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold" aria-hidden="true" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <Link to="/pricing" className="btn-gold inline-flex px-8 py-2.5 text-sm">
+              {bs.seePlans}
+            </Link>
+          </div>
         </div>
       </section>
 

@@ -138,47 +138,47 @@ export const termsContent: FeatureDictionary<LegalPageContent> = {
       },
     ],
   },
-  ru: {
-    title: "Условия использования",
-    subtitle: `Условия пользования платформой Sakan (${COMPANY.websiteLabel}).`,
+  fr: {
+    title: "Conditions d'utilisation",
+    subtitle: `Conditions générales régissant l'utilisation de la plateforme Sakan (${COMPANY.websiteLabel}).`,
     sections: [
       {
-        title: "1. Характер услуги",
+        title: "1. Nature du service",
         body: [
-          "Sakan — платформа для серьёзных знакомств с целью брака, а не брачное агентство и не юридическая служба. Результат не гарантируется.",
-          "Членство и чат бесплатны на 100%; платные функции полностью опциональны.",
+          "Sakan est une plateforme de rencontres sérieuses en vue du mariage ; ce n'est ni une agence matrimoniale ni un service juridique, et aucune union n'est garantie.",
+          "L'inscription et le chat sont gratuits à 100 % ; les services payants sont entièrement optionnels.",
         ],
       },
       {
-        title: "2. Требования и аккаунт",
+        title: "2. Éligibilité et compte",
         body: [
-          "Возраст от 18 лет, достоверные данные и настоящие собственные фотографии.",
-          "Один аккаунт на человека; выдача себя за другого и фейковые профили запрещены.",
-          "Аккаунт остаётся на автоматической проверке до успешной верификации.",
+          "Il est exigé d'avoir au moins 18 ans et de fournir des informations exactes ainsi que de véritables photos personnelles.",
+          "Un seul compte par personne ; l'usurpation d'identité et la création de faux comptes sont interdites.",
+          "Le compte reste sous vérification automatique jusqu'à la validation du contrôle de vérification.",
         ],
       },
       {
-        title: "3. Правила поведения",
+        title: "3. Règles de conduite",
         body: [
-          "Запрещены оскорбительные, откровенные, разжигающие вражду и несогласованные рекламные материалы.",
-          "Строго запрещено просить деньги у участников и продавать визовые или туристические услуги.",
-          "Нарушения ведут к блокировке аккаунта системой ИИ-модерации.",
+          "Tout contenu offensant, sexuellement explicite, incitant à la haine ou publicitaire non autorisé est interdit.",
+          "Il est strictement interdit de demander de l'argent aux membres ou de proposer des services de visa ou de voyage contre paiement.",
+          "Toute infraction entraîne la suspension ou le bannissement définitif du compte par le système de modération automatique.",
         ],
       },
       {
-        title: "4. Платежи и премиум-плата",
+        title: "4. Paiements et frais de mise en avant",
         body: [
-          "Единственная премиум-плата — 0,99 EUR (99 центов) за изображение/объявление в ленте, плюс опциональные тарифы на странице цен.",
-          "Обработка через Stripe. В тестовом режиме реальные деньги не списываются.",
-          "Право отказа: у потребителей ЕС есть 14 дней; оно прекращается с началом оказания цифровой услуги по явному согласию.",
+          "Les seuls frais autorisés sont de 0,99 euro (99 centimes) par photo/annonce dans le bandeau de mise en avant, ainsi que les formules d'abonnement optionnelles présentées sur la page des tarifs.",
+          "Le traitement s'effectue via Stripe. En phase de test, aucun montant réel n'est débité.",
+          "Droit de rétractation : les consommateurs de l'Union européenne disposent d'un délai de rétractation de 14 jours, qui s'éteint dès le début de l'exécution du service numérique avec leur accord explicite.",
         ],
       },
       {
-        title: "5. Ответственность и прекращение",
+        title: "5. Responsabilité et résiliation",
         body: [
-          "Мы не отвечаем за поведение участников вне платформы; встречайтесь в общественных местах.",
-          "Вы можете удалить аккаунт в настройках; мы вправе закрыть аккаунт при нарушении условий.",
-          "Применяется право Германии.",
+          "La plateforme n'assume aucune responsabilité quant au comportement des membres en dehors de son cadre ; nous recommandons toujours la prudence et de se rencontrer dans des lieux publics.",
+          "Vous pouvez supprimer votre compte à tout moment depuis les paramètres, et la plateforme se réserve le droit de résilier un compte en cas de non-respect des présentes conditions.",
+          "Le droit applicable est le droit allemand.",
         ],
       },
     ],

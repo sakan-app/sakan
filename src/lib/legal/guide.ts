@@ -99,33 +99,33 @@ export const guideContent: FeatureDictionary<LegalPageContent> = {
       },
     ],
   },
-  ru: {
-    title: "⚖️ Официальное руководство по брачному праву и безопасности",
-    subtitle: "Платформа Sakan — правовое правило в Европе, необходимые документы и предупреждение о мошенничестве.",
+  fr: {
+    title: "⚖️ Guide officiel du droit du mariage et avertissements de sécurité",
+    subtitle: "Plateforme Sakan — la règle légale en Europe, les documents requis et une mise en garde stricte contre la fraude.",
     sections: [
       {
-        title: "Основное правовое правило",
+        title: "La règle légale fondamentale",
         body: [
-          "Германия и страны ЕС признают брак, заключённый на их территории, только если он оформлен в государственном ЗАГСе (Standesamt).",
-          "Чисто религиозный исламский брак (никах у имама) в Европе не имеет гражданско-правовых последствий и не принимается для иммиграции или воссоединения семьи.",
-          "Большинство признанных мечетей требуют сначала свидетельство о гражданском браке.",
+          "L'Allemagne et les pays de l'UE ne reconnaissent légalement aucun mariage conclu sur leur territoire s'il n'a pas été officiellement enregistré auprès du bureau d'état civil (Standesamt).",
+          "Un mariage islamique purement religieux (mariage devant un imam) conclu en Europe n'a aucun effet juridique civil et n'est pas accepté pour l'immigration ou le regroupement familial.",
+          "La plupart des mosquées reconnues exigent d'abord la présentation de l'acte de mariage civil avant de célébrer le mariage religieux.",
         ],
       },
       {
-        title: "Необходимые документы",
+        title: "Parcours des documents requis",
         body: [
-          "Брак в Германии: подача в Standesamt по месту жительства. Документы: действующий паспорт, легальное пребывание, свежее свидетельство о рождении (с переводом и заверением) и справка о брачной правоспособности из страны происхождения.",
-          "Брак вне Европы и воссоединение семьи: гражданский брак в суде или министерстве юстиции страны партнёра, легализация в МИД этой страны и посольстве Германии, затем перевод присяжным переводчиком.",
-          "Условия воссоединения: достаточный доход семьи без Jobcenter + достаточное жильё + сертификат немецкого языка A1 до въезда.",
-          "Брак в Дании (быстрое решение в ЕС): минимальный пакет документов через Датское агентство семейного права при личном присутствии обоих; свидетельство автоматически признаётся в Германии и ЕС.",
+          "Mariage en Allemagne : dépôt de la demande au Standesamt de la ville concernée. Documents : passeport valide, séjour légal, acte de naissance récent (traduit et certifié), et certificat de célibat (Ledigkeitsbescheinigung) légalisé par le pays d'origine.",
+          "Mariage hors d'Europe et regroupement familial : le mariage civil officiel est célébré devant le tribunal ou le ministère de la Justice du pays du partenaire, puis légalisé par le ministère des Affaires étrangères de ce pays et par l'ambassade d'Allemagne, avant d'être traduit par un traducteur assermenté en Allemagne.",
+          "Conditions du regroupement familial : revenu familial suffisant sans recours au Jobcenter + logement d'une superficie adéquate + certificat de langue allemande niveau A1 pour le partenaire avant le départ.",
+          "Mariage au Danemark (la solution européenne rapide) : documents simplifiés via l'agence danoise du droit de la famille, avec présence physique des deux parties ; l'acte est automatiquement reconnu en Allemagne et dans le reste de l'UE pour les démarches de séjour et le changement de classe fiscale.",
         ],
       },
       {
-        title: "Предупреждение о мошенничестве",
+        title: "Avertissement strict contre la fraude",
         body: [
-          "Финансовые просьбы: запрещено переводить деньги онлайн на «билеты или визовые сборы». Администрация никогда не просит средства вне официальной платы (99 центов через Stripe).",
-          "Ложные обещания: любой, кто обещает превратить религиозный брак в юридический документ для воссоединения без Standesamt, — мошенник.",
-          "Мгновенная блокировка: если участник просит деньги, немедленно нажмите «Пожаловаться» — ИИ-менеджер заблокирует профиль навсегда.",
+          "Demandes financières : il est strictement interdit d'envoyer de l'argent à quiconque en ligne sous prétexte de billets d'avion ou de frais de visa. La direction de la plateforme ne demande aucune somme en dehors des frais officiels (99 centimes via Stripe).",
+          "Fausses promesses : toute personne prétendant transformer un contrat religieux en document légal pour le regroupement familial sans passer par le Standesamt est un escroc.",
+          "Blocage immédiat : dès qu'un membre demande de l'argent, appuyez immédiatement sur le bouton de signalement afin que le gestionnaire automatique le bannisse définitivement et efface son profil.",
         ],
       },
     ],

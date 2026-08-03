@@ -92,31 +92,31 @@ export const impressumContent: FeatureDictionary<LegalPageContent> = {
       },
     ],
   },
-  ru: {
-    title: "Выходные данные (Impressum)",
-    subtitle: "Обязательные сведения согласно § 5 DDG/TMG (Германия)",
+  fr: {
+    title: "Mentions légales (Impressum)",
+    subtitle: "Informations obligatoires conformément à l'article 5 de la loi allemande sur les services numériques (§5 DDG/TMG)",
     sections: [
-      { title: "Поставщик услуг / ответственный за содержание", body: [address] },
+      { title: "Responsable du contenu", body: [address] },
       {
-        title: "Контакты",
+        title: "Contact",
         body: [
-          `Сайт: ${COMPANY.websiteLabel}`,
-          `Общая почта: ${COMPANY.infoEmail}`,
-          `Служба поддержки: ${COMPANY.serviceEmail}`,
+          `Site officiel : ${COMPANY.websiteLabel}`,
+          `E-mail général : ${COMPANY.infoEmail}`,
+          `E-mail du service client : ${COMPANY.serviceEmail}`,
         ],
       },
       {
-        title: "Коммерческий статус",
+        title: "Statut commercial",
         body: [
-          "Платформа работает в тестовом режиме; платежи проходят через тестовую среду Stripe, реальные деньги не списываются.",
-          "При переходе в боевой режим здесь будут указаны торговая регистрация (Gewerbe) и налоговый номер; поля редактируются из панели администратора.",
+          "La plateforme fonctionne actuellement en phase d'exploitation test ; les paiements s'effectuent via l'environnement de test Stripe et aucun montant réel n'est débité.",
+          "Lors du passage en mode réel (Live Mode), le numéro d'immatriculation commerciale (Gewerbe) et le numéro fiscal (Steuernummer / USt-IdNr.) seront ajoutés sur cette page ; ces champs sont modifiables depuis le tableau de bord d'administration sans modification du code.",
         ],
       },
       {
-        title: "Разрешение споров",
+        title: "Règlement des litiges",
         body: [
-          "Платформа ЕС для онлайн-урегулирования споров: https://ec.europa.eu/consumers/odr",
-          "Мы не обязаны и не готовы участвовать в разбирательствах перед потребительским арбитражем.",
+          "Plateforme de règlement en ligne des litiges de l'Union européenne : https://ec.europa.eu/consumers/odr",
+          "Nous ne sommes ni tenus ni disposés à participer à une procédure de règlement des litiges devant un organisme de médiation de la consommation.",
         ],
       },
     ],

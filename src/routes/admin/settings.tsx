@@ -22,7 +22,7 @@ export const Route = createFileRoute("/admin/settings")({ component: AdminSettin
 type Draft = {
   support_email: string;
   maintenance_mode: boolean;
-  default_language: "ar" | "en" | "de" | "ru";
+  default_language: "ar" | "en" | "de" | "fr";
   registration_enabled: boolean;
   verification_required: boolean;
   max_gallery_photos: number;
@@ -135,7 +135,7 @@ function AdminSettings() {
               <option value="ar">العربية</option>
               <option value="en">English</option>
               <option value="de">Deutsch</option>
-              <option value="ru">Русский</option>
+              <option value="fr">Français</option>
             </AdminSelect>
           </Row>
           <Toggle

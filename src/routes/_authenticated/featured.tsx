@@ -7,7 +7,8 @@ import { toast } from "sonner";
 
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatureStrings } from "@/i18n/feature";
-import { createFeaturedCheckout } from "@/lib/ads/ads.functions";
+import { CreativeCropper } from "@/components/ads/CreativeCropper";
+import { createFeaturedCheckout, getFeaturedQueue } from "@/lib/ads/ads.functions";
 import {
   createFeaturedAdDraft,
   myFeaturedAdsQuery,
@@ -34,18 +35,28 @@ function FeaturedPage() {
   const qc = useQueryClient();
   const userId = user?.id ?? "";
   const checkout = useServerFn(createFeaturedCheckout);
+  const fetchQueue = useServerFn(getFeaturedQueue);
 
   const [file, setFile] = useState<File | null>(null);
+  const [cropped, setCropped] = useState<Blob | null>(null);
   const [headline, setHeadline] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [link, setLink] = useState("");
 
   const mine = useQuery({ ...myFeaturedAdsQuery(userId), enabled: Boolean(userId) });
+  const queue = useQuery({
+    queryKey: ["featured-queue"],
+    queryFn: () => fetchQueue(),
+    refetchInterval: 30_000,
+  });
 
   const submit = useMutation({
     mutationFn: async () => {
       if (!file) throw new Error("no_file");
-      const imagePath = await uploadFeaturedCreative(userId, file);
+      const upload = cropped
+        ? new File([cropped], `${file.name.replace(/\.[^.]+$/, "")}.jpg`, { type: "image/jpeg" })
+        : file;
+      const imagePath = await uploadFeaturedCreative(userId, upload);
       const adId = await createFeaturedAdDraft({
         userId,
         imagePath,
@@ -64,6 +75,7 @@ function FeaturedPage() {
       }
       toast.success(s.success, { description: result.testMode ? s.testMode : undefined });
       setFile(null);
+      setCropped(null);
       setHeadline("");
       setSubtitle("");
       setLink("");
@@ -71,6 +83,11 @@ function FeaturedPage() {
     },
     onError: () => toast.error(s.error),
   });
+
+  const fmtLeft = (ms: number) => {
+    const total = Math.max(0, Math.round(ms / 1000));
+    return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, "0")}`;
+  };
 
   const fmtDate = (value: string | null) =>
     value ? new Date(value).toLocaleDateString(locale === "ar" ? "ar-EG" : locale) : "—";
@@ -105,9 +122,22 @@ function FeaturedPage() {
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
                 className="sr-only"
-                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                onChange={(e) => {
+                  setCropped(null);
+                  setFile(e.target.files?.[0] ?? null);
+                }}
               />
             </label>
+
+            {file ? (
+              <CreativeCropper
+                file={file}
+                label={s.previewTitle}
+                zoomLabel={s.zoomLabel}
+                hint={s.cropHint}
+                onChange={setCropped}
+              />
+            ) : null}
 
             <Field label={s.headline} value={headline} onChange={setHeadline} max={60} />
             <Field label={s.subtitle} value={subtitle} onChange={setSubtitle} max={90} />
@@ -134,6 +164,48 @@ function FeaturedPage() {
               )}
             </button>
           </form>
+        </section>
+
+        <section className="mt-8">
+          <h2 className="text-lg font-bold text-cream">{s.queueTitle}</h2>
+          {(queue.data?.length ?? 0) === 0 ? (
+            <p className="mt-3 text-sm text-cream/55">{s.noAds}</p>
+          ) : (
+            <ol className="mt-4 grid gap-2">
+              {queue.data!.map((entry, i) => (
+                <li
+                  key={entry.id}
+                  className="glass-card flex items-center gap-3 rounded-2xl px-4 py-3"
+                >
+                  <span className="w-6 shrink-0 text-sm font-black text-gold">{i + 1}</span>
+                  {entry.imageUrl ? (
+                    <img
+                      src={entry.imageUrl}
+                      alt=""
+                      loading="lazy"
+                      className="h-10 w-10 rounded-lg object-cover"
+                    />
+                  ) : null}
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-cream">
+                      {entry.headline ?? s.sponsored}
+                    </p>
+                    <p className="text-[11px] text-cream/55">
+                      {entry.isCurrent ? s.onAir : s.waiting}
+                      {entry.isCurrent
+                        ? ` · ${s.loopsLeft}: ${Math.max(0, entry.loopsTotal - entry.loopsDone)} · ${s.timeLeft} ${fmtLeft(entry.remainingMs)}`
+                        : ""}
+                    </p>
+                  </div>
+                  {entry.isCurrent ? (
+                    <span className="chip-glass px-2 py-0.5 text-[10px] uppercase tracking-wider text-gold">
+                      {s.onAir}
+                    </span>
+                  ) : null}
+                </li>
+              ))}
+            </ol>
+          )}
         </section>
 
         <section className="mt-8">

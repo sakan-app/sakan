@@ -8,7 +8,7 @@ export const LANGUAGE_NAMES: Record<Locale, string> = {
   ar: "Arabic",
   en: "English",
   de: "German",
-  ru: "Russian",
+  fr: "French",
 };
 
 export type CompatibilityProfile = {

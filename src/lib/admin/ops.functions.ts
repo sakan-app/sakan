@@ -256,7 +256,7 @@ export const updatePlatformSettings = createServerFn({ method: "POST" })
     z.object({
       support_email: z.string().email().max(200).optional(),
       maintenance_mode: z.boolean().optional(),
-      default_language: z.enum(["ar", "en", "de", "ru"]).optional(),
+      default_language: z.enum(["ar", "en", "de", "fr"]).optional(),
       registration_enabled: z.boolean().optional(),
       verification_required: z.boolean().optional(),
       max_gallery_photos: z.number().int().min(1).max(50).optional(),
