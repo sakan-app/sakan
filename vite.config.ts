@@ -25,9 +25,13 @@ const pwa = VitePWA({
   manifest: false,
   filename: "sw.js",
   devOptions: { enabled: false },
+  // The Nitro/TanStack build writes browser assets to dist/client. Without this
+  // the plugin defaults to `dist`, emitting sw.js where nothing is served from
+  // and prefixing every precache URL with `client/`.
+  outDir: "dist/client",
   workbox: {
     importScripts: ["/sw-push.js"],
-    globPatterns: ["**/*.{js,css,ico,png,svg,webp,woff2,webmanifest}"],
+    globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,woff2,webmanifest}"],
     // SSR means there is no static HTML on disk; these documents are fetched
     // and precached at install so a cold offline start still renders.
     additionalManifestEntries: [
@@ -53,8 +57,11 @@ const pwa = VitePWA({
           plugins: [
             {
               // Offline and never visited before → the offline shell.
+              // `/offline.html` is a self-contained static document: it needs no
+              // JS, no router and no hydration, so it renders on a cold offline
+              // start for a URL that was never visited.
               handlerDidError: async () =>
-                (await caches.match("/offline", { ignoreSearch: true })) ??
+                (await caches.match("/offline.html", { ignoreSearch: true })) ??
                 (await caches.match("/", { ignoreSearch: true })) ??
                 Response.error(),
             },
