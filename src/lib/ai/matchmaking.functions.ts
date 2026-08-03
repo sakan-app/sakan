@@ -25,6 +25,8 @@ export const scoreCompatibility = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<CompatibilityScoreRow> => {
     try {
       await enforceRateLimit(`ai:${context.userId}`, 20, 60_000);
+      const { assertCandidateVisible } = await import("@/lib/ai/visibility.server");
+      await assertCandidateVisible(context.userId, data.candidateId);
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const { data: meRow, error: meErr } = await supabaseAdmin
         .from("profiles")
