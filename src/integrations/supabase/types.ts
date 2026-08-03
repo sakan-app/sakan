@@ -685,6 +685,7 @@ export type Database = {
       notifications: {
         Row: {
           actor_id: string | null
+          archived_at: string | null
           body: string | null
           created_at: string
           data: Json
@@ -696,6 +697,7 @@ export type Database = {
         }
         Insert: {
           actor_id?: string | null
+          archived_at?: string | null
           body?: string | null
           created_at?: string
           data?: Json
@@ -707,6 +709,7 @@ export type Database = {
         }
         Update: {
           actor_id?: string | null
+          archived_at?: string | null
           body?: string | null
           created_at?: string
           data?: Json
@@ -1319,6 +1322,7 @@ export type Database = {
         | "profile_view"
         | "verification"
         | "system"
+        | "premium"
       payment_status: "pending" | "succeeded" | "failed" | "refunded"
       photo_kind: "avatar" | "gallery" | "verification"
       religiosity_level:
@@ -1498,6 +1502,7 @@ export const Constants = {
         "profile_view",
         "verification",
         "system",
+        "premium",
       ],
       payment_status: ["pending", "succeeded", "failed", "refunded"],
       photo_kind: ["avatar", "gallery", "verification"],
