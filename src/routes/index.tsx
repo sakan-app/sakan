@@ -105,7 +105,7 @@ function Index() {
   };
 
   const genderBtn = (active: boolean) =>
-    `flex flex-1 items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors ${
+    `flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg border px-2 py-2 text-center text-[13px] leading-tight transition-colors ${
       active
         ? "border-gold bg-gold/15 font-bold text-gold"
         : "border-gold/25 text-cream/70 hover:border-gold/50"
