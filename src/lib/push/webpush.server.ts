@@ -216,6 +216,21 @@ async function sendToSubscription(
   return response.status;
 }
 
+async function sendWithRetry(subscription: SubscriptionRow, payload: PushPayload): Promise<number> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      const status = await sendToSubscription(subscription, payload);
+      if (status !== 408 && status !== 429 && status < 500) return status;
+      lastError = new Error(`push_status_${status}`);
+    } catch (error) {
+      lastError = error;
+    }
+    if (attempt < 2) await new Promise((resolve) => setTimeout(resolve, 250 * 2 ** attempt));
+  }
+  throw lastError instanceof Error ? lastError : new Error("push_delivery_failed");
+}
+
 /**
  * Fan-out to every active device of a member.
  *
@@ -251,7 +266,7 @@ export async function sendPushToUser(
   await Promise.all(
     subscriptions.map(async (subscription) => {
       try {
-        const status = await sendToSubscription(subscription, payload);
+        const status = await sendWithRetry(subscription, payload);
         if (status === 404 || status === 410) {
           failed += 1;
           attempts.push({ subscriptionId: subscription.id, status, outcome: "expired" });
@@ -278,7 +293,8 @@ export async function sendPushToUser(
           attempts.push({
             subscriptionId: subscription.id,
             status: null,
-            outcome: error instanceof DOMException && error.name === "TimeoutError"
+            outcome: error instanceof DOMException &&
+              (error.name === "TimeoutError" || error.name === "AbortError")
               ? "timeout"
               : "network_error",
           });

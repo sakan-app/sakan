@@ -11,11 +11,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
-const BATCH_SIZE = 100;
 /**
- * A notification is only given up on after this long. Before that, a run that
- * delivered nothing (device offline queue rejected it, provider 5xx) leaves
- * the row unstamped so the next minute retries it.
+ * Failed delivery stays unstamped so it remains visible as pending rather
+ * than being incorrectly recorded as delivered.
  */
 const GIVE_UP_AFTER_MS = 15 * 60 * 1000;
 const dispatchInput = z.object({ notificationId: z.string().uuid() });
@@ -85,8 +83,7 @@ export const Route = createFileRoute("/api/public/push-dispatch")({
           .is("push_sent_at", null)
           .is("read_at", null)
           .eq("id", parsed.data.notificationId)
-          .order("created_at", { ascending: true })
-          .limit(BATCH_SIZE);
+          .limit(1);
 
         if (error) return new Response(error.message, { status: 500 });
         const rows = (data ?? []) as NotificationRow[];
@@ -156,10 +153,8 @@ export const Route = createFileRoute("/api/public/push-dispatch")({
             ...result.attempts.map((attempt) => ({ notificationId: row.id, ...attempt })),
           );
 
-          // Only stamp when the row is genuinely finished: something was
-          // delivered, the member has no devices at all, or we have retried
-          // past the give-up window. Stamping a failed send would drop the
-          // notification permanently.
+          // Only stamp when the row is genuinely finished. Stamping a failed
+          // send would suppress a later explicit replay of the notification.
           const expired = Date.now() - new Date(row.created_at).getTime() > GIVE_UP_AFTER_MS;
           if (result.sent === 0 && result.devices > 0 && !expired) {
             retrying += 1;
