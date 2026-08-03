@@ -6,6 +6,15 @@ import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useI18n } from "@/lib/i18n";
 import { avatarUrlQuery, myProfileQuery } from "@/lib/profile-queries";
+import {
+  PRESENCE_DOT,
+  THEME_GRADIENT,
+  avatarBorderClass,
+  coverUrlQuery,
+  profileStrength,
+} from "@/lib/profile/appearance";
+import { useFeatureStrings } from "@/i18n/feature";
+import { profileStudioStrings } from "@/lib/profile/strings";
 import { countryFlag, countryLabel } from "@/lib/countries";
 
 export const Route = createFileRoute("/_authenticated/profile")({
@@ -30,6 +39,9 @@ function MyProfilePage() {
   const profileQ = useQuery({ ...myProfileQuery(userId), enabled: Boolean(userId) });
   const profile = profileQ.data;
   const avatarQ = useQuery(avatarUrlQuery(profile?.avatar_url));
+  const coverQ = useQuery(coverUrlQuery(profile?.cover_url));
+  const studio = useFeatureStrings(profileStudioStrings);
+  const strength = profile ? profileStrength(profile) : null;
 
   useEffect(() => {
     if (profile && !profile.onboarding_complete) {
@@ -49,9 +61,16 @@ function MyProfilePage() {
         ) : !profile ? (
           <p className="py-20 text-center text-sm text-cream/60">{t.common.errorText}</p>
         ) : (
-          <div className="glass-card p-6 sm:p-8">
-            <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-              <div className="h-28 w-28 shrink-0 overflow-hidden rounded-full border border-gold/40 bg-navy">
+          <div
+            className="glass-card overflow-hidden p-0"
+            style={{ ["--sakan-accent" as string]: profile.accent_color }}
+          >
+            <div className="relative h-32 w-full sm:h-40" style={{ background: THEME_GRADIENT[profile.profile_theme] }}>
+              {coverQ.data && <img src={coverQ.data} alt="" className="h-full w-full object-cover" />}
+            </div>
+            <div className="p-6 sm:p-8">
+            <div className="-mt-16 flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+              <div className={`relative h-28 w-28 shrink-0 overflow-hidden rounded-full bg-navy ${avatarBorderClass(profile.avatar_border)}`}>
                 {avatarQ.data ? (
                   <img
                     src={avatarQ.data}
@@ -80,6 +99,10 @@ function MyProfilePage() {
                 <p className="mt-1 text-xs text-gold">
                   {profile.is_verified ? t.profile.verified : t.profile.unverified}
                 </p>
+                <p className="mt-1 inline-flex items-center gap-2 text-xs text-cream/70">
+                  <span className={`h-2 w-2 rounded-full ${PRESENCE_DOT[profile.presence_status]}`} aria-hidden />
+                  {studio.statuses[profile.presence_status]}
+                </p>
                 <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-cream/10">
                   <div
                     className="h-full rounded-full bg-gold"
@@ -87,7 +110,7 @@ function MyProfilePage() {
                   />
                 </div>
                 <p className="mt-1 text-[11px] text-cream/50">
-                  {t.onboarding.completeness}: {profile.completeness}%
+                  {t.onboarding.completeness}: {profile.completeness}% · {studio.strength}: {strength?.score ?? 0}%
                 </p>
               </div>
             </div>
@@ -141,6 +164,9 @@ function MyProfilePage() {
               >
                 {t.profile.editTitle}
               </Link>
+              <Link to="/profile/appearance" className="btn-outline-gold px-5 py-3 text-center text-sm font-semibold">
+                {studio.open}
+              </Link>
               <button
                 onClick={async () => {
                   await signOut();
@@ -150,6 +176,7 @@ function MyProfilePage() {
               >
                 {t.profile.signOut}
               </button>
+            </div>
             </div>
           </div>
         )}

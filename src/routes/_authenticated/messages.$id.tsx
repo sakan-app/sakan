@@ -30,6 +30,7 @@ import { PinnedBanner } from "@/components/chat/PinnedBanner";
 import { SelectionBar } from "@/components/chat/SelectionBar";
 import { WallpaperPicker } from "@/components/chat/WallpaperPicker";
 import { useAuth } from "@/hooks/useAuth";
+import { myProfileQuery } from "@/lib/profile-queries";
 import { formatLastSeen, useIsOnline } from "@/hooks/usePresence";
 import { useFeatureStrings } from "@/i18n/feature";
 import { useI18n } from "@/lib/i18n";
@@ -200,7 +201,12 @@ function ConversationPage() {
 
   const infoQ = useQuery(conversationInfoQuery(id, userId));
   const messagesQ = useInfiniteQuery(messagesQuery(id));
-  const { typingUserId, sendTyping } = useConversationRealtime({ conversationId: id, userId });
+  const myProfileQ = useQuery({ ...myProfileQuery(userId), enabled: Boolean(userId) });
+  const { typingUserId, sendTyping } = useConversationRealtime({
+    conversationId: id,
+    userId,
+    hideTyping: myProfileQ.data?.hide_typing ?? false,
+  });
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);

@@ -52,6 +52,7 @@ import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-passw
 import { Route as MemberIdRouteImport } from './routes/member.$id'
 import { Route as AuthenticatedMessagesIndexRouteImport } from './routes/_authenticated/messages.index'
 import { Route as AuthenticatedMessagesIdRouteImport } from './routes/_authenticated/messages.$id'
+import { Route as AuthenticatedProfileAppearanceRouteImport } from './routes/_authenticated/profile.appearance'
 import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
 import { Route as AdminUserIdRouteImport } from './routes/admin/user.$id'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
@@ -272,6 +273,12 @@ const AuthenticatedMessagesIdRoute = AuthenticatedMessagesIdRouteImport.update({
   path: '/messages/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedProfileAppearanceRoute =
+  AuthenticatedProfileAppearanceRouteImport.update({
+    id: '/appearance',
+    path: '/appearance',
+    getParentRoute: () => AuthenticatedProfileRoute,
+  } as any)
 const AuthenticatedProfileEditRoute =
   AuthenticatedProfileEditRouteImport.update({
     id: '/edit',
@@ -331,6 +338,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/auth/': typeof AuthIndexRoute
   '/messages/$id': typeof AuthenticatedMessagesIdRoute
+  '/profile/appearance': typeof AuthenticatedProfileAppearanceRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/admin/user/$id': typeof AdminUserIdRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
@@ -377,6 +385,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/auth': typeof AuthIndexRoute
   '/messages/$id': typeof AuthenticatedMessagesIdRoute
+  '/profile/appearance': typeof AuthenticatedProfileAppearanceRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/admin/user/$id': typeof AdminUserIdRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
@@ -426,6 +435,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/auth/': typeof AuthIndexRoute
   '/_authenticated/messages/$id': typeof AuthenticatedMessagesIdRoute
+  '/_authenticated/profile/appearance': typeof AuthenticatedProfileAppearanceRoute
   '/_authenticated/profile/edit': typeof AuthenticatedProfileEditRoute
   '/admin/user/$id': typeof AdminUserIdRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
@@ -475,6 +485,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/auth/'
     | '/messages/$id'
+    | '/profile/appearance'
     | '/profile/edit'
     | '/admin/user/$id'
     | '/api/public/stripe-webhook'
@@ -521,6 +532,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/messages/$id'
+    | '/profile/appearance'
     | '/profile/edit'
     | '/admin/user/$id'
     | '/api/public/stripe-webhook'
@@ -569,6 +581,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/auth/'
     | '/_authenticated/messages/$id'
+    | '/_authenticated/profile/appearance'
     | '/_authenticated/profile/edit'
     | '/admin/user/$id'
     | '/api/public/stripe-webhook'
@@ -899,6 +912,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMessagesIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/profile/appearance': {
+      id: '/_authenticated/profile/appearance'
+      path: '/appearance'
+      fullPath: '/profile/appearance'
+      preLoaderRoute: typeof AuthenticatedProfileAppearanceRouteImport
+      parentRoute: typeof AuthenticatedProfileRoute
+    }
     '/_authenticated/profile/edit': {
       id: '/_authenticated/profile/edit'
       path: '/edit'
@@ -924,10 +944,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedProfileRouteChildren {
+  AuthenticatedProfileAppearanceRoute: typeof AuthenticatedProfileAppearanceRoute
   AuthenticatedProfileEditRoute: typeof AuthenticatedProfileEditRoute
 }
 
 const AuthenticatedProfileRouteChildren: AuthenticatedProfileRouteChildren = {
+  AuthenticatedProfileAppearanceRoute: AuthenticatedProfileAppearanceRoute,
   AuthenticatedProfileEditRoute: AuthenticatedProfileEditRoute,
 }
 

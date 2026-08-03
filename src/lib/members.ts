@@ -27,11 +27,13 @@ export type MemberView = {
   religiosity: Database["public"]["Enums"]["religiosity_level"] | null;
   heightCm: number | null;
   online: boolean;
+  /** Visible presence; invisible members are reported as offline. */
+  presenceStatus: Database["public"]["Enums"]["presence_status"] | "offline_hidden";
 };
 
 const ONLINE_WINDOW_MS = 15 * 60 * 1000;
 export const PUBLIC_COLUMNS =
-  "id, display_name, birth_date, gender, looking_for, country_code, city, bio, interests, spoken_languages, education, occupation, marital_status, religiosity, height_cm, is_verified, last_seen_at, avatar_url";
+  "id, display_name, birth_date, gender, looking_for, country_code, city, bio, interests, spoken_languages, education, occupation, marital_status, religiosity, height_cm, is_verified, last_seen_at, avatar_url, presence_status, hide_last_seen";
 
 function ageFromBirthDate(birthDate: string | null): number | null {
   if (!birthDate) return null;
@@ -61,6 +63,8 @@ export type PublicProfile = Pick<
   | "is_verified"
   | "last_seen_at"
   | "avatar_url"
+  | "presence_status"
+  | "hide_last_seen"
 >;
 
 /** Signs storage paths in bulk so private buckets can be rendered in the browser. */
@@ -135,7 +139,13 @@ export async function toMemberViews(rows: PublicProfile[]): Promise<MemberView[]
       maritalStatus: row.marital_status,
       religiosity: row.religiosity,
       heightCm: row.height_cm,
-      online: Date.now() - new Date(row.last_seen_at).getTime() < ONLINE_WINDOW_MS,
+      // Presence privacy: invisible members and members hiding last-seen never
+      // surface as online to anyone else.
+      online:
+        row.presence_status !== "invisible" &&
+        !row.hide_last_seen &&
+        Date.now() - new Date(row.last_seen_at).getTime() < ONLINE_WINDOW_MS,
+      presenceStatus: row.presence_status === "invisible" ? "offline_hidden" : row.presence_status,
     };
   });
 }

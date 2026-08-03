@@ -938,17 +938,23 @@ export type Database = {
       }
       profiles: {
         Row: {
+          accent_color: string
+          avatar_border: Database["public"]["Enums"]["avatar_border"]
           avatar_url: string | null
           bio: string | null
           birth_date: string | null
           city: string | null
           completeness: number
           country_code: string | null
+          cover_url: string | null
           created_at: string
           display_name: string
           education: string | null
           gender: Database["public"]["Enums"]["gender"] | null
+          glass_intensity: number
           height_cm: number | null
+          hide_last_seen: boolean
+          hide_typing: boolean
           id: string
           interests: string[]
           is_active: boolean
@@ -960,22 +966,30 @@ export type Database = {
           occupation: string | null
           onboarding_complete: boolean
           preferred_language: Database["public"]["Enums"]["language_code"]
+          presence_status: Database["public"]["Enums"]["presence_status"]
+          profile_theme: Database["public"]["Enums"]["profile_theme"]
           religiosity: Database["public"]["Enums"]["religiosity_level"] | null
           spoken_languages: string[]
           updated_at: string
         }
         Insert: {
+          accent_color?: string
+          avatar_border?: Database["public"]["Enums"]["avatar_border"]
           avatar_url?: string | null
           bio?: string | null
           birth_date?: string | null
           city?: string | null
           completeness?: number
           country_code?: string | null
+          cover_url?: string | null
           created_at?: string
           display_name: string
           education?: string | null
           gender?: Database["public"]["Enums"]["gender"] | null
+          glass_intensity?: number
           height_cm?: number | null
+          hide_last_seen?: boolean
+          hide_typing?: boolean
           id: string
           interests?: string[]
           is_active?: boolean
@@ -987,22 +1001,30 @@ export type Database = {
           occupation?: string | null
           onboarding_complete?: boolean
           preferred_language?: Database["public"]["Enums"]["language_code"]
+          presence_status?: Database["public"]["Enums"]["presence_status"]
+          profile_theme?: Database["public"]["Enums"]["profile_theme"]
           religiosity?: Database["public"]["Enums"]["religiosity_level"] | null
           spoken_languages?: string[]
           updated_at?: string
         }
         Update: {
+          accent_color?: string
+          avatar_border?: Database["public"]["Enums"]["avatar_border"]
           avatar_url?: string | null
           bio?: string | null
           birth_date?: string | null
           city?: string | null
           completeness?: number
           country_code?: string | null
+          cover_url?: string | null
           created_at?: string
           display_name?: string
           education?: string | null
           gender?: Database["public"]["Enums"]["gender"] | null
+          glass_intensity?: number
           height_cm?: number | null
+          hide_last_seen?: boolean
+          hide_typing?: boolean
           id?: string
           interests?: string[]
           is_active?: boolean
@@ -1014,6 +1036,8 @@ export type Database = {
           occupation?: string | null
           onboarding_complete?: boolean
           preferred_language?: Database["public"]["Enums"]["language_code"]
+          presence_status?: Database["public"]["Enums"]["presence_status"]
+          profile_theme?: Database["public"]["Enums"]["profile_theme"]
           religiosity?: Database["public"]["Enums"]["religiosity_level"] | null
           spoken_languages?: string[]
           updated_at?: string
@@ -1288,6 +1312,7 @@ export type Database = {
     }
     Enums: {
       app_role: "user" | "moderator" | "admin" | "super_admin"
+      avatar_border: "none" | "gold" | "glow" | "gradient" | "verified"
       billing_event_type:
         | "checkout"
         | "activated"
@@ -1325,6 +1350,14 @@ export type Database = {
         | "premium"
       payment_status: "pending" | "succeeded" | "failed" | "refunded"
       photo_kind: "avatar" | "gallery" | "verification"
+      presence_status: "online" | "away" | "busy" | "dnd" | "invisible"
+      profile_theme:
+        | "navy"
+        | "aurora"
+        | "sand"
+        | "emerald"
+        | "rose"
+        | "midnight"
       religiosity_level:
         | "practicing"
         | "moderate"
@@ -1466,6 +1499,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["user", "moderator", "admin", "super_admin"],
+      avatar_border: ["none", "gold", "glow", "gradient", "verified"],
       billing_event_type: [
         "checkout",
         "activated",
@@ -1506,6 +1540,8 @@ export const Constants = {
       ],
       payment_status: ["pending", "succeeded", "failed", "refunded"],
       photo_kind: ["avatar", "gallery", "verification"],
+      presence_status: ["online", "away", "busy", "dnd", "invisible"],
+      profile_theme: ["navy", "aurora", "sand", "emerald", "rose", "midnight"],
       religiosity_level: [
         "practicing",
         "moderate",
