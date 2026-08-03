@@ -19,7 +19,19 @@ import { addAdminNote, getUserDetailFull, runUserAction } from "@/lib/admin/ops.
 import { useAdminAccess } from "@/routes/admin/route";
 import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/user/$id")({ component: AdminUserDetail, errorComponent: RouteErrorBoundary });
+export const Route = createFileRoute("/admin/user/$id")({
+  head: () => ({
+    meta: [
+      { title: "User Details · SAKAN Admin" },
+      { name: "description", content: "Review a member's profile, subscription and activity." },
+      { property: "og:title", content: "User Details · SAKAN Admin" },
+      { property: "og:description", content: "Review a member's profile, subscription and activity." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
+  component: AdminUserDetail,
+  errorComponent: RouteErrorBoundary,
+});
 
 function AdminUserDetail() {
   const { id } = Route.useParams();
