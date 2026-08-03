@@ -79,6 +79,7 @@ type ConversationHeaderInfo = {
   otherName: string;
   otherAvatarUrl: string | null;
   otherLastSeenAt: string | null;
+  otherPresence: "online" | "away" | "busy" | "dnd" | "invisible" | null;
   otherVerified: boolean;
   compatibilityScore: number | null;
 };
