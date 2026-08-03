@@ -583,6 +583,36 @@ in Arabic, English, German and French.
 
 ---
 
+## 27. Documentation
+
+Full engineering documentation lives in [`docs/`](./docs). This README stays the entry point;
+the documents below are the authoritative reference for each area.
+
+| Document | Contents |
+|---|---|
+| [ARCHITECTURE.md](./docs/ARCHITECTURE.md) | System, frontend, backend, realtime, rendering and caching architecture |
+| [FOLDER_STRUCTURE.md](./docs/FOLDER_STRUCTURE.md) | Directory responsibilities and naming conventions |
+| [ROUTES.md](./docs/ROUTES.md) | Every public, authenticated, admin and API route |
+| [SERVER_FUNCTIONS.md](./docs/SERVER_FUNCTIONS.md) | Every `*.functions.ts` module, validation and permissions |
+| [API.md](./docs/API.md) | Server-function transport and public HTTP endpoints |
+| [DATABASE.md](./docs/DATABASE.md) | Tables, policies, triggers, functions and usage |
+| [DATABASE_SCHEMA.md](./docs/DATABASE_SCHEMA.md) | Complete ER diagram |
+| [SECURITY.md](./docs/SECURITY.md) | Auth, RLS, roles, secrets, rate limiting, threat model |
+| [BILLING.md](./docs/BILLING.md) | Stripe checkout, portal, webhooks, entitlements |
+| [AI.md](./docs/AI.md) | AI gateway, prompts, moderation, matchmaking |
+| [PWA.md](./docs/PWA.md) | Service worker, caching, push, offline queue |
+| [ADMIN.md](./docs/ADMIN.md) | Admin back office and audit logging |
+| [FEATURES.md](./docs/FEATURES.md) | Feature catalogue with flows and dependencies |
+| [TRANSLATIONS.md](./docs/TRANSLATIONS.md) | i18n architecture, RTL and fallbacks |
+| [DEPLOYMENT.md](./docs/DEPLOYMENT.md) | Build, environment, secrets, rollback, monitoring |
+| [TESTING.md](./docs/TESTING.md) | Manual QA, regression, accessibility, offline and security tests |
+| [CONTRIBUTING.md](./docs/CONTRIBUTING.md) | Engineering standards and review checklist |
+| [CHANGELOG.md](./docs/CHANGELOG.md) | Semantic version history |
+| [ROADMAP.md](./docs/ROADMAP.md) | Implemented baseline versus planned work |
+| [KNOWN_LIMITATIONS.md](./docs/KNOWN_LIMITATIONS.md) | Confirmed limitations in the current code |
+
+---
+
 <div align="center">
 
 **© SAKAN 2026 — All rights reserved.**
