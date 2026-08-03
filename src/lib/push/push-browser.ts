@@ -154,6 +154,40 @@ export async function resubscribePush(oldEndpoint: string | null): Promise<void>
 }
 
 /** Fire-and-forget install funnel analytics. */
+/**
+ * Self-heals the browser↔database link. If the user already granted
+ * permission, this re-persists (or re-creates) the subscription so the
+ * dispatcher can actually find a device row. Never prompts.
+ */
+export async function syncPushSubscription(): Promise<void> {
+  if (!pushSupported()) return;
+  if (Notification.permission !== "granted") return;
+  if (typeof navigator !== "undefined" && navigator.onLine === false) return;
+  try {
+    const config = await getPushConfig();
+    if (!config.configured || !config.publicKey) return;
+
+    const registration = await activeRegistration();
+    let subscription = await registration.pushManager.getSubscription();
+    if (subscription && !sameApplicationServerKey(subscription, config.publicKey)) {
+      await deletePushSubscription({ data: { endpoint: subscription.endpoint } }).catch(
+        () => undefined,
+      );
+      await subscription.unsubscribe().catch(() => undefined);
+      subscription = null;
+    }
+    if (!subscription) {
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: base64UrlToUint8Array(config.publicKey) as BufferSource,
+      });
+    }
+    await savePushSubscription({ data: serialize(subscription) });
+  } catch (error) {
+    console.warn("[push] subscription sync skipped", error);
+  }
+}
+
 export async function logInstallEvent(
   eventType: "prompt_shown" | "accepted" | "dismissed" | "installed",
 ): Promise<void> {
