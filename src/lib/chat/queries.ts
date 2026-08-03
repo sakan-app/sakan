@@ -331,6 +331,7 @@ export async function editMessage(
   args: { conversationId: string; messageId: string; body: string },
 ) {
   const editedAt = new Date().toISOString();
+  const previous = readMessageFromCache(queryClient, args.conversationId, args.messageId);
   patchMessageInCache(queryClient, args.conversationId, args.messageId, {
     body: args.body,
     edited_at: editedAt,
@@ -339,7 +340,17 @@ export async function editMessage(
     .from("messages")
     .update({ body: args.body, edited_at: editedAt })
     .eq("id", args.messageId);
-  if (error) throw error;
+  if (error) {
+    // Roll the optimistic patch back so the bubble stops showing an edit that
+    // never reached the database.
+    if (previous) {
+      patchMessageInCache(queryClient, args.conversationId, args.messageId, {
+        body: previous.body,
+        edited_at: previous.edited_at,
+      });
+    }
+    throw error;
+  }
 }
 
 export async function deleteMessageForEveryone(
@@ -347,16 +358,28 @@ export async function deleteMessageForEveryone(
   args: { conversationId: string; messageId: string },
 ) {
   const deletedAt = new Date().toISOString();
+  const previous = readMessageFromCache(queryClient, args.conversationId, args.messageId);
   patchMessageInCache(queryClient, args.conversationId, args.messageId, {
     deleted_at: deletedAt,
     body: "",
     pinned_at: null,
   });
+  // The messages_body_len check requires 1..4000 characters, so a tombstone
+  // must clear the body to NULL — an empty string is rejected (23514).
   const { error } = await supabase
     .from("messages")
-    .update({ deleted_at: deletedAt, body: "", pinned_at: null, pinned_by: null })
+    .update({ deleted_at: deletedAt, body: null, pinned_at: null, pinned_by: null })
     .eq("id", args.messageId);
-  if (error) throw error;
+  if (error) {
+    if (previous) {
+      patchMessageInCache(queryClient, args.conversationId, args.messageId, {
+        deleted_at: previous.deleted_at,
+        body: previous.body,
+        pinned_at: previous.pinned_at,
+      });
+    }
+    throw error;
+  }
 }
 
 export async function deleteMessageForMe(
@@ -383,6 +406,7 @@ export async function setMessagePinned(
   args: { conversationId: string; messageId: string; userId: string; pinned: boolean },
 ) {
   const pinnedAt = args.pinned ? new Date().toISOString() : null;
+  const previous = readMessageFromCache(queryClient, args.conversationId, args.messageId);
   patchMessageInCache(queryClient, args.conversationId, args.messageId, {
     pinned_at: pinnedAt,
     pinned_by: args.pinned ? args.userId : null,
@@ -391,7 +415,15 @@ export async function setMessagePinned(
     .from("messages")
     .update({ pinned_at: pinnedAt, pinned_by: args.pinned ? args.userId : null })
     .eq("id", args.messageId);
-  if (error) throw error;
+  if (error) {
+    if (previous) {
+      patchMessageInCache(queryClient, args.conversationId, args.messageId, {
+        pinned_at: previous.pinned_at,
+        pinned_by: previous.pinned_by,
+      });
+    }
+    throw error;
+  }
 }
 
 export function pinnedMessagesQuery(conversationId: string) {
