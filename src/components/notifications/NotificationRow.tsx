@@ -3,6 +3,8 @@ import { Archive, ArchiveRestore, Check, Trash2 } from "lucide-react";
 
 import type { NotificationItem } from "@/hooks/useNotifications";
 import { NOTIFICATION_ICONS, haptic } from "@/lib/notifications/shared";
+import { PresenceIndicator, resolvePresence } from "@/components/presence/PresenceIndicator";
+import { useIsAway, useIsOnline } from "@/hooks/usePresence";
 
 type Props = {
   item: NotificationItem;
@@ -37,6 +39,9 @@ function NotificationRowBase({
   const startX = useRef<number | null>(null);
   const armed = useRef(false);
   const Icon = NOTIFICATION_ICONS[item.type];
+  const actorOnline = useIsOnline(item.actor?.id, item.actor?.lastSeenAt);
+  const actorAway = useIsAway(item.actor?.id);
+  const actorPresence = resolvePresence(item.actor?.presenceStatus, actorOnline, actorAway);
 
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     if (e.pointerType === "mouse") return;
@@ -109,6 +114,7 @@ function NotificationRowBase({
             ) : (
               <Icon className="h-5 w-5 text-gold" aria-hidden />
             )}
+            {item.actor && <PresenceIndicator state={actorPresence} overlay hideOffline />}
           </span>
           <span className="min-w-0 flex-1">
             <span className="block truncate text-sm font-bold text-cream">{item.title}</span>

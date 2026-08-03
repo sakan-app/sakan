@@ -13,7 +13,14 @@ import { socialStrings } from "@/lib/social/strings";
 export type NotificationType = Database["public"]["Enums"]["notification_type"];
 export type NotificationRow = Database["public"]["Tables"]["notifications"]["Row"];
 
-export type NotificationActor = { id: string; name: string; avatarUrl: string | null };
+export type NotificationActor = {
+  id: string;
+  name: string;
+  avatarUrl: string | null;
+  /** Visible presence (invisible/hidden members are reported as null). */
+  presenceStatus: "online" | "away" | "busy" | "dnd" | "invisible" | null;
+  lastSeenAt: string | null;
+};
 
 export type NotificationItem = {
   id: string;
@@ -41,7 +48,7 @@ async function attachActors(rows: NotificationRow[]): Promise<NotificationItem[]
   if (actorIds.length > 0) {
     const { data } = await supabase
       .from("profiles")
-      .select("id, display_name, avatar_url")
+      .select("id, display_name, avatar_url, presence_status, hide_last_seen, last_seen_at")
       .in("id", actorIds);
     const paths = (data ?? []).map((p) => p.avatar_url).filter((p): p is string => Boolean(p));
     let urlByPath = new Map<string, string>();
@@ -52,7 +59,13 @@ async function attachActors(rows: NotificationRow[]): Promise<NotificationItem[]
     actorsById = new Map(
       (data ?? []).map((p) => [
         p.id,
-        { id: p.id, name: p.display_name, avatarUrl: p.avatar_url ? urlByPath.get(p.avatar_url) ?? null : null },
+        {
+          id: p.id,
+          name: p.display_name,
+          avatarUrl: p.avatar_url ? urlByPath.get(p.avatar_url) ?? null : null,
+          presenceStatus: p.presence_status === "invisible" ? null : p.presence_status,
+          lastSeenAt: p.hide_last_seen ? null : p.last_seen_at,
+        },
       ]),
     );
   }

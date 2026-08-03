@@ -32,7 +32,8 @@ import { WallpaperPicker } from "@/components/chat/WallpaperPicker";
 import { AiSuggestBar } from "@/components/chat/AiSuggestBar";
 import { useAuth } from "@/hooks/useAuth";
 import { myProfileQuery } from "@/lib/profile-queries";
-import { formatLastSeen, useIsOnline } from "@/hooks/usePresence";
+import { formatLastSeen, useIsAway, useIsOnline } from "@/hooks/usePresence";
+import { PresenceIndicator, resolvePresence } from "@/components/presence/PresenceIndicator";
 import { useFeatureStrings } from "@/i18n/feature";
 import { useI18n } from "@/lib/i18n";
 import { chatStrings } from "@/lib/chat/strings";
@@ -96,7 +97,7 @@ function conversationInfoQuery(conversationId: string, userId: string) {
       if (conv.user_low !== userId && conv.user_high !== userId) return null;
       const { data: profile } = await supabase
         .from("profiles")
-        .select("id, display_name, avatar_url, last_seen_at, is_verified")
+        .select("id, display_name, avatar_url, last_seen_at, is_verified, presence_status, hide_last_seen")
         .eq("id", otherUserId)
         .maybeSingle();
       const avatarUrl = profile?.avatar_url ? await signStoragePath("avatars", profile.avatar_url) : null;
@@ -112,7 +113,9 @@ function conversationInfoQuery(conversationId: string, userId: string) {
         otherUserId,
         otherName: profile?.display_name ?? "",
         otherAvatarUrl: avatarUrl,
-        otherLastSeenAt: profile?.last_seen_at ?? null,
+        otherLastSeenAt: profile?.hide_last_seen ? null : (profile?.last_seen_at ?? null),
+        otherPresence:
+          !profile || profile.presence_status === "invisible" ? null : profile.presence_status,
         otherVerified: Boolean(profile?.is_verified),
         compatibilityScore: compat?.score ?? null,
       };
@@ -245,6 +248,8 @@ function ConversationPage() {
   );
   const messageMap = useMemo(() => new Map(messages.map((m) => [m.id, m])), [messages]);
   const online = useIsOnline(infoQ.data?.otherUserId, infoQ.data?.otherLastSeenAt);
+  const headerAway = useIsAway(infoQ.data?.otherUserId);
+  const headerPresence = resolvePresence(infoQ.data?.otherPresence, online, headerAway);
   const pinned = useMemo(
     () =>
       messages
@@ -699,8 +704,11 @@ function ConversationPage() {
                 </span>
               )}
             </p>
-            <p className="truncate text-[11px] text-cream/50">
-              {typingUserId ? s.typing : formatLastSeen(locale, info.otherLastSeenAt, online)}
+            <p className="flex items-center gap-1.5 truncate text-[11px] text-cream/60">
+              <PresenceIndicator state={headerPresence} size="sm" />
+              <span className="truncate">
+                {typingUserId ? s.typing : formatLastSeen(locale, info.otherLastSeenAt, online)}
+              </span>
             </p>
           </div>
           <button
