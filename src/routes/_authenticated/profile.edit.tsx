@@ -1,3 +1,4 @@
+import { BioAssistant } from "@/components/profile/BioAssistant";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Camera, Loader2, Trash2, UserRound } from "lucide-react";
@@ -531,6 +532,7 @@ function EditProfilePage() {
                 value={form.bio}
                 onChange={(e) => set("bio", e.target.value)}
               />
+              <BioAssistant onApply={(bio) => set("bio", bio.slice(0, 1200))} />
             </Field>
 
             <Field label={t.onboarding.interests} id="interests" hint={t.onboarding.interestsHint}>

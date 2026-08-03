@@ -9,6 +9,8 @@ import type { ChatMessage, MessageRow } from "@/lib/chat/types";
 type UseConversationRealtimeArgs = {
   conversationId: string;
   userId: string;
+  /** When true, this member's typing events are never broadcast. */
+  hideTyping?: boolean;
 };
 
 function upsertPage(
@@ -47,7 +49,7 @@ function upsertPage(
  * broadcast/presence channel used for the typing indicator. Cache writes are
  * targeted (no list refetch) and the channel is torn down on unmount.
  */
-export function useConversationRealtime({ conversationId, userId }: UseConversationRealtimeArgs) {
+export function useConversationRealtime({ conversationId, userId, hideTyping = false }: UseConversationRealtimeArgs) {
   const queryClient = useQueryClient();
   const [typingUserId, setTypingUserId] = useState<string | null>(null);
   const typingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -98,6 +100,7 @@ export function useConversationRealtime({ conversationId, userId }: UseConversat
   }, [conversationId, userId, queryClient]);
 
   function sendTyping() {
+    if (hideTyping) return;
     channelRef.current?.send({ type: "broadcast", event: "typing", payload: { userId } });
   }
 

@@ -33,6 +33,8 @@ type ComposerProps = {
   replyToName?: string;
   onCancelReply?: () => void;
   focusToken?: number;
+  /** Text pushed in from outside (AI suggestions); token forces re-apply. */
+  draft?: { text: string; token: number } | null;
 };
 
 export function Composer({
@@ -45,6 +47,7 @@ export function Composer({
   replyToName,
   onCancelReply,
   focusToken,
+  draft,
 }: ComposerProps) {
   const { user } = useAuth();
   const [text, setText] = useState("");
@@ -58,6 +61,12 @@ export function Composer({
   useEffect(() => {
     if (focusToken) textareaRef.current?.focus();
   }, [focusToken]);
+
+  useEffect(() => {
+    if (!draft?.token) return;
+    setText(draft.text);
+    textareaRef.current?.focus();
+  }, [draft?.token, draft?.text]);
 
   function autoGrow(el: HTMLTextAreaElement) {
     el.style.height = "auto";
