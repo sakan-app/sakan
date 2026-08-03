@@ -134,10 +134,10 @@ function Index() {
                   <label className="mb-2 block text-xs font-semibold text-cream/80">{t.home.iAm}</label>
                   <div className="flex gap-2">
                     <button type="button" className={genderBtn(iAm === "male")} onClick={() => setIAm("male")}>
-                      <User className="h-4 w-4" /> {t.home.male}
+                      <User className="h-4 w-4 shrink-0" /> <span className="truncate">{t.home.male}</span>
                     </button>
                     <button type="button" className={genderBtn(iAm === "female")} onClick={() => setIAm("female")}>
-                      <User className="h-4 w-4" /> {t.home.female}
+                      <User className="h-4 w-4 shrink-0" /> <span className="truncate">{t.home.female}</span>
                     </button>
                   </div>
                 </div>
@@ -145,10 +145,10 @@ function Index() {
                   <label className="mb-2 block text-xs font-semibold text-cream/80">{t.home.lookingFor}</label>
                   <div className="flex gap-2">
                     <button type="button" className={genderBtn(lookingFor === "male")} onClick={() => setLookingFor("male")}>
-                      <User className="h-4 w-4" /> {t.home.male}
+                      <User className="h-4 w-4 shrink-0" /> <span className="truncate">{t.home.male}</span>
                     </button>
                     <button type="button" className={genderBtn(lookingFor === "female")} onClick={() => setLookingFor("female")}>
-                      <User className="h-4 w-4" /> {t.home.female}
+                      <User className="h-4 w-4 shrink-0" /> <span className="truncate">{t.home.female}</span>
                     </button>
                   </div>
                 </div>
