@@ -2,21 +2,28 @@ import { useEffect, useState } from "react";
 import { Download, X } from "lucide-react";
 import { useFeatureStrings } from "@/i18n/feature";
 import { pwaStrings } from "@/components/pwa/pwa.strings";
-import { clearDeferredInstallPrompt, getDeferredInstallPrompt } from "@/components/pwa/PwaProvider";
+import {
+  clearDeferredInstallPrompt,
+  getDeferredInstallPrompt,
+  isAppInstalled,
+} from "@/components/pwa/PwaProvider";
+import { logInstallEvent } from "@/lib/push/push.client";
 
 const DISMISS_KEY = "sakan-install-dismissed";
+/** Re-offer the install after a week instead of never again. */
+const DISMISS_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 function isIos(): boolean {
   if (typeof navigator === "undefined") return false;
   return /iphone|ipad|ipod/i.test(navigator.userAgent);
 }
 
-function isStandalone(): boolean {
-  if (typeof window === "undefined") return false;
-  return (
-    window.matchMedia("(display-mode: standalone)").matches ||
-    (window.navigator as unknown as { standalone?: boolean }).standalone === true
-  );
+function recentlyDismissed(): boolean {
+  const stored = window.localStorage.getItem(DISMISS_KEY);
+  if (!stored) return false;
+  const at = Number(stored);
+  if (!Number.isFinite(at)) return true; // legacy "1" value
+  return Date.now() - at < DISMISS_TTL_MS;
 }
 
 export function InstallPrompt() {
@@ -26,14 +33,18 @@ export function InstallPrompt() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const dismissed = window.localStorage.getItem(DISMISS_KEY);
-    if (dismissed || isStandalone()) return;
+    // Never nag someone who already installed the app.
+    if (recentlyDismissed() || isAppInstalled()) return;
 
     function onInstallAvailable() {
       setVisible(true);
     }
+    function onInstalled() {
+      setVisible(false);
+    }
 
     window.addEventListener("sakan:install-available", onInstallAvailable);
+    window.addEventListener("sakan:app-installed", onInstalled);
 
     if (getDeferredInstallPrompt()) {
       setVisible(true);
@@ -42,10 +53,14 @@ export function InstallPrompt() {
       return () => {
         window.clearTimeout(timer);
         window.removeEventListener("sakan:install-available", onInstallAvailable);
+        window.removeEventListener("sakan:app-installed", onInstalled);
       };
     }
 
-    return () => window.removeEventListener("sakan:install-available", onInstallAvailable);
+    return () => {
+      window.removeEventListener("sakan:install-available", onInstallAvailable);
+      window.removeEventListener("sakan:app-installed", onInstalled);
+    };
   }, []);
 
   if (!visible) return null;
@@ -53,14 +68,16 @@ export function InstallPrompt() {
   function dismiss() {
     setVisible(false);
     setShowIosInstructions(false);
-    window.localStorage.setItem(DISMISS_KEY, "1");
+    window.localStorage.setItem(DISMISS_KEY, String(Date.now()));
+    void logInstallEvent("dismissed");
   }
 
   async function handleInstall() {
     const prompt = getDeferredInstallPrompt();
     if (prompt) {
       await prompt.prompt();
-      await prompt.userChoice;
+      const choice = await prompt.userChoice;
+      void logInstallEvent(choice.outcome === "accepted" ? "accepted" : "dismissed");
       clearDeferredInstallPrompt();
       setVisible(false);
       return;

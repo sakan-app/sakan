@@ -56,6 +56,13 @@ export interface PwaStrings {
   offlineTitle: string;
   offlineBody: string;
   offlineRetry: string;
+  installedTitle: string;
+  pushTitle: string;
+  pushBlocked: string;
+  pushUnsupported: string;
+  pushEnabled: string;
+  pushTest: string;
+  version: string;
 }
 
 export const pwaStrings: FeatureDictionary<PwaStrings> = {
@@ -71,6 +78,13 @@ export const pwaStrings: FeatureDictionary<PwaStrings> = {
     offlineTitle: "لا يوجد اتصال بالإنترنت",
     offlineBody: "يبدو أنك غير متصل حالياً. تحقق من الاتصال وحاول مرة أخرى.",
     offlineRetry: "إعادة المحاولة",
+    installedTitle: "التطبيق مثبّت بالفعل",
+    pushTitle: "الإشعارات الفورية",
+    pushBlocked: "الإشعارات محظورة في إعدادات المتصفح",
+    pushUnsupported: "غير مدعوم على هذا الجهاز",
+    pushEnabled: "مفعّلة على هذا الجهاز",
+    pushTest: "إرسال إشعار تجريبي",
+    version: "الإصدار",
   },
   en: {
     updateAvailable: "A new SAKAN update is available",
@@ -84,6 +98,13 @@ export const pwaStrings: FeatureDictionary<PwaStrings> = {
     offlineTitle: "You're offline",
     offlineBody: "It looks like you have no connection. Check it and try again.",
     offlineRetry: "Retry",
+    installedTitle: "App already installed",
+    pushTitle: "Push notifications",
+    pushBlocked: "Notifications are blocked in your browser settings",
+    pushUnsupported: "Not supported on this device",
+    pushEnabled: "Enabled on this device",
+    pushTest: "Send a test notification",
+    version: "Version",
   },
   de: {
     updateAvailable: "Ein neues SAKAN-Update ist verfügbar",
@@ -97,6 +118,13 @@ export const pwaStrings: FeatureDictionary<PwaStrings> = {
     offlineTitle: "Du bist offline",
     offlineBody: "Es scheint keine Verbindung zu bestehen. Bitte erneut versuchen.",
     offlineRetry: "Erneut versuchen",
+    installedTitle: "App bereits installiert",
+    pushTitle: "Push-Benachrichtigungen",
+    pushBlocked: "Benachrichtigungen sind im Browser blockiert",
+    pushUnsupported: "Auf diesem Gerät nicht unterstützt",
+    pushEnabled: "Auf diesem Gerät aktiviert",
+    pushTest: "Testbenachrichtigung senden",
+    version: "Version",
   },
   fr: {
     updateAvailable: "Une nouvelle mise à jour de SAKAN est disponible",
@@ -110,5 +138,12 @@ export const pwaStrings: FeatureDictionary<PwaStrings> = {
     offlineTitle: "Aucune connexion",
     offlineBody: "Il semble que vous soyez hors ligne. Vérifiez votre connexion et réessayez.",
     offlineRetry: "Réessayer",
+    installedTitle: "Application déjà installée",
+    pushTitle: "Notifications push",
+    pushBlocked: "Les notifications sont bloquées dans le navigateur",
+    pushUnsupported: "Non pris en charge sur cet appareil",
+    pushEnabled: "Activées sur cet appareil",
+    pushTest: "Envoyer une notification test",
+    version: "Version",
   },
 };

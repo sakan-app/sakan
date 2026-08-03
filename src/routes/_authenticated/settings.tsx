@@ -16,6 +16,7 @@ import {
 import { useEffect, useState } from "react";
 
 import { GlassCard, Screen } from "@/components/app/AppShell";
+import { PushToggle, VersionIndicator } from "@/components/pwa/PushToggle";
 import { shellStrings } from "@/components/app/shell.strings";
 import { WallpaperPicker } from "@/components/chat/WallpaperPicker";
 import { resolveSettings, wallpapersQuery } from "@/lib/chat/wallpaper-queries";
@@ -183,6 +184,7 @@ function SettingsPage() {
           value={wallpaperLabel}
           onClick={() => setWallpaperOpen(true)}
         />
+        <PushToggle />
       </Group>
 
       <Group title={s.billing}>
@@ -227,9 +229,7 @@ function SettingsPage() {
         <Row icon={LogOut} label={s.signOut} onClick={handleSignOut} danger />
       </Group>
 
-      <p className="mt-6 pb-4 text-center text-[11px] text-cream/35">
-        SAKAN · <span className="latin">v1.0</span>
-      </p>
+      <VersionIndicator />
 
       {wallpaperOpen && (
         <WallpaperPicker

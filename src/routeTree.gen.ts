@@ -55,6 +55,7 @@ import { Route as AuthenticatedMessagesIdRouteImport } from './routes/_authentic
 import { Route as AuthenticatedProfileAppearanceRouteImport } from './routes/_authenticated/profile.appearance'
 import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
 import { Route as AdminUserIdRouteImport } from './routes/admin/user.$id'
+import { Route as ApiPublicPushDispatchRouteImport } from './routes/api/public/push-dispatch'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
 
 const IndexRoute = IndexRouteImport.update({
@@ -290,6 +291,11 @@ const AdminUserIdRoute = AdminUserIdRouteImport.update({
   path: '/user/$id',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const ApiPublicPushDispatchRoute = ApiPublicPushDispatchRouteImport.update({
+  id: '/api/public/push-dispatch',
+  path: '/api/public/push-dispatch',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   id: '/api/public/stripe-webhook',
   path: '/api/public/stripe-webhook',
@@ -341,6 +347,7 @@ export interface FileRoutesByFullPath {
   '/profile/appearance': typeof AuthenticatedProfileAppearanceRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/admin/user/$id': typeof AdminUserIdRoute
+  '/api/public/push-dispatch': typeof ApiPublicPushDispatchRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/messages/': typeof AuthenticatedMessagesIndexRoute
 }
@@ -388,6 +395,7 @@ export interface FileRoutesByTo {
   '/profile/appearance': typeof AuthenticatedProfileAppearanceRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/admin/user/$id': typeof AdminUserIdRoute
+  '/api/public/push-dispatch': typeof ApiPublicPushDispatchRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/messages': typeof AuthenticatedMessagesIndexRoute
 }
@@ -438,6 +446,7 @@ export interface FileRoutesById {
   '/_authenticated/profile/appearance': typeof AuthenticatedProfileAppearanceRoute
   '/_authenticated/profile/edit': typeof AuthenticatedProfileEditRoute
   '/admin/user/$id': typeof AdminUserIdRoute
+  '/api/public/push-dispatch': typeof ApiPublicPushDispatchRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
 }
@@ -488,6 +497,7 @@ export interface FileRouteTypes {
     | '/profile/appearance'
     | '/profile/edit'
     | '/admin/user/$id'
+    | '/api/public/push-dispatch'
     | '/api/public/stripe-webhook'
     | '/messages/'
   fileRoutesByTo: FileRoutesByTo
@@ -535,6 +545,7 @@ export interface FileRouteTypes {
     | '/profile/appearance'
     | '/profile/edit'
     | '/admin/user/$id'
+    | '/api/public/push-dispatch'
     | '/api/public/stripe-webhook'
     | '/messages'
   id:
@@ -584,6 +595,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile/appearance'
     | '/_authenticated/profile/edit'
     | '/admin/user/$id'
+    | '/api/public/push-dispatch'
     | '/api/public/stripe-webhook'
     | '/_authenticated/messages/'
   fileRoutesById: FileRoutesById
@@ -606,6 +618,7 @@ export interface RootRouteChildren {
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   MemberIdRoute: typeof MemberIdRoute
   AuthIndexRoute: typeof AuthIndexRoute
+  ApiPublicPushDispatchRoute: typeof ApiPublicPushDispatchRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
 }
 
@@ -933,6 +946,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUserIdRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/api/public/push-dispatch': {
+      id: '/api/public/push-dispatch'
+      path: '/api/public/push-dispatch'
+      fullPath: '/api/public/push-dispatch'
+      preLoaderRoute: typeof ApiPublicPushDispatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/stripe-webhook': {
       id: '/api/public/stripe-webhook'
       path: '/api/public/stripe-webhook'
@@ -1047,6 +1067,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthResetPasswordRoute: AuthResetPasswordRoute,
   MemberIdRoute: MemberIdRoute,
   AuthIndexRoute: AuthIndexRoute,
+  ApiPublicPushDispatchRoute: ApiPublicPushDispatchRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
 }
 export const routeTree = rootRouteImport
