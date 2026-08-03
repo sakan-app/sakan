@@ -46,6 +46,12 @@ async function activeRegistration(timeoutMs = 10_000): Promise<ServiceWorkerRegi
   const existing = await navigator.serviceWorker.getRegistration();
   if (existing?.active) return existing;
 
+  // No worker yet (first run, or a registration that never activated): ask for
+  // one explicitly instead of waiting forever on `ready`.
+  if (!existing) {
+    await navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => undefined);
+  }
+
   const registration = await Promise.race([
     navigator.serviceWorker.ready,
     new Promise<null>((resolve) => setTimeout(() => resolve(null), timeoutMs)),
@@ -80,6 +86,12 @@ function serialize(subscription: PushSubscription) {
   };
 }
 
+function sameApplicationServerKey(subscription: PushSubscription, publicKey: string): boolean {
+  const current = subscription.options?.applicationServerKey;
+  if (!current) return true;
+  return keyToBase64Url(current as ArrayBuffer) === publicKey.replace(/=+$/, "");
+}
+
 /**
  * Asks for permission (if needed), subscribes with the server VAPID key and
  * stores the device. Returns the resulting state.
@@ -97,7 +109,14 @@ export async function enablePush(): Promise<PushState> {
   if (permission !== "granted") return permission === "denied" ? "denied" : "prompt";
 
   const registration = await activeRegistration();
-  const existing = await registration.pushManager.getSubscription();
+  let existing = await registration.pushManager.getSubscription();
+  // A subscription created with a different VAPID key is silently rejected by
+  // the push service (403) — drop it and mint a new one.
+  if (existing && !sameApplicationServerKey(existing, config.publicKey)) {
+    await deletePushSubscription({ data: { endpoint: existing.endpoint } }).catch(() => undefined);
+    await existing.unsubscribe().catch(() => undefined);
+    existing = null;
+  }
   const subscription =
     existing ??
     (await registration.pushManager.subscribe({
@@ -135,6 +154,40 @@ export async function resubscribePush(oldEndpoint: string | null): Promise<void>
 }
 
 /** Fire-and-forget install funnel analytics. */
+/**
+ * Self-heals the browser↔database link. If the user already granted
+ * permission, this re-persists (or re-creates) the subscription so the
+ * dispatcher can actually find a device row. Never prompts.
+ */
+export async function syncPushSubscription(): Promise<void> {
+  if (!pushSupported()) return;
+  if (Notification.permission !== "granted") return;
+  if (typeof navigator !== "undefined" && navigator.onLine === false) return;
+  try {
+    const config = await getPushConfig();
+    if (!config.configured || !config.publicKey) return;
+
+    const registration = await activeRegistration();
+    let subscription = await registration.pushManager.getSubscription();
+    if (subscription && !sameApplicationServerKey(subscription, config.publicKey)) {
+      await deletePushSubscription({ data: { endpoint: subscription.endpoint } }).catch(
+        () => undefined,
+      );
+      await subscription.unsubscribe().catch(() => undefined);
+      subscription = null;
+    }
+    if (!subscription) {
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: base64UrlToUint8Array(config.publicKey) as BufferSource,
+      });
+    }
+    await savePushSubscription({ data: serialize(subscription) });
+  } catch (error) {
+    console.warn("[push] subscription sync skipped", error);
+  }
+}
+
 export async function logInstallEvent(
   eventType: "prompt_shown" | "accepted" | "dismissed" | "installed",
 ): Promise<void> {

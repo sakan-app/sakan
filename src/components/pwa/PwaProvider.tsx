@@ -5,7 +5,8 @@ import { flushOutbox, installOfflineWriteInterceptor } from "@/lib/outbox";
 import { installAudioUnlock } from "@/lib/audio/engine";
 import { startServiceWorker } from "@/lib/pwa/register";
 import { setAppBadge } from "@/lib/pwa/badge";
-import { logInstallEvent, resubscribePush } from "@/lib/push/push-browser";
+import { logInstallEvent, resubscribePush, syncPushSubscription } from "@/lib/push/push-browser";
+import { supabase } from "@/integrations/supabase/client";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -81,6 +82,31 @@ export function PwaProvider({ children }: { children: ReactNode }) {
 
   // Single registration point for the Workbox service worker.
   useEffect(() => startServiceWorker(), []);
+
+  // Self-heal push: if permission is granted but the device row is missing
+  // (cleared storage, rotated endpoint, failed first save), re-persist it so
+  // background notifications keep working while the app is closed.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    let cancelled = false;
+
+    const sync = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (cancelled || !data.session?.user) return;
+      await syncPushSubscription();
+    };
+
+    const timer = window.setTimeout(() => void sync(), 2500);
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN") void sync();
+    });
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+      sub.subscription.unsubscribe();
+    };
+  }, []);
 
   // Install prompt capture + install analytics.
   useEffect(() => {

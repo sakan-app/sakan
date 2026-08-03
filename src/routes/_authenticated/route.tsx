@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import { AppShell } from "@/components/app/AppShell";
-import { supabase } from "@/integrations/supabase/client";
+import { resolveGuardUser } from "@/lib/auth/offline-session";
 import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -10,9 +10,10 @@ export const Route = createFileRoute("/_authenticated")({
     meta: [{ name: "robots", content: "noindex, nofollow" }],
   }),
   beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) throw redirect({ to: "/auth" });
-    return { user: data.user };
+    // Offline-tolerant: a missing network must not look like a signed-out user.
+    const user = await resolveGuardUser();
+    if (!user) throw redirect({ to: "/auth" });
+    return { user };
   },
   component: AppShell,
   errorComponent: RouteErrorBoundary,
