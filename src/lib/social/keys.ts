@@ -11,5 +11,6 @@ export const socialKeys = {
 
 export const notificationKeys = {
   list: (userId: string) => ["notifications", "list", userId] as const,
+  archived: (userId: string) => ["notifications", "archived", userId] as const,
   unreadCount: (userId: string) => ["notifications", "unread", userId] as const,
 };
