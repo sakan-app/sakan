@@ -195,7 +195,7 @@ function MemberProfile() {
                   </span>
                 )}
                 {member.isVerified && (
-                  <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-navy-deep/85 px-2.5 py-1 text-[11px] font-semibold text-cream">
+                  <span className="absolute end-3 top-3 flex items-center gap-1 rounded-full bg-navy-deep/85 px-2.5 py-1 text-[11px] font-semibold text-cream">
                     <BadgeCheck className="h-4 w-4 text-sky-400" /> {t.member.verified}
                   </span>
                 )}

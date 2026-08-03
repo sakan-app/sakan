@@ -176,7 +176,7 @@ function Index() {
               <div className="mt-4">
                 <label className="mb-2 block text-xs font-semibold text-cream/80">{t.home.residence}</label>
                 <div className="relative">
-                  <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gold" />
+                  <MapPin className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gold" />
                   <select className="field-navy" value={country} onChange={(e) => setCountry(e.target.value)}>
                     <option value="all">{t.home.chooseCountry}</option>
                     {COUNTRY_CODES.map((code) => (
@@ -264,7 +264,7 @@ function Index() {
                       <UserRound className="h-5 w-5 text-gold/50" />
                     </span>
                   )}
-                  <BadgeCheck className="absolute -bottom-1 -left-1 h-4 w-4 text-sky-400" />
+                  <BadgeCheck className="absolute -bottom-1 -start-1 h-4 w-4 text-sky-400" />
                 </div>
                 <div className="text-[11px] leading-4">
                   <p className="font-semibold text-cream">{m.name}، {m.age}</p>
