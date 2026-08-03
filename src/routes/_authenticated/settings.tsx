@@ -11,8 +11,9 @@ import {
   LogOut,
   ShieldCheck,
   UserRound,
+  Volume2,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { GlassCard, Screen } from "@/components/app/AppShell";
 import { shellStrings } from "@/components/app/shell.strings";
@@ -26,6 +27,20 @@ import { useFeatureStrings } from "@/i18n/feature";
 import { localeFlags, localeNames, localeOrder } from "@/i18n";
 import { useI18n } from "@/lib/i18n";
 import { RouteErrorBoundary } from "@/components/RouteError";
+import {
+  SOUND_PREF_EVENT,
+  playNotificationSound,
+  setSoundsEnabled,
+  soundsEnabled,
+} from "@/lib/notifications/sounds";
+
+/** Sound-toggle copy for the four supported locales. */
+const soundLabels = {
+  ar: "أصوات التنبيهات",
+  en: "Notification sounds",
+  de: "Benachrichtigungstöne",
+  fr: "Sons de notification",
+} as const;
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
@@ -107,6 +122,17 @@ function SettingsPage() {
   const { plan } = useSubscription();
   const navigate = useNavigate();
   const [wallpaperOpen, setWallpaperOpen] = useState(false);
+  const [sounds, setSounds] = useState(true);
+  // Read the stored preference after mount so SSR and hydration match.
+  useEffect(() => setSounds(soundsEnabled()), []);
+
+  function toggleSounds() {
+    const next = !sounds;
+    setSounds(next);
+    setSoundsEnabled(next);
+    window.dispatchEvent(new CustomEvent(SOUND_PREF_EVENT, { detail: next }));
+    if (next) playNotificationSound("message");
+  }
   const wallpapersQ = useQuery(wallpapersQuery(user?.id ?? ""));
   const globalWallpaper = resolveSettings(wallpapersQ.data, null);
   const wallpaperLabel =
@@ -125,6 +151,32 @@ function SettingsPage() {
         <Row icon={UserRound} label={s.editProfile} to="/profile/edit" />
         <Row icon={Heart} label={s.favorites} to="/favorites" />
         <Row icon={Bell} label={s.notifications} to="/notifications" />
+        <button
+          type="button"
+          role="switch"
+          aria-checked={sounds}
+          onClick={toggleSounds}
+          className="relative flex w-full items-center gap-3 px-4 py-3.5 text-start transition-colors hover:bg-white/5"
+        >
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-white/8 text-gold">
+            <Volume2 className="h-[17px] w-[17px]" />
+          </span>
+          <span className="flex-1 text-sm font-semibold text-cream">
+            {soundLabels[locale as keyof typeof soundLabels] ?? soundLabels.en}
+          </span>
+          <span
+            aria-hidden
+            className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+              sounds ? "bg-gold/80" : "bg-white/15"
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${
+                sounds ? "start-[1.375rem]" : "start-0.5"
+              }`}
+            />
+          </span>
+        </button>
         <Row
           icon={ImageIcon}
           label={ws.title}
