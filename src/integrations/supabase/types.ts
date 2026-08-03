@@ -1335,7 +1335,7 @@ export type Database = {
         | "expired"
         | "rejected"
       gender: "male" | "female"
-      language_code: "ar" | "en" | "de" | "ru" | "fr"
+      language_code: "ar" | "en" | "de" | "fr"
       log_level: "debug" | "info" | "warn" | "error"
       marital_status: "single" | "divorced" | "widowed"
       message_kind: "text" | "image" | "file"
@@ -1524,7 +1524,7 @@ export const Constants = {
         "rejected",
       ],
       gender: ["male", "female"],
-      language_code: ["ar", "en", "de", "ru", "fr"],
+      language_code: ["ar", "en", "de", "fr"],
       log_level: ["debug", "info", "warn", "error"],
       marital_status: ["single", "divorced", "widowed"],
       message_kind: ["text", "image", "file"],
