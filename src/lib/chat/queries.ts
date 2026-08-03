@@ -383,7 +383,12 @@ export async function deleteMessageForEveryone(
   // must clear the body to NULL — an empty string is rejected (23514).
   const { error } = await supabase
     .from("messages")
-    .update({ deleted_at: deletedAt, body: null, pinned_at: null, pinned_by: null })
+    .update({
+      deleted_at: deletedAt,
+      body: null as unknown as string,
+      pinned_at: null,
+      pinned_by: null,
+    })
     .eq("id", args.messageId);
   if (error) {
     if (previous) {
