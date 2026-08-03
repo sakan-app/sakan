@@ -270,7 +270,61 @@ responses, per-user rate limiting and typed error kinds.
 - Realtime: subscription, payment and billing-event changes invalidate the client cache
   instantly after checkout, renewal, cancellation or expiry.
 
-Required secrets: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (must start with `whsec_`).
+### Billing architecture
+
+| Layer | File | Role |
+| --- | --- | --- |
+| REST client | `src/lib/billing/stripe.server.ts` | fetch-based Stripe client, key resolution (live vs test), webhook signature verification |
+| Provider adapter | `src/lib/billing/provider.server.ts` | `createCheckout` / `cancel` / `resume` / `portal`; manual (CCP) fallback provider |
+| Customer mapping | `src/lib/billing/customers.server.ts` | `billing_customers` table: member ↔ `cus_…`; reverse lookup for invoices & charges |
+| Lifecycle | `src/lib/billing/billing.server.ts` | activate, cancel-at-period-end, resume, payment failure + grace, refunds, expiry sweep |
+| Event handlers | `src/lib/billing/webhook.server.ts` | one handler per Stripe event, correct object hierarchy |
+| Endpoint | `src/routes/api/public/stripe-webhook.ts` | signature check → idempotency claim → dispatch |
+| Server fns | `src/lib/billing/billing.functions.ts` | `createCheckout`, `cancelSubscription`, `resumeSubscription`, `createPortalSession` (all auth + rate limited) |
+
+### Webhook lifecycle & metadata sources
+
+Only Checkout Sessions and Subscriptions carry our metadata. Invoices and Charges never do,
+so they are resolved through the parent subscription or the customer mapping:
+
+| Event | Resolution source | Effect |
+| --- | --- | --- |
+| `checkout.session.completed` | `session.metadata` | first activation (or featured-ad publish) |
+| `invoice.paid` (`subscription_cycle`) | `invoice.subscription` → subscription metadata → `billing_customers` | renewal: extends period, records payment |
+| `invoice.payment_failed` | same as above | `past_due` + 3-day grace + in-app notification |
+| `customer.subscription.updated` | `subscription.metadata` / mappings | mirrors cancel flag, status and period end |
+| `customer.subscription.deleted` | `subscription.metadata` / mappings | access ends |
+| `charge.refunded` | `charge.invoice` → subscription, or customer mapping | payment marked refunded; full refund closes the subscription |
+
+### Idempotency & consistency
+
+- Every delivery claims a row in `webhook_events` by unique event id; duplicates are ack'd
+  without reprocessing, and failures delete the claim so Stripe's retry can reprocess.
+- Activation is additionally guarded by a payment-level idempotency ref (checkout session id
+  for the first purchase, invoice id for renewals) — concurrent retries cannot double-extend
+  a period or double-record a payment.
+- Refunds and failed payments check the existing payment row before writing.
+- Stripe's `current_period_end` is authoritative when present; local date maths is a fallback.
+
+### Renewal, grace, resume, portal
+
+- **Renewal** — driven by `invoice.paid`; plan and interval are preserved, the period is
+  extended and a payment + billing event is recorded.
+- **Failure** — grace window of 3 days (`grace_until`), status `past_due`, notification to the
+  member; a later successful payment restores `active` automatically.
+- **Resume** — calls Stripe first (`cancel_at_period_end: false`) and only then updates the
+  database, so a subscription Stripe already ended cannot be silently "resumed" locally.
+- **Portal** — `/billing` → “Manage payment & invoices” opens a Stripe Billing Portal session
+  for payment methods, invoices and cancel/resume; changes flow back through webhooks.
+
+### Scheduled jobs
+
+`public.sweep_billing_lifecycle()` runs hourly via `pg_cron` (`sakan-billing-sweep`): it moves
+lapsed subscriptions into grace, expires them when the grace window closes, and writes the
+matching billing events. No client-side refresh is required.
+
+Required secrets: `STRIPE_SECRET_KEY` (or `STRIPE_TEST_API_KEY` for test mode),
+`STRIPE_WEBHOOK_SECRET` (must start with `whsec_`).
 
 ---
 
