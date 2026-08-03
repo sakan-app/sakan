@@ -144,7 +144,7 @@ function NotificationsPage() {
         </div>
 
         <div className="relative mt-4">
-          <Search className="pointer-events-none absolute inset-y-0 start-3 my-auto h-4 w-4 text-cream/40" aria-hidden />
+          <Search className="pointer-events-none absolute inset-y-0 start-3 my-auto h-4 w-4 text-cream/60" aria-hidden />
           <input
             type="search"
             value={term}
@@ -155,14 +155,14 @@ function NotificationsPage() {
           />
         </div>
 
-        <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto pb-1">
+        <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto pb-1" role="group" aria-label={s.title}>
           {NOTIFICATION_FILTERS.map((key) => (
             <button
               key={key}
               type="button"
               aria-pressed={filter === key}
               onClick={() => setFilter(key)}
-              className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
+              className={`press whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
                 filter === key ? "bg-gold-deep text-navy" : "glass-card border-white/10 text-cream/70 hover:text-cream"
               }`}
             >
@@ -175,14 +175,14 @@ function NotificationsPage() {
           <div className="glass-card mt-4 flex flex-wrap items-center gap-2 rounded-2xl border-white/10 p-3" role="region" aria-live="polite">
             <span className="text-xs font-bold text-cream">{s.selectedCount.replace("{n}", String(selected.length))}</span>
             <div className="ms-auto flex flex-wrap gap-2">
-              <button type="button" onClick={() => setSelected(visible.map((n) => n.id))} className="btn-outline-gold px-3 py-1.5 text-[11px]">
+              <button type="button" onClick={() => setSelected(visible.map((n) => n.id))} className="press btn-outline-gold px-3 py-1.5 text-[11px]">
                 {s.selectAll}
               </button>
-              <button type="button" onClick={() => runBulk("read")} className="btn-outline-gold inline-flex items-center gap-1 px-3 py-1.5 text-[11px]">
+              <button type="button" onClick={() => runBulk("read")} className="press btn-outline-gold inline-flex items-center gap-1 px-3 py-1.5 text-[11px]">
                 <CheckCheck className="h-3.5 w-3.5" aria-hidden />
                 {s.markSelectedRead}
               </button>
-              <button type="button" onClick={() => runBulk("archive")} className="btn-outline-gold px-3 py-1.5 text-[11px]">
+              <button type="button" onClick={() => runBulk("archive")} className="press btn-outline-gold px-3 py-1.5 text-[11px]">
                 {view === "inbox" ? s.archiveSelected : s.unarchive}
               </button>
               <button
@@ -199,7 +199,7 @@ function NotificationsPage() {
           </div>
         )}
 
-        <p className="mt-3 text-[11px] text-cream/40 sm:hidden">{s.swipeHint}</p>
+        <p className="mt-3 text-[11px] text-cream/60 sm:hidden">{s.swipeHint}</p>
 
         <div className="mt-6">
           {listQ.isPending ? (
@@ -228,8 +228,8 @@ function NotificationsPage() {
             <div className="flex flex-col gap-6">
               {groups.map((group) => (
                 <section key={group.id}>
-                  <h2 className="mb-2 px-1 text-xs font-bold uppercase tracking-wide text-cream/50">{s.groups[group.id]}</h2>
-                  <ul className="flex flex-col gap-2">
+                  <h2 className="mb-2 px-1 text-xs font-bold uppercase tracking-wide text-cream/65">{s.groups[group.id]}</h2>
+                  <ul className="list-stagger flex flex-col gap-2">
                     {group.items.map((item) => (
                       <NotificationRow
                         key={item.id}

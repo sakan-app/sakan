@@ -128,13 +128,13 @@ function AppearanceStudio() {
 
   return (
     <div className="w-full" style={{ ["--sakan-accent" as string]: accent }}>
-      <main className="mx-auto w-full max-w-4xl px-5 py-8 lg:px-8">
-        <Link to="/profile" className="inline-flex items-center gap-2 text-xs text-cream/60 hover:text-cream">
+      <main className="route-enter mx-auto w-full max-w-4xl px-5 py-8 lg:px-8">
+        <Link to="/profile" className="inline-flex items-center gap-2 text-xs text-cream/70 hover:text-cream">
           <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden />
           {s.title}
         </Link>
         <h1 className="mt-3 text-2xl font-black text-cream">{s.title}</h1>
-        <p className="mt-1 text-sm text-cream/60">{s.subtitle}</p>
+        <p className="mt-1 text-sm text-cream/70">{s.subtitle}</p>
 
         {/* Live preview */}
         <section className="mt-6" aria-label={s.preview}>
@@ -183,7 +183,7 @@ function AppearanceStudio() {
           </div>
         </section>
 
-        <div className="mt-6 grid gap-4 lg:grid-cols-2">
+        <div className="list-stagger mt-6 grid gap-4 lg:grid-cols-2">
           {/* Cover */}
           <Card title={s.cover} hint={s.coverHint}>
             <div className="flex flex-wrap gap-2">
@@ -198,12 +198,12 @@ function AppearanceStudio() {
                   e.target.value = "";
                 }}
               />
-              <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="btn-gold inline-flex items-center gap-2 px-4 py-2 text-xs">
+              <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="press btn-gold inline-flex items-center gap-2 px-4 py-2 text-xs">
                 {uploading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <ImagePlus className="h-4 w-4" aria-hidden />}
                 {s.coverUpload}
               </button>
               {coverPath && (
-                <button type="button" onClick={() => setCoverPath(null)} className="btn-outline-gold inline-flex items-center gap-2 px-4 py-2 text-xs">
+                <button type="button" onClick={() => setCoverPath(null)} className="press btn-outline-gold inline-flex items-center gap-2 px-4 py-2 text-xs">
                   <Trash2 className="h-4 w-4" aria-hidden />
                   {s.coverRemove}
                 </button>
@@ -221,7 +221,7 @@ function AppearanceStudio() {
                   onClick={() => setAccent(color)}
                   aria-label={color}
                   aria-pressed={accent === color}
-                  className={`grid h-9 w-9 place-items-center rounded-full border transition ${
+                  className={`press grid h-9 w-9 place-items-center rounded-full border transition ${
                     accent === color ? "border-cream scale-110" : "border-white/20"
                   }`}
                   style={{ backgroundColor: color }}
@@ -229,7 +229,7 @@ function AppearanceStudio() {
                   {accent === color && <Check className="h-4 w-4 text-navy" aria-hidden />}
                 </button>
               ))}
-              <label className="ms-2 inline-flex items-center gap-2 text-xs text-cream/60">
+              <label className="ms-2 inline-flex items-center gap-2 text-xs text-cream/70">
                 <input
                   type="color"
                   value={accent}
@@ -250,7 +250,7 @@ function AppearanceStudio() {
                   type="button"
                   onClick={() => setTheme(key)}
                   aria-pressed={theme === key}
-                  className={`rounded-2xl border p-2 text-[11px] font-semibold text-cream transition ${
+                  className={`press rounded-2xl border p-2 text-[11px] font-semibold text-cream transition ${
                     theme === key ? "border-gold-deep" : "border-white/10 hover:border-white/25"
                   }`}
                 >
@@ -274,7 +274,7 @@ function AppearanceStudio() {
               aria-label={s.glass}
               aria-valuetext={`${glass}%`}
             />
-            <p className="mt-1 text-[11px] text-cream/50">{glass}%</p>
+            <p className="mt-1 text-[11px] text-cream/65">{glass}%</p>
 
             <h3 className="mt-5 text-xs font-bold text-gold">{s.border}</h3>
             <div className="mt-2 flex flex-wrap gap-2">
@@ -284,7 +284,7 @@ function AppearanceStudio() {
                   type="button"
                   onClick={() => setBorder(key)}
                   aria-pressed={border === key}
-                  className={`rounded-full px-3 py-1.5 text-[11px] font-semibold transition ${
+                  className={`press rounded-full px-3 py-1.5 text-[11px] font-semibold transition ${
                     border === key ? "bg-gold-deep text-navy" : "glass-card border-white/10 text-cream/70"
                   }`}
                 >
@@ -303,7 +303,7 @@ function AppearanceStudio() {
                   type="button"
                   onClick={() => setStatus(key)}
                   aria-pressed={status === key}
-                  className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-semibold transition ${
+                  className={`press inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-semibold transition ${
                     status === key ? "bg-gold-deep text-navy" : "glass-card border-white/10 text-cream/70"
                   }`}
                 >
@@ -329,7 +329,7 @@ function AppearanceStudio() {
                 style={{ width: `${strength?.score ?? 0}%`, backgroundColor: accent }}
               />
             </div>
-            <p className="mt-1 text-[11px] text-cream/50">{strength?.score ?? 0}%</p>
+            <p className="mt-1 text-[11px] text-cream/65">{strength?.score ?? 0}%</p>
             <ul className="mt-3 grid gap-1.5 sm:grid-cols-2">
               {strength?.segments.map((seg) => (
                 <li key={seg.key} className="flex items-center gap-2 text-xs">
@@ -339,7 +339,7 @@ function AppearanceStudio() {
                   >
                     <Check className="h-3 w-3" />
                   </span>
-                  <span className={seg.done ? "text-cream/80" : "text-cream/50"}>{s.strengthItems[seg.key]}</span>
+                  <span className={seg.done ? "text-cream/80" : "text-cream/65"}>{s.strengthItems[seg.key]}</span>
                 </li>
               ))}
             </ul>
@@ -355,7 +355,7 @@ function AppearanceStudio() {
             type="button"
             onClick={() => save.mutate()}
             disabled={save.isPending}
-            className="btn-gold inline-flex items-center gap-2 px-6 py-3 text-sm font-bold shadow-lg"
+            className="press btn-gold inline-flex items-center gap-2 px-6 py-3 text-sm font-bold shadow-lg"
           >
             {save.isPending && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
             {save.isPending ? s.saving : s.save}
@@ -370,7 +370,7 @@ function Card({ title, hint, children }: { title: string; hint?: string; childre
   return (
     <section className="glass-card rounded-3xl border-white/10 p-5">
       <h2 className="text-sm font-bold text-gold">{title}</h2>
-      {hint && <p className="mt-1 mb-3 text-[11px] text-cream/50">{hint}</p>}
+      {hint && <p className="mt-1 mb-3 text-[11px] text-cream/65">{hint}</p>}
       <div className={hint ? "" : "mt-3"}>{children}</div>
     </section>
   );
@@ -406,7 +406,7 @@ function Toggle({
       </button>
       <span className="min-w-0">
         <span className="block text-sm font-semibold text-cream">{label}</span>
-        <span className="block text-[11px] text-cream/50">{hint}</span>
+        <span className="block text-[11px] text-cream/65">{hint}</span>
       </span>
     </label>
   );
