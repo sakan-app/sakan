@@ -2,21 +2,24 @@ import { Link } from "@tanstack/react-router";
 import { Facebook, Instagram, Youtube, Twitter, Mail, Globe, MapPin } from "lucide-react";
 import logo from "@/assets/sakan-logo.png.asset.json";
 import { COMPANY, COMPANY_ADDRESS_LINES } from "@/lib/company";
-
-const SITE_LINKS = [
-  { to: "/about", label: "عن المنصة" },
-  { to: "/guide", label: "دليل قانون الزواج" },
-  { to: "/pricing", label: "باقات الاشتراك" },
-  { to: "/search", label: "ابحث عن شريك" },
-] as const;
-
-const LEGAL_LINKS = [
-  { to: "/privacy", label: "سياسة الخصوصية (GDPR)" },
-  { to: "/terms", label: "شروط الخدمة" },
-  { to: "/impressum", label: "Impressum" },
-] as const;
+import { useI18n } from "@/lib/i18n";
 
 export function Footer() {
+  const { t } = useI18n();
+
+  const siteLinks = [
+    { to: "/about", label: t.nav.about },
+    { to: "/guide", label: t.guide?.navLabel ?? t.nav.about },
+    { to: "/pricing", label: t.nav.plans },
+    { to: "/search", label: t.nav.browse },
+  ] as const;
+
+  const legalLinks = [
+    { to: "/privacy", label: t.footer.privacy },
+    { to: "/terms", label: t.footer.terms },
+    { to: "/impressum", label: t.footer.imprint },
+  ] as const;
+
   return (
     <footer className="relative overflow-hidden border-t border-gold/15 bg-navy-deep pt-14 text-cream/80">
       <div
@@ -30,14 +33,14 @@ export function Footer() {
       <div className="relative mx-auto grid max-w-[1360px] gap-10 px-6 pb-10 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
         <div>
           <div className="flex items-center gap-2">
-            <img src={logo.url} alt="شعار سكن" className="h-12 w-12 object-contain" loading="lazy" />
+            <img src={logo.url} alt="SAKAN" className="h-12 w-12 object-contain" loading="lazy" />
             <span className="text-lg font-bold text-cream">
               سكن <span className="text-gold/60">|</span>{" "}
               <span className="latin text-sm text-gold">SAKAN</span>
             </span>
           </div>
           <p className="mt-4 max-w-xs text-sm leading-7 text-cream/60">
-            منصة دولية آمنة للتعارف الجاد والزواج المستقر في أوروبا والعالم العربي.
+            {t.footer.tagline}
           </p>
           <div className="mt-5 flex gap-3">
             {[Facebook, Instagram, Youtube, Twitter].map((Icon, i) => (
@@ -52,9 +55,9 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="mb-4 text-sm font-bold text-gold">روابط مهمة</h3>
+          <h3 className="mb-4 text-sm font-bold text-gold">{t.footer.links}</h3>
           <ul className="space-y-2 text-sm text-cream/70">
-            {SITE_LINKS.map((l) => (
+            {siteLinks.map((l) => (
               <li key={l.to}>
                 <Link to={l.to} className="transition-colors hover:text-gold">
                   {l.label}
@@ -65,9 +68,9 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="mb-4 text-sm font-bold text-gold">قانوني</h3>
+          <h3 className="mb-4 text-sm font-bold text-gold">{t.footer.legal}</h3>
           <ul className="space-y-2 text-sm text-cream/70">
-            {LEGAL_LINKS.map((l) => (
+            {legalLinks.map((l) => (
               <li key={l.to}>
                 <Link to={l.to} className="transition-colors hover:text-gold">
                   {l.label}
@@ -78,7 +81,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="mb-4 text-sm font-bold text-gold">تواصل معنا</h3>
+          <h3 className="mb-4 text-sm font-bold text-gold">{t.footer.contact}</h3>
           <ul className="space-y-3 text-sm text-cream/70">
             <li className="flex items-center gap-2">
               <Mail className="h-4 w-4 shrink-0 text-gold" />
