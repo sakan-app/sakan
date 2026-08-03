@@ -25,6 +25,9 @@ import {
   type ProfileTheme,
 } from "@/lib/profile/appearance";
 import { haptic } from "@/lib/notifications/shared";
+import { ProfileQualityCard } from "@/components/profile/ProfileQualityCard";
+import { useFeatureStrings as useAssistStrings } from "@/i18n/feature";
+import { aiAssistStrings } from "@/lib/ai/assist-strings";
 
 export const Route = createFileRoute("/_authenticated/profile/appearance")({
   head: () => ({
@@ -42,6 +45,7 @@ export const Route = createFileRoute("/_authenticated/profile/appearance")({
 
 function AppearanceStudio() {
   const s = useFeatureStrings(profileStudioStrings);
+  const ai = useAssistStrings(aiAssistStrings);
   const { user } = useAuth();
   const userId = user?.id ?? "";
   const queryClient = useQueryClient();
@@ -339,6 +343,10 @@ function AppearanceStudio() {
                 </li>
               ))}
             </ul>
+          </Card>
+          {/* AI quality review */}
+          <Card title={ai.qualityTitle} hint={ai.qualityHint}>
+            <ProfileQualityCard accent={accent} />
           </Card>
         </div>
 
