@@ -126,7 +126,7 @@ type QueueRow = {
 };
 
 const QUEUE_SELECT =
-  "id, image_path, headline, subtitle, target_url, status, amount_cents, currency, starts_at, ends_at, impressions, clicks, review_note, created_at, queue_position, display_started_at, paused_at, loops_total, extra_loops";
+  "id, user_id, image_path, headline, subtitle, target_url, status, amount_cents, currency, starts_at, ends_at, impressions, clicks, review_note, created_at, queue_position, display_started_at, paused_at, loops_total, extra_loops";
 
 /**
  * Advances the paid rotation queue.
@@ -229,6 +229,7 @@ export async function listFeaturedQueue() {
       : 0;
     return {
       id: r.id,
+      userId: r.user_id,
       imagePath: r.image_path,
       imageUrl: urls.get(r.image_path) ?? null,
       headline: r.headline,
