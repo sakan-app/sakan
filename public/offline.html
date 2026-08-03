@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#0D1B3D" />
+    <title>لا يوجد اتصال بالإنترنت | سَكَن</title>
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <style>
+      :root { color-scheme: dark; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 1.5rem; padding: 1.5rem;
+        background: #0A1430; color: #F6F1E7; text-align: center;
+        font-family: "Cairo", "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      .ring {
+        width: 5rem; height: 5rem; display: flex; align-items: center; justify-content: center;
+        border-radius: 999px; border: 1px solid rgba(212, 175, 55, .3); background: #0D1B3D;
+      }
+      svg { width: 2.25rem; height: 2.25rem; stroke: #D4AF37; fill: none; stroke-width: 2;
+        stroke-linecap: round; stroke-linejoin: round; }
+      h1 { font-size: 1.25rem; margin: 0; font-weight: 700; }
+      p { margin: .5rem 0 0; max-width: 24rem; font-size: .875rem; color: rgba(246, 241, 231, .7); }
+      button {
+        border: 0; cursor: pointer; border-radius: .75rem; padding: .625rem 1.5rem;
+        font-size: .875rem; font-weight: 600; color: #0D1B3D;
+        background: linear-gradient(135deg, #D4AF37, #F0D785);
+        font-family: inherit;
+      }
+      a { font-size: .75rem; color: rgba(212, 175, 55, .8); text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <div class="ring" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M2 2l20 20"/><path d="M8.5 16.5a5 5 0 0 1 7 0"/><path d="M2 8.82a15 15 0 0 1 4.17-2.65"/><path d="M10.66 5c4.01-.36 8.14.9 11.34 3.76"/><path d="M16.85 11.25a10 10 0 0 1 2.22 1.68"/><path d="M5 12.86a10 10 0 0 1 5.17-2.69"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+    </div>
+    <div>
+      <h1>لا يوجد اتصال بالإنترنت</h1>
+      <p>يبدو أنك غير متصل حالياً. تحقق من الاتصال وحاول مرة أخرى. / You are offline. Check your connection and try again.</p>
+    </div>
+    <button type="button" onclick="location.reload()">إعادة المحاولة / Retry</button>
+    <a href="/">سَكَن | SAKAN</a>
+  </body>
+</html>
