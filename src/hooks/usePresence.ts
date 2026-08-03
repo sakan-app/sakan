@@ -40,6 +40,20 @@ export function usePresence() {
   useEffect(() => {
     if (!userId) return;
     refCount += 1;
+    // Privacy: members set to "invisible" (or hiding last seen) must never be
+    // broadcast on the shared presence channel. We still subscribe so they can
+    // see others, but we never track our own presence for them.
+    let mayBroadcast = false;
+    let cancelled = false;
+    const privacyLoaded = supabase
+      .from("profiles")
+      .select("presence_status, hide_last_seen")
+      .eq("id", userId)
+      .maybeSingle()
+      .then(({ data }) => {
+        mayBroadcast =
+          !cancelled && Boolean(data) && data?.presence_status !== "invisible" && !data?.hide_last_seen;
+      });
 
     if (!channel) {
       channel = supabase.channel("sakan:presence", { config: { presence: { key: userId } } });
@@ -59,7 +73,11 @@ export function usePresence() {
         })
         .subscribe((status) => {
           if (status === "SUBSCRIBED") {
-            void channel?.track({ online_at: new Date().toISOString(), status: "online" });
+            void privacyLoaded.then(() => {
+              if (mayBroadcast) {
+                void channel?.track({ online_at: new Date().toISOString(), status: "online" });
+              }
+            });
           }
         });
     }
@@ -76,7 +94,7 @@ export function usePresence() {
     const report = (status: "online" | "away") => {
       if (reported === status) return;
       reported = status;
-      void channel?.track({ online_at: new Date().toISOString(), status });
+      if (mayBroadcast) void channel?.track({ online_at: new Date().toISOString(), status });
       if (status === "online") void supabase.rpc("touch_last_seen");
     };
     const goIdle = () => report("away");
@@ -95,6 +113,7 @@ export function usePresence() {
     activity();
 
     return () => {
+      cancelled = true;
       if (idleTimer) clearTimeout(idleTimer);
       events.forEach((event) => window.removeEventListener(event, activity));
       document.removeEventListener("visibilitychange", onVisibility);
