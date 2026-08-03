@@ -716,7 +716,7 @@ function ConversationPage() {
           </div>
           <CallButton
             kind="voice"
-            conversationId={conversationId}
+            conversationId={id}
             peer={{
               id: info.otherUserId,
               name: info.otherName,
@@ -725,7 +725,7 @@ function ConversationPage() {
           />
           <CallButton
             kind="video"
-            conversationId={conversationId}
+            conversationId={id}
             peer={{
               id: info.otherUserId,
               name: info.otherName,
