@@ -21,6 +21,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { RealtimeBridge } from "@/components/RealtimeBridge";
 import { PwaProvider } from "@/components/pwa/PwaProvider";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
+import { LocalizedSeo } from "@/components/LocalizedSeo";
 
 /** Routes rendered inside the authenticated native app shell. */
 const APP_SHELL_PREFIXES = [
@@ -153,6 +154,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <body>
         <a
           href="#main-content"
+          id="skip-to-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:start-2 focus:z-[100] focus:rounded-md focus:bg-gold focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-navy-deep"
         >
           تخطَّ إلى المحتوى الرئيسي
@@ -179,6 +181,7 @@ function RootComponent() {
         <I18nProvider>
           <PwaProvider>
             <LocaleSync />
+            <LocalizedSeo />
             <RealtimeBridge />
             <OfflineBanner />
             <div className={inAppShell ? "" : "pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0"}>
