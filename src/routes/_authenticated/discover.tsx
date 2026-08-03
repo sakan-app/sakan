@@ -177,6 +177,17 @@ function DiscoverPage() {
               <div key={i} className="aspect-[4/5] animate-pulse rounded-[22px] bg-white/5" />
             ))}
           </div>
+        ) : listQ.isError ? (
+          <GlassCard className="p-10 text-center">
+            <p className="text-sm text-cream/70">{t.common.errorText}</p>
+            <button
+              type="button"
+              onClick={() => void listQ.refetch()}
+              className="mt-4 inline-flex items-center rounded-xl bg-gold px-4 py-2 text-sm font-semibold text-navy-deep"
+            >
+              {t.common.retry}
+            </button>
+          </GlassCard>
         ) : members.length === 0 ? (
           <GlassCard className="p-10 text-center">
             <p className="text-sm text-cream/70">{t.search.emptyText}</p>

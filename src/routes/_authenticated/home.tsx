@@ -142,6 +142,17 @@ function HomeFeed() {
               <div key={i} className="aspect-[4/5] animate-pulse rounded-[22px] bg-white/5" />
             ))}
           </div>
+        ) : activeQ.isError ? (
+          <div className="glass-card rounded-2xl p-8 text-center">
+            <p className="text-sm text-cream/70">{t.common.errorText}</p>
+            <button
+              type="button"
+              onClick={() => void activeQ.refetch()}
+              className="mt-4 inline-flex items-center rounded-xl bg-gold px-4 py-2 text-sm font-semibold text-navy-deep"
+            >
+              {t.common.retry}
+            </button>
+          </div>
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {(activeQ.data ?? []).map((member, i) => (

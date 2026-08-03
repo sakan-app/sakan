@@ -5,15 +5,20 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Locale } from "@/i18n";
 import { toCompatibilityProfile, type ProfileRow } from "@/lib/ai/matchmaking-helpers.server";
 import { scoreProfileQuality, gatewayErrorToMessage } from "@/lib/ai/coaching-helpers.server";
+import { enforceRateLimit, RateLimitError } from "@/lib/rate-limit.server";
 
 const PROFILE_COLS =
   "id, display_name, birth_date, gender, looking_for, country_code, city, bio, interests, occupation, education, marital_status, religiosity, preferred_language, avatar_url";
 
+const AI_LIMIT = 20;
+const AI_WINDOW_MS = 60_000;
+
 export const suggestProfileQuality = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator(z.void())
-  .handler(async ({ context }) => {
+  .handler(async ({ context }): Promise<{ score: number; suggestions: string[] }> => {
     try {
+      await enforceRateLimit(`ai:${context.userId}`, AI_LIMIT, AI_WINDOW_MS);
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const { data: meRow, error: meErr } = await supabaseAdmin
         .from("profiles")
@@ -35,6 +40,7 @@ export const suggestProfileQuality = createServerFn({ method: "POST" })
       );
       return result;
     } catch (error) {
+      if (error instanceof RateLimitError) throw error;
       throw new Error(gatewayErrorToMessage(error));
     }
   });
@@ -42,8 +48,9 @@ export const suggestProfileQuality = createServerFn({ method: "POST" })
 export const suggestIceBreakers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator(z.object({ candidateId: z.string().uuid() }))
-  .handler(async ({ context, data }) => {
+  .handler(async ({ context, data }): Promise<{ suggestions: string[] }> => {
     try {
+      await enforceRateLimit(`ai:${context.userId}`, AI_LIMIT, AI_WINDOW_MS);
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const { buildIceBreakerMessages } = await import("@/lib/ai/prompts");
       const { generateSuggestions } = await import("@/lib/ai/coaching-helpers.server");
@@ -67,6 +74,7 @@ export const suggestIceBreakers = createServerFn({ method: "POST" })
         ),
       };
     } catch (error) {
+      if (error instanceof RateLimitError) throw error;
       throw new Error(gatewayErrorToMessage(error));
     }
   });
@@ -74,8 +82,9 @@ export const suggestIceBreakers = createServerFn({ method: "POST" })
 export const suggestSmartReplies = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator(z.object({ conversationId: z.string().uuid() }))
-  .handler(async ({ context, data }) => {
+  .handler(async ({ context, data }): Promise<{ suggestions: string[] }> => {
     try {
+      await enforceRateLimit(`ai:${context.userId}`, AI_LIMIT, AI_WINDOW_MS);
       const { buildSmartReplyMessages } = await import("@/lib/ai/prompts");
       const { generateSuggestions } = await import("@/lib/ai/coaching-helpers.server");
       // RLS-scoped read: only participants can see the transcript.
@@ -91,7 +100,7 @@ export const suggestSmartReplies = createServerFn({ method: "POST" })
         .filter((m) => (m.body ?? "").trim().length > 0)
         .reverse()
         .map((m) => ({ fromMe: m.sender_id === context.userId, body: (m.body ?? "").slice(0, 400) }));
-      if (transcript.length === 0) return { suggestions: [] as string[] };
+      if (transcript.length === 0) return { suggestions: [] };
       const { data: meRow } = await context.supabase
         .from("profiles")
         .select("preferred_language")
@@ -100,6 +109,7 @@ export const suggestSmartReplies = createServerFn({ method: "POST" })
       const language = (meRow?.preferred_language ?? "ar") as Locale;
       return { suggestions: await generateSuggestions(buildSmartReplyMessages(transcript, language), 3) };
     } catch (error) {
+      if (error instanceof RateLimitError) throw error;
       throw new Error(gatewayErrorToMessage(error));
     }
   });
@@ -107,8 +117,9 @@ export const suggestSmartReplies = createServerFn({ method: "POST" })
 export const improveMyBio = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator(z.void())
-  .handler(async ({ context }) => {
+  .handler(async ({ context }): Promise<{ bio: string; notes: string[] }> => {
     try {
+      await enforceRateLimit(`ai:${context.userId}`, AI_LIMIT, AI_WINDOW_MS);
       const { improveBio } = await import("@/lib/ai/coaching-helpers.server");
       const { data: meRow, error } = await context.supabase
         .from("profiles")
@@ -119,6 +130,7 @@ export const improveMyBio = createServerFn({ method: "POST" })
       const language = (meRow.preferred_language ?? "ar") as Locale;
       return await improveBio(toCompatibilityProfile(meRow as ProfileRow), language);
     } catch (error) {
+      if (error instanceof RateLimitError) throw error;
       throw new Error(gatewayErrorToMessage(error));
     }
   });
