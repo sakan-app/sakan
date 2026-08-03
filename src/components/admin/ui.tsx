@@ -147,10 +147,26 @@ export function Pagination({
   );
 }
 
-export function TableShell({ head, children }: { head: ReactNode; children: ReactNode }) {
+export function TableShell({
+  head,
+  children,
+  caption,
+}: {
+  head: ReactNode;
+  children: ReactNode;
+  /** Screen-reader description of the table contents. */
+  caption?: string;
+}) {
   return (
-    <div className="overflow-x-auto">
+    <div
+      className="overflow-x-auto"
+      // Scrollable regions must be reachable by keyboard (WCAG 2.1.1).
+      tabIndex={0}
+      role="group"
+      aria-label={caption}
+    >
       <table className="w-full min-w-[720px] border-collapse text-sm">
+        {caption ? <caption className="sr-only">{caption}</caption> : null}
         <thead className="text-[11px] uppercase tracking-wide text-cream/45">{head}</thead>
         <tbody className="divide-y divide-cream/8">{children}</tbody>
       </table>
@@ -159,7 +175,14 @@ export function TableShell({ head, children }: { head: ReactNode; children: Reac
 }
 
 export function Th({ children, className }: { children?: ReactNode; className?: string }) {
-  return <th className={cn("whitespace-nowrap px-3 py-2 text-start font-semibold", className)}>{children}</th>;
+  return (
+    <th
+      scope="col"
+      className={cn("whitespace-nowrap px-3 py-2 text-start font-semibold", className)}
+    >
+      {children}
+    </th>
+  );
 }
 
 export function Td({ children, className }: { children?: ReactNode; className?: string }) {
