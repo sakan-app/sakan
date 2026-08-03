@@ -219,8 +219,8 @@ async function sendToSubscription(
 export async function sendPushToUser(
   userId: string,
   payload: PushPayload,
-): Promise<{ sent: number; failed: number; skipped: boolean }> {
-  if (!vapidConfigured()) return { sent: 0, failed: 0, skipped: true };
+): Promise<{ sent: number; failed: number; devices: number; skipped: boolean }> {
+  if (!vapidConfigured()) return { sent: 0, failed: 0, devices: 0, skipped: true };
 
   const { data } = await supabaseAdmin
     .from("push_subscriptions")
@@ -268,5 +268,5 @@ export async function sendPushToUser(
     }),
   );
 
-  return { sent, failed, skipped: false };
+  return { sent, failed, devices: subscriptions.length, skipped: false };
 }

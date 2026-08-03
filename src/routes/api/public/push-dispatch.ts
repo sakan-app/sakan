@@ -13,6 +13,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 const BATCH_SIZE = 100;
+/**
+ * A notification is only given up on after this long. Before that, a run that
+ * delivered nothing (device offline queue rejected it, provider 5xx) leaves
+ * the row unstamped so the next minute retries it.
+ */
+const GIVE_UP_AFTER_MS = 15 * 60 * 1000;
 
 function safeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
@@ -30,6 +36,7 @@ type NotificationRow = {
   title: string;
   body: string | null;
   data: Record<string, unknown> | null;
+  created_at: string;
 };
 
 /** Deep link for each notification type. */
@@ -71,7 +78,7 @@ export const Route = createFileRoute("/api/public/push-dispatch")({
 
         const { data, error } = await supabaseAdmin
           .from("notifications")
-          .select("id, user_id, type, title, body, data")
+          .select("id, user_id, type, title, body, data, created_at")
           .is("push_sent_at", null)
           .is("read_at", null)
           .gte("created_at", new Date(Date.now() - 60 * 60 * 1000).toISOString())
@@ -99,6 +106,7 @@ export const Route = createFileRoute("/api/public/push-dispatch")({
         );
 
         let sent = 0;
+        let retrying = 0;
         // Badge counts are per member: one query, reused for every row.
         const unreadByUser = new Map<string, number>();
         await Promise.all(
@@ -115,8 +123,16 @@ export const Route = createFileRoute("/api/public/push-dispatch")({
 
         for (const row of rows) {
           const member = presence.get(row.user_id);
-          if (!member?.dnd) {
-            const result = await sendPushToUser(row.user_id, {
+          if (member?.dnd) {
+            // Nothing will ever be delivered for this row — close it out.
+            await supabaseAdmin
+              .from("notifications")
+              .update({ push_sent_at: new Date().toISOString() })
+              .eq("id", row.id);
+            continue;
+          }
+
+          const result = await sendPushToUser(row.user_id, {
               title: row.title,
               body: row.body ?? "",
               url: targetUrl(row),
@@ -125,16 +141,26 @@ export const Route = createFileRoute("/api/public/push-dispatch")({
               lang: member?.locale ?? "ar",
               dir: (member?.locale ?? "ar") === "ar" ? "rtl" : "ltr",
               badge_count: unreadByUser.get(row.user_id) ?? 0,
-            });
-            sent += result.sent;
+          });
+          sent += result.sent;
+
+          // Only stamp when the row is genuinely finished: something was
+          // delivered, the member has no devices at all, or we have retried
+          // past the give-up window. Stamping a failed send would drop the
+          // notification permanently.
+          const expired = Date.now() - new Date(row.created_at).getTime() > GIVE_UP_AFTER_MS;
+          if (result.sent === 0 && result.devices > 0 && !expired) {
+            retrying += 1;
+            continue;
           }
+
           await supabaseAdmin
             .from("notifications")
             .update({ push_sent_at: new Date().toISOString() })
             .eq("id", row.id);
         }
 
-        return Response.json({ processed: rows.length, sent });
+        return Response.json({ processed: rows.length, sent, retrying });
       },
     },
   },

@@ -36,6 +36,24 @@ export function pushSupported(): boolean {
   );
 }
 
+/**
+ * `navigator.serviceWorker.ready` never settles when no worker ever reaches
+ * "activated" — a broken or absent SW build makes it hang forever, which in
+ * turn hangs the whole subscribe flow with no error. Bound the wait so the
+ * caller gets a real failure instead of an infinite spinner.
+ */
+async function activeRegistration(timeoutMs = 10_000): Promise<ServiceWorkerRegistration> {
+  const existing = await navigator.serviceWorker.getRegistration();
+  if (existing?.active) return existing;
+
+  const registration = await Promise.race([
+    navigator.serviceWorker.ready,
+    new Promise<null>((resolve) => setTimeout(() => resolve(null), timeoutMs)),
+  ]);
+  if (!registration) throw new Error("push_service_worker_unavailable");
+  return registration;
+}
+
 /** Current state without triggering any permission prompt. */
 export async function readPushState(): Promise<PushState> {
   if (!pushSupported()) return "unsupported";
@@ -78,7 +96,7 @@ export async function enablePush(): Promise<PushState> {
       : await Notification.requestPermission();
   if (permission !== "granted") return permission === "denied" ? "denied" : "prompt";
 
-  const registration = await navigator.serviceWorker.ready;
+  const registration = await activeRegistration();
   const existing = await registration.pushManager.getSubscription();
   const subscription =
     existing ??
