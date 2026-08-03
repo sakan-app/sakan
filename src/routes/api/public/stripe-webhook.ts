@@ -33,7 +33,6 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
         const eventId = String(event["id"] ?? "");
         const object = ((event["data"] as Record<string, unknown> | undefined)?.["object"] ??
           {}) as Record<string, unknown>;
-        const metadata = (object["metadata"] ?? {}) as Record<string, string>;
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
@@ -51,64 +50,29 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
         }
 
         try {
-          if (type === "checkout.session.completed") {
-            if (metadata["kind"] === "featured_ad" && metadata["ad_id"]) {
-              const { publishFeaturedAd } = await import("@/lib/ads/ads.server");
-              await publishFeaturedAd(
-                metadata["ad_id"],
-                "stripe",
-                String(object["payment_intent"] ?? object["id"] ?? ""),
-              );
-            } else if (metadata["kind"] === "subscription" && metadata["user_id"]) {
-              const { activateSubscription } = await import("@/lib/billing/billing.server");
-              await activateSubscription({
-                userId: metadata["user_id"]!,
-                planCode: metadata["plan_code"] ?? "premium",
-                interval: metadata["interval"] === "annual" ? "annual" : "monthly",
-                provider: "stripe",
-                providerRef: String(object["subscription"] ?? object["id"] ?? ""),
-              });
-            }
-          } else if (
-            type === "invoice.paid" &&
-            object["billing_reason"] === "subscription_cycle" &&
-            metadata["user_id"]
-          ) {
-            const { activateSubscription } = await import("@/lib/billing/billing.server");
-            await activateSubscription({
-              userId: metadata["user_id"]!,
-              planCode: metadata["plan_code"] ?? "premium",
-              interval: metadata["interval"] === "annual" ? "annual" : "monthly",
-              provider: "stripe",
-              providerRef: String(object["subscription"] ?? ""),
-            });
-          } else if (type === "customer.subscription.deleted" && metadata["user_id"]) {
-            await supabaseAdmin
-              .from("subscriptions")
-              .update({ status: "canceled", canceled_at: new Date().toISOString() })
-              .eq("user_id", metadata["user_id"]!)
-              .eq("status", "active");
-          } else if (type === "customer.subscription.updated" && metadata["user_id"]) {
-            // Mirrors "cancel at period end" toggles made in Stripe or the portal.
-            await supabaseAdmin
-              .from("subscriptions")
-              .update({ cancel_at_period_end: Boolean(object["cancel_at_period_end"]) })
-              .eq("user_id", metadata["user_id"]!)
-              .in("status", ["trialing", "active", "past_due"]);
-          } else if (type === "invoice.payment_failed" && metadata["user_id"]) {
-            // Keep access alive through a 3-day grace window before expiry.
-            const graceUntil = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString();
-            await supabaseAdmin
-              .from("subscriptions")
-              .update({ status: "past_due", grace_until: graceUntil })
-              .eq("user_id", metadata["user_id"]!)
-              .in("status", ["trialing", "active"]);
-          } else if (type === "charge.refunded" && metadata["user_id"]) {
-            await supabaseAdmin
-              .from("subscriptions")
-              .update({ status: "canceled", canceled_at: new Date().toISOString() })
-              .eq("user_id", metadata["user_id"]!)
-              .in("status", ["trialing", "active", "past_due"]);
+          const handlers = await import("@/lib/billing/webhook.server");
+          switch (type) {
+            case "checkout.session.completed":
+              await handlers.handleCheckoutCompleted(object);
+              break;
+            case "invoice.paid":
+            case "invoice_payment.paid":
+              await handlers.handleInvoicePaid(object);
+              break;
+            case "invoice.payment_failed":
+              await handlers.handleInvoiceFailed(object);
+              break;
+            case "customer.subscription.updated":
+              await handlers.handleSubscriptionUpdated(object);
+              break;
+            case "customer.subscription.deleted":
+              await handlers.handleSubscriptionDeleted(object);
+              break;
+            case "charge.refunded":
+              await handlers.handleChargeRefunded(object);
+              break;
+            default:
+              break;
           }
         } catch (error) {
           console.error("[stripe-webhook]", type, error);
