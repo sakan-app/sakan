@@ -65,25 +65,30 @@ export type PublicProfile = Pick<
   ProfileRow,
   | "id"
   | "display_name"
-  | "birth_date"
   | "gender"
   | "looking_for"
   | "country_code"
   | "city"
-  | "bio"
-  | "interests"
-  | "spoken_languages"
-  | "education"
-  | "occupation"
-  | "marital_status"
-  | "religiosity"
-  | "height_cm"
   | "is_verified"
   | "last_seen_at"
   | "avatar_url"
   | "presence_status"
   | "hide_last_seen"
->;
+> &
+  Partial<
+    Pick<
+      ProfileRow,
+      | "birth_date"
+      | "bio"
+      | "interests"
+      | "spoken_languages"
+      | "education"
+      | "occupation"
+      | "marital_status"
+      | "religiosity"
+      | "height_cm"
+    >
+  > & { birth_year?: number | null };
 
 export async function toMemberViews(rows: PublicProfile[]): Promise<MemberView[]> {
   if (rows.length === 0) return [];
@@ -126,7 +131,9 @@ export async function toMemberViews(rows: PublicProfile[]): Promise<MemberView[]
     return {
       id: row.id,
       name: row.display_name,
-      age: ageFromBirthDate(row.birth_date),
+      age:
+        ageFromBirthDate(row.birth_date ?? null) ??
+        (row.birth_year ? new Date().getFullYear() - row.birth_year : null),
       gender: row.gender,
       lookingFor: row.looking_for,
       countryCode: row.country_code,
@@ -134,14 +141,14 @@ export async function toMemberViews(rows: PublicProfile[]): Promise<MemberView[]
       profilePhoto,
       gallery,
       isVerified: row.is_verified,
-      bio: row.bio,
+      bio: row.bio ?? null,
       interests: row.interests ?? [],
       languages: row.spoken_languages ?? [],
-      education: row.education,
-      occupation: row.occupation,
-      maritalStatus: row.marital_status,
-      religiosity: row.religiosity,
-      heightCm: row.height_cm,
+      education: row.education ?? null,
+      occupation: row.occupation ?? null,
+      maritalStatus: row.marital_status ?? null,
+      religiosity: row.religiosity ?? null,
+      heightCm: row.height_cm ?? null,
       // Presence privacy: invisible members and members hiding last-seen never
       // surface as online to anyone else.
       online:
