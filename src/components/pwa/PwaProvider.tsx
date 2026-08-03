@@ -1,8 +1,10 @@
 import { useEffect, type ReactNode } from "react";
+import { useRouter } from "@tanstack/react-router";
 
 import { flushOutbox, installOfflineWriteInterceptor } from "@/lib/outbox";
 import { installAudioUnlock } from "@/lib/audio/engine";
 import { startServiceWorker } from "@/lib/pwa/register";
+import { setAppBadge } from "@/lib/pwa/badge";
 import { logInstallEvent, resubscribePush } from "@/lib/push/push-browser";
 
 interface BeforeInstallPromptEvent extends Event {
@@ -31,6 +33,8 @@ export function isAppInstalled(): boolean {
 }
 
 export function PwaProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
+
   // Browsers block audio until the first gesture; unlock once so notification
   // sounds and call tones can play later without a user-visible prompt.
   useEffect(() => installAudioUnlock(), []);
@@ -49,7 +53,15 @@ export function PwaProvider({ children }: { children: ReactNode }) {
     function onMessage(event: MessageEvent) {
       if (event.data?.type === "sakan:flush-outbox") flush();
       if (event.data?.type === "sakan:navigate" && typeof event.data.url === "string") {
-        window.location.assign(event.data.url);
+        // Client-side deep link: keeps the session and avoids a full reload.
+        void router.navigate({ to: event.data.url, replace: false }).catch(() => {
+          window.location.assign(event.data.url);
+        });
+      }
+      // A push arrived while a tab is open — mirror its badge count locally.
+      if (event.data?.type === "sakan:push") {
+        const badge = Number(event.data.payload?.badge_count);
+        if (Number.isFinite(badge)) void setAppBadge(badge);
       }
       // The browser rotated the push subscription — persist the new one.
       if (event.data?.type === "sakan:push-resubscribe") {
@@ -65,7 +77,7 @@ export function PwaProvider({ children }: { children: ReactNode }) {
       window.removeEventListener("online", flush);
       navigator.serviceWorker?.removeEventListener("message", onMessage);
     };
-  }, []);
+  }, [router]);
 
   // Single registration point for the Workbox service worker.
   useEffect(() => startServiceWorker(), []);
