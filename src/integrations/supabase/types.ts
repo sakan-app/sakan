@@ -770,6 +770,7 @@ export type Database = {
           created_at: string
           data: Json
           id: string
+          push_sent_at: string | null
           read_at: string | null
           title: string
           type: Database["public"]["Enums"]["notification_type"]
@@ -782,6 +783,7 @@ export type Database = {
           created_at?: string
           data?: Json
           id?: string
+          push_sent_at?: string | null
           read_at?: string | null
           title: string
           type: Database["public"]["Enums"]["notification_type"]
@@ -794,6 +796,7 @@ export type Database = {
           created_at?: string
           data?: Json
           id?: string
+          push_sent_at?: string | null
           read_at?: string | null
           title?: string
           type?: Database["public"]["Enums"]["notification_type"]
@@ -1124,6 +1127,84 @@ export type Database = {
           religiosity?: Database["public"]["Enums"]["religiosity_level"] | null
           spoken_languages?: string[]
           updated_at?: string
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          disabled_at: string | null
+          endpoint: string
+          expiration_time: string | null
+          failure_count: number
+          id: string
+          last_used_at: string | null
+          locale: string | null
+          p256dh: string
+          updated_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          disabled_at?: string | null
+          endpoint: string
+          expiration_time?: string | null
+          failure_count?: number
+          id?: string
+          last_used_at?: string | null
+          locale?: string | null
+          p256dh: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          disabled_at?: string | null
+          endpoint?: string
+          expiration_time?: string | null
+          failure_count?: number
+          id?: string
+          last_used_at?: string | null
+          locale?: string | null
+          p256dh?: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      pwa_install_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          locale: string | null
+          platform: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          locale?: string | null
+          platform?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          locale?: string | null
+          platform?: string | null
+          user_agent?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }

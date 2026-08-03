@@ -24,17 +24,31 @@
   "screenshots": [
     {
       "src": "/screenshots/mobile-home.jpg",
-      "sizes": "720x1280",
+      "sizes": "390x844",
       "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "الصفحة الرئيسية على الهاتف"
     },
     {
+      "src": "/screenshots/mobile-search.jpg",
+      "sizes": "390x844",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "نتائج البحث على الهاتف"
+    },
+    {
       "src": "/screenshots/desktop-home.jpg",
-      "sizes": "1280x720",
+      "sizes": "1280x800",
       "type": "image/jpeg",
       "form_factor": "wide",
       "label": "لوحة الأعضاء على سطح المكتب"
+    },
+    {
+      "src": "/screenshots/desktop-search.jpg",
+      "sizes": "1280x800",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "نتائج البحث على سطح المكتب"
     }
   ],
   "shortcuts": [

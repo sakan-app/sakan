@@ -21,6 +21,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { RealtimeBridge } from "@/components/RealtimeBridge";
 import { PwaProvider } from "@/components/pwa/PwaProvider";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
+import { UpdateBanner } from "@/components/pwa/UpdateBanner";
 import { LocalizedSeo } from "@/components/LocalizedSeo";
 
 /** Routes rendered inside the authenticated native app shell. */
@@ -196,6 +197,7 @@ function RootComponent() {
             </div>
             {mounted && !inAppShell && <BottomNav />}
             <InstallPrompt />
+            <UpdateBanner />
             <Toaster richColors position="top-center" />
           </PwaProvider>
         </I18nProvider>
