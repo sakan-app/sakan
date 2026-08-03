@@ -1,11 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, MessageCircle, Search, UserRound } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import { z } from "zod";
 
 import { useAuth } from "@/hooks/useAuth";
-import { useIsOnline } from "@/hooks/usePresence";
+import { useIsAway, useIsOnline } from "@/hooks/usePresence";
+import { PresenceIndicator, resolvePresence } from "@/components/presence/PresenceIndicator";
 import { useFeatureStrings } from "@/i18n/feature";
 import { useI18n } from "@/lib/i18n";
 import { chatStrings } from "@/lib/chat/strings";
@@ -44,6 +46,8 @@ function ConversationRow({ item }: { item: ConversationListItem }) {
   const { locale } = useI18n();
   const s = useFeatureStrings(chatStrings);
   const online = useIsOnline(item.otherUserId, item.otherLastSeenAt);
+  const away = useIsAway(item.otherUserId);
+  const presence = resolvePresence(item.otherPresence, online, away);
   const preview =
     item.lastMessageKind === "image"
       ? s.photoMessage
@@ -71,9 +75,7 @@ function ConversationRow({ item }: { item: ConversationListItem }) {
             <UserRound className="h-6 w-6" />
           </span>
         )}
-        {online && (
-          <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-navy-deep bg-emerald-400" />
-        )}
+        <PresenceIndicator state={presence} size="lg" overlay hideOffline />
       </span>
       <span className="min-w-0 flex-1">
         <span className="flex items-center justify-between gap-2">
@@ -92,6 +94,57 @@ function ConversationRow({ item }: { item: ConversationListItem }) {
         </span>
       </span>
     </Link>
+  );
+}
+
+/** Windows the conversation list once it grows past a screenful. */
+function VirtualConversations({ items }: { items: ConversationListItem[] }) {
+  const parentRef = useRef<HTMLDivElement>(null);
+  const [offset, setOffset] = useState(0);
+  const virtualize = items.length >= 20;
+
+  useEffect(() => {
+    if (!parentRef.current) return;
+    setOffset(parentRef.current.getBoundingClientRect().top + window.scrollY);
+  }, [items.length]);
+
+  const virtualizer = useWindowVirtualizer({
+    count: virtualize ? items.length : 0,
+    estimateSize: () => 76,
+    overscan: 6,
+    scrollMargin: offset,
+  });
+
+  if (!virtualize) {
+    return (
+      <div className="list-stagger space-y-2">
+        {items.map((item) => (
+          <ConversationRow key={item.id} item={item} />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div ref={parentRef}>
+      <div className="relative w-full" style={{ height: virtualizer.getTotalSize() }}>
+        {virtualizer.getVirtualItems().map((row) => {
+          const item = items[row.index];
+          if (!item) return null;
+          return (
+            <div
+              key={row.key}
+              ref={virtualizer.measureElement}
+              data-index={row.index}
+              className="absolute inset-x-0 pb-2"
+              style={{ transform: `translateY(${row.start - virtualizer.options.scrollMargin}px)` }}
+            >
+              <ConversationRow item={item} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
@@ -187,7 +240,7 @@ function MessagesIndexPage() {
                 <p className="mt-2 text-xs leading-6 text-cream/60">{s.emptyText}</p>
               </div>
             ) : (
-              filtered.map((item) => <ConversationRow key={item.id} item={item} />)
+              <VirtualConversations items={filtered} />
             )}
           </div>
         </div>

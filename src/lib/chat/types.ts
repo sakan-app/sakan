@@ -17,6 +17,8 @@ export type ConversationListItem = {
   otherAvatarPath: string | null;
   otherAvatarUrl: string | null;
   otherLastSeenAt: string | null;
+  /** Visible presence of the other member (privacy already applied). */
+  otherPresence: "online" | "away" | "busy" | "dnd" | "invisible" | null;
   lastMessageBody: string | null;
   lastMessageKind: MessageKind | null;
   lastMessageAt: string | null;

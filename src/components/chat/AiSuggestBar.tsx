@@ -35,7 +35,7 @@ export function AiSuggestBar({ conversationId, otherUserId, hasMessages, onPick 
             setOpen(true);
             mutation.mutate();
           }}
-          className="tap-scale inline-flex items-center gap-2 rounded-full border border-gold/30 bg-navy-deep/60 px-3 py-1.5 text-xs font-medium text-gold backdrop-blur"
+          className="press tap-scale inline-flex items-center gap-2 rounded-full border border-gold/30 bg-navy-deep/60 px-3 py-1.5 text-xs font-medium text-gold backdrop-blur"
         >
           <Sparkles className="h-3.5 w-3.5" aria-hidden />
           {s.ideas}
@@ -45,7 +45,7 @@ export function AiSuggestBar({ conversationId, otherUserId, hasMessages, onPick 
   }
 
   return (
-    <div className="px-3 pt-2" aria-live="polite">
+    <section className="px-3 pt-2" aria-live="polite" aria-label={s.ideas}>
       <div className="rounded-2xl border border-gold/20 bg-navy-deep/60 p-3 backdrop-blur">
         <div className="mb-2 flex items-center justify-between gap-2">
           <span className="inline-flex items-center gap-2 text-xs font-semibold text-gold">
@@ -56,7 +56,7 @@ export function AiSuggestBar({ conversationId, otherUserId, hasMessages, onPick 
             type="button"
             onClick={() => setOpen(false)}
             aria-label={s.hide}
-            className="tap-scale grid h-7 w-7 place-items-center rounded-full text-muted-foreground hover:text-foreground"
+            className="press tap-scale grid h-7 w-7 place-items-center rounded-full text-muted-foreground hover:text-foreground"
           >
             <X className="h-4 w-4" aria-hidden />
           </button>
@@ -73,7 +73,7 @@ export function AiSuggestBar({ conversationId, otherUserId, hasMessages, onPick 
           <p className="text-xs text-muted-foreground">{s.empty}</p>
         )}
 
-        <div className="flex flex-wrap gap-2">
+        <div className="list-stagger flex flex-wrap gap-2">
           {(mutation.data?.suggestions ?? []).map((text) => (
             <button
               key={text}
@@ -82,13 +82,13 @@ export function AiSuggestBar({ conversationId, otherUserId, hasMessages, onPick 
                 onPick(text);
                 setOpen(false);
               }}
-              className="tap-scale max-w-full rounded-xl border border-border/60 bg-background/40 px-3 py-2 text-start text-xs text-foreground hover:border-gold/40"
+              className="press tap-scale max-w-full rounded-xl border border-border/60 bg-background/40 px-3 py-2 text-start text-xs text-foreground hover:border-gold/40"
             >
               {text}
             </button>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }

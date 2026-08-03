@@ -5,9 +5,13 @@ import { useI18n } from "@/lib/i18n";
 import { countryFlag, countryLabel } from "@/lib/countries";
 import { LikeButton } from "@/components/social/LikeButton";
 import { FavoriteButton } from "@/components/social/FavoriteButton";
+import { PresenceIndicator, resolvePresence } from "@/components/presence/PresenceIndicator";
+import { useIsAway } from "@/hooks/usePresence";
 
 export function MemberCard({ member }: { member: MemberView }) {
   const { t } = useI18n();
+  const away = useIsAway(member.id);
+  const presence = resolvePresence(member.presenceStatus, member.online, away);
 
   return (
     <Link
@@ -35,9 +39,11 @@ export function MemberCard({ member }: { member: MemberView }) {
             <BadgeCheck className="h-5 w-5 text-sky-400" />
           </span>
         )}
-        {member.online && (
-          <span className="absolute left-2 top-2 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-navy-deep" />
-        )}
+        <PresenceIndicator
+          state={presence}
+          hideOffline
+          className="absolute start-2 top-2 rounded-full ring-2 ring-navy-deep"
+        />
         <div className="absolute bottom-2 end-2 flex gap-1.5">
           <FavoriteButton targetId={member.id} />
           <LikeButton targetId={member.id} />
