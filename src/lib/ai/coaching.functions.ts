@@ -51,6 +51,8 @@ export const suggestIceBreakers = createServerFn({ method: "POST" })
   .handler(async ({ context, data }): Promise<{ suggestions: string[] }> => {
     try {
       await enforceRateLimit(`ai:${context.userId}`, AI_LIMIT, AI_WINDOW_MS);
+      const { assertCandidateVisible } = await import("@/lib/ai/visibility.server");
+      await assertCandidateVisible(context.userId, data.candidateId);
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const { buildIceBreakerMessages } = await import("@/lib/ai/prompts");
       const { generateSuggestions } = await import("@/lib/ai/coaching-helpers.server");
