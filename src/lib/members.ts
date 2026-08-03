@@ -49,6 +49,12 @@ async function isSignedIn() {
   return Boolean(data.session);
 }
 
+/** Current user id, or null while signed out. */
+async function currentUserId(): Promise<string | null> {
+  const { data } = await supabase.auth.getSession();
+  return data.session?.user.id ?? null;
+}
+
 async function showcaseColumns() {
   return (await isSignedIn()) ? PUBLIC_COLUMNS : ANON_COLUMNS;
 }
@@ -190,7 +196,8 @@ function birthRange(minAge?: number, maxAge?: number) {
 }
 
 async function fetchMembers(filters: MemberFilters, limit: number, offset = 0) {
-  const signedIn = await isSignedIn();
+  const viewerId = await currentUserId();
+  const signedIn = Boolean(viewerId);
   let query = supabase
     .from("profiles")
     .select(signedIn ? PUBLIC_COLUMNS : ANON_COLUMNS, { count: "exact" })
@@ -198,6 +205,10 @@ async function fetchMembers(filters: MemberFilters, limit: number, offset = 0) {
     .eq("is_hidden", false)
     .order(SORT_COLUMN[filters.sort ?? "recent"], { ascending: false })
     .range(offset, offset + limit - 1);
+
+  // A member must never appear in their own browse/search results: liking or
+  // favoriting yourself is rejected by the database and breaks the card state.
+  if (viewerId) query = query.neq("id", viewerId);
 
   if (filters.lookingFor) query = query.eq("gender", filters.lookingFor);
   if (filters.country && filters.country !== "all") {
