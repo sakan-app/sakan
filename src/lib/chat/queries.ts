@@ -263,9 +263,7 @@ export async function sendMessage(queryClient: QueryClient, args: SendMessageArg
     .insert({
       conversation_id: args.conversationId,
       sender_id: args.senderId,
-      // messages_body_len rejects empty strings, so attachment-only messages
-      // must store NULL instead of "".
-      body: (args.body.trim() || null) as unknown as string,
+      body: args.body,
       kind: args.kind,
       attachment_path: args.attachmentPath ?? null,
       attachment_name: args.attachmentName ?? null,
@@ -381,13 +379,11 @@ export async function deleteMessageForEveryone(
     body: "",
     pinned_at: null,
   });
-  // The messages_body_len check requires 1..4000 characters, so a tombstone
-  // must clear the body to NULL — an empty string is rejected (23514).
   const { error } = await supabase
     .from("messages")
     .update({
       deleted_at: deletedAt,
-      body: null as unknown as string,
+      body: "",
       pinned_at: null,
       pinned_by: null,
     })
