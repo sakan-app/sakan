@@ -24,6 +24,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { startConversation } from "@/lib/chat/queries";
 import { chatStrings } from "@/lib/chat/strings";
 import { useFeatureStrings } from "@/i18n/feature";
+import { favoritesQuery, useToggleFavorite } from "@/lib/social/queries";
+import { socialStrings } from "@/lib/social/strings";
 import { toast } from "sonner";
 import { applyDocumentSeo } from "@/components/LocalizedSeo";
 import { memberSeo } from "@/lib/seo";
@@ -111,10 +113,17 @@ function MemberError() {
 function MemberProfile() {
   const { id } = Route.useParams();
   const { t } = useI18n();
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const chatS = useFeatureStrings(chatStrings);
+  const socialS = useFeatureStrings(socialStrings);
   const navigate = useNavigate();
   const memberQ = useQuery(memberQuery(id));
+  const userId = user?.id ?? "";
+  const favoritesQ = useQuery({
+    ...favoritesQuery(userId),
+    enabled: isAuthenticated && Boolean(userId),
+  });
+  const toggleFavorite = useToggleFavorite(userId);
   const loaderMember = Route.useLoaderData() as MemberView | null | undefined;
   // Fall back to loader data so SSR and the first client render agree.
   const member: MemberView | null | undefined = memberQ.data ?? loaderMember;
@@ -139,6 +148,7 @@ function MemberProfile() {
     (url): url is string => Boolean(url),
   );
   const notProvided = t.member.notProvided;
+  const isFavorited = (favoritesQ.data ?? []).some((entry) => entry.member.id === member.id);
   const maritalLabel = member.maritalStatus
     ? t.enums.marital[member.maritalStatus]
     : notProvided;
@@ -172,6 +182,14 @@ function MemberProfile() {
     void startConversation(memberId)
       .then((conversationId) => navigate({ to: "/messages/$id", params: { id: conversationId } }))
       .catch(() => toast.error(chatS.startChatError));
+  }
+
+  function handleToggleFavorite() {
+    if (!isAuthenticated) {
+      void navigate({ to: "/auth" });
+      return;
+    }
+    toggleFavorite.mutate({ targetId: member!.id, favorited: isFavorited });
   }
 
   return (
@@ -305,10 +323,13 @@ function MemberProfile() {
                   <MessageCircle className="h-4 w-4" /> {t.member.startChat}
                 </button>
                 <button
-                  onClick={handleStartChat}
-                  className="btn-outline-gold flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold"
+                  onClick={handleToggleFavorite}
+                  disabled={toggleFavorite.isPending}
+                  aria-pressed={isFavorited}
+                  className="btn-outline-gold flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold disabled:opacity-60"
                 >
-                  <Heart className="h-4 w-4" /> {t.member.addFavorite}
+                  <Heart className={`h-4 w-4 ${isFavorited ? "fill-current" : ""}`} />{" "}
+                  {isFavorited ? socialS.unfavorite : t.member.addFavorite}
                 </button>
               </div>
 
