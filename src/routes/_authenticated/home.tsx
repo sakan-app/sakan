@@ -144,13 +144,13 @@ function HomeFeed() {
           </div>
         ) : activeQ.isError ? (
           <div className="glass-card rounded-2xl p-8 text-center">
-            <p className="text-sm text-cream/70">{t.common.errorText}</p>
+            <p className="text-sm text-cream/70">{soc.errorText}</p>
             <button
               type="button"
               onClick={() => void activeQ.refetch()}
               className="mt-4 inline-flex items-center rounded-xl bg-gold px-4 py-2 text-sm font-semibold text-navy-deep"
             >
-              {t.common.retry}
+              {soc.retry}
             </button>
           </div>
         ) : (
