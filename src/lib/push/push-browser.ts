@@ -46,6 +46,12 @@ async function activeRegistration(timeoutMs = 10_000): Promise<ServiceWorkerRegi
   const existing = await navigator.serviceWorker.getRegistration();
   if (existing?.active) return existing;
 
+  // No worker yet (first run, or a registration that never activated): ask for
+  // one explicitly instead of waiting forever on `ready`.
+  if (!existing) {
+    await navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => undefined);
+  }
+
   const registration = await Promise.race([
     navigator.serviceWorker.ready,
     new Promise<null>((resolve) => setTimeout(() => resolve(null), timeoutMs)),
@@ -80,6 +86,12 @@ function serialize(subscription: PushSubscription) {
   };
 }
 
+function sameApplicationServerKey(subscription: PushSubscription, publicKey: string): boolean {
+  const current = subscription.options?.applicationServerKey;
+  if (!current) return true;
+  return keyToBase64Url(current as ArrayBuffer) === publicKey.replace(/=+$/, "");
+}
+
 /**
  * Asks for permission (if needed), subscribes with the server VAPID key and
  * stores the device. Returns the resulting state.
@@ -97,7 +109,14 @@ export async function enablePush(): Promise<PushState> {
   if (permission !== "granted") return permission === "denied" ? "denied" : "prompt";
 
   const registration = await activeRegistration();
-  const existing = await registration.pushManager.getSubscription();
+  let existing = await registration.pushManager.getSubscription();
+  // A subscription created with a different VAPID key is silently rejected by
+  // the push service (403) — drop it and mint a new one.
+  if (existing && !sameApplicationServerKey(existing, config.publicKey)) {
+    await deletePushSubscription({ data: { endpoint: existing.endpoint } }).catch(() => undefined);
+    await existing.unsubscribe().catch(() => undefined);
+    existing = null;
+  }
   const subscription =
     existing ??
     (await registration.pushManager.subscribe({
