@@ -9,6 +9,7 @@ import { useMyPresenceStatus } from "@/hooks/usePresence";
 import { useI18n } from "@/lib/i18n";
 import { notificationKeys } from "@/lib/social/keys";
 import { socialStrings } from "@/lib/social/strings";
+import { playNotificationSound, type SoundKey } from "@/lib/notifications/sounds";
 
 export type NotificationType = Database["public"]["Enums"]["notification_type"];
 export type NotificationRow = Database["public"]["Tables"]["notifications"]["Row"];
@@ -333,6 +334,10 @@ export function useNotificationsRealtime() {
             if (!dndRef.current) {
               toast(item.title, { description: item.body ?? stringsRef.current.types[item.type] });
             }
+            // One cue per notification; staff alerts get the distinct admin tone.
+            const soundKey: SoundKey =
+              item.type === "system" && item.data?.["scope"] === "admin" ? "admin" : item.type;
+            playNotificationSound(soundKey, dndRef.current);
           });
         },
       )

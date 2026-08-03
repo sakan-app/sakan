@@ -30,9 +30,25 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
         }
 
         const type = String(event["type"] ?? "");
+        const eventId = String(event["id"] ?? "");
         const object = ((event["data"] as Record<string, unknown> | undefined)?.["object"] ??
           {}) as Record<string, unknown>;
         const metadata = (object["metadata"] ?? {}) as Record<string, string>;
+
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+        // Idempotency: Stripe retries deliveries, so the unique event id is
+        // claimed first. A duplicate insert means the event is already handled.
+        if (eventId) {
+          const { error: claimError } = await supabaseAdmin
+            .from("webhook_events")
+            .insert({ id: eventId, provider: "stripe", event_type: type, status: "processing" });
+          if (claimError) {
+            // 23505 = unique violation → already received; ack without redoing work.
+            if (claimError.code === "23505") return new Response("duplicate");
+            console.error("[stripe-webhook] claim", claimError);
+          }
+        }
 
         try {
           if (type === "checkout.session.completed") {
@@ -67,18 +83,48 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
               providerRef: String(object["subscription"] ?? ""),
             });
           } else if (type === "customer.subscription.deleted" && metadata["user_id"]) {
-            const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
             await supabaseAdmin
               .from("subscriptions")
               .update({ status: "canceled", canceled_at: new Date().toISOString() })
               .eq("user_id", metadata["user_id"]!)
               .eq("status", "active");
+          } else if (type === "customer.subscription.updated" && metadata["user_id"]) {
+            // Mirrors "cancel at period end" toggles made in Stripe or the portal.
+            await supabaseAdmin
+              .from("subscriptions")
+              .update({ cancel_at_period_end: Boolean(object["cancel_at_period_end"]) })
+              .eq("user_id", metadata["user_id"]!)
+              .in("status", ["trialing", "active", "past_due"]);
+          } else if (type === "invoice.payment_failed" && metadata["user_id"]) {
+            // Keep access alive through a 3-day grace window before expiry.
+            const graceUntil = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString();
+            await supabaseAdmin
+              .from("subscriptions")
+              .update({ status: "past_due", grace_until: graceUntil })
+              .eq("user_id", metadata["user_id"]!)
+              .in("status", ["trialing", "active"]);
+          } else if (type === "charge.refunded" && metadata["user_id"]) {
+            await supabaseAdmin
+              .from("subscriptions")
+              .update({ status: "canceled", canceled_at: new Date().toISOString() })
+              .eq("user_id", metadata["user_id"]!)
+              .in("status", ["trialing", "active", "past_due"]);
           }
         } catch (error) {
           console.error("[stripe-webhook]", type, error);
+          if (eventId) {
+            // Mark as failed so Stripe's retry can re-claim and reprocess it.
+            await supabaseAdmin.from("webhook_events").delete().eq("id", eventId);
+          }
           return new Response("handler_error", { status: 500 });
         }
 
+        if (eventId) {
+          await supabaseAdmin
+            .from("webhook_events")
+            .update({ status: "processed" })
+            .eq("id", eventId);
+        }
         return new Response("ok");
       },
     },

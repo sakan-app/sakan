@@ -8,7 +8,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -35,6 +35,8 @@ const APP_SHELL_PREFIXES = [
   "/billing",
   "/notifications",
   "/onboarding",
+  "/auth",
+  "/admin",
 ];
 
 function NotFoundComponent() {
@@ -174,6 +176,10 @@ function RootComponent() {
   const inAppShell = APP_SHELL_PREFIXES.some(
     (p) => pathname === p || pathname.startsWith(`${p}/`),
   );
+  // The bottom nav depends on client-only state (session, safe areas), so it
+  // mounts after hydration to keep the server and client markup identical.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -188,7 +194,7 @@ function RootComponent() {
               {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
               <Outlet />
             </div>
-            {!inAppShell && <BottomNav />}
+            {mounted && !inAppShell && <BottomNav />}
             <InstallPrompt />
             <Toaster richColors position="top-center" />
           </PwaProvider>

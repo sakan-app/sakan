@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from "react";
 
 import { flushOutbox } from "@/lib/outbox";
+import { installAudioUnlock } from "@/lib/audio/engine";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -18,6 +19,10 @@ export function clearDeferredInstallPrompt(): void {
 }
 
 export function PwaProvider({ children }: { children: ReactNode }) {
+  // Browsers block audio until the first gesture; unlock once so notification
+  // sounds and call tones can play later without a user-visible prompt.
+  useEffect(() => installAudioUnlock(), []);
+
   // Replay any offline-queued writes when the network or the SW says so.
   useEffect(() => {
     if (typeof window === "undefined") return;

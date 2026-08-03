@@ -7,9 +7,20 @@
 
 const API = "https://api.stripe.com/v1";
 
+/**
+ * Resolves the active Stripe secret key.
+ *
+ * Production uses STRIPE_SECRET_KEY; preview/dev prefers STRIPE_TEST_API_KEY
+ * when present so test cards never touch live money. A live key is still used
+ * in dev if no test key is configured, matching previous behaviour.
+ */
 export function stripeKey(): string | null {
-  const key = process.env["STRIPE_SECRET_KEY"];
-  return key && key.startsWith("sk_") ? key : null;
+  const live = process.env["STRIPE_SECRET_KEY"];
+  const test = process.env["STRIPE_TEST_API_KEY"];
+  const isProduction = process.env["NODE_ENV"] === "production";
+  const candidates = isProduction ? [live, test] : [test, live];
+  const key = candidates.find((value) => typeof value === "string" && value.startsWith("sk_"));
+  return key ?? null;
 }
 
 export function stripeIsLive(): boolean {
