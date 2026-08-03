@@ -5,6 +5,7 @@ import { Loader2, MapPin, SearchX, SlidersHorizontal } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MemberCard } from "@/components/MemberCard";
+import { VirtualMemberGrid } from "@/components/search/VirtualMemberGrid";
 import { PAGE_SIZE, searchMembersQuery } from "@/lib/members";
 import { useI18n } from "@/lib/i18n";
 import { countryLabel } from "@/lib/countries";
@@ -203,12 +204,8 @@ function SearchPage() {
                   </div>
                 ))}
               </div>
-              {/* Desktop grid */}
-              <div className="hidden gap-5 sm:grid sm:grid-cols-3 lg:grid-cols-4">
-                {refinedResults.map((m) => (
-                  <MemberCard key={m.id} member={m} />
-                ))}
-              </div>
+              {/* Desktop grid — virtualized once the result set gets long */}
+              <VirtualMemberGrid members={refinedResults} className="hidden sm:block" />
               {hasMore && (
                 <div className="mt-8 text-center">
                   <button

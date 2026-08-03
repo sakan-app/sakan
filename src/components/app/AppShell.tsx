@@ -1,6 +1,6 @@
 import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import {
   Bell,
   ChevronLeft,
@@ -561,6 +561,7 @@ export function AppShell() {
             immersive ? "pb-0" : "pb-[calc(5.75rem+env(safe-area-inset-bottom))] lg:pb-8"
           }`}
         >
+          <MotionConfig reducedMotion="user">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={pathname}
@@ -572,6 +573,7 @@ export function AppShell() {
               <Outlet />
             </motion.div>
           </AnimatePresence>
+          </MotionConfig>
         </main>
       </div>
       {!immersive && <TabBar />}
