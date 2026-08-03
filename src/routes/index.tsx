@@ -156,16 +156,16 @@ function Index() {
 
               <div className="mt-4 grid grid-cols-2 gap-4">
                 <div>
-                  <label className="mb-2 block text-xs font-semibold text-cream/80">{t.home.ageFrom}</label>
-                  <select className="field-navy" value={minAge} onChange={(e) => setMinAge(Number(e.target.value))}>
+                  <label htmlFor="home-min-age" className="mb-2 block text-xs font-semibold text-cream/80">{t.home.ageFrom}</label>
+                  <select id="home-min-age" aria-label={t.home.ageFrom} className="field-navy" value={minAge} onChange={(e) => setMinAge(Number(e.target.value))}>
                     {Array.from({ length: 43 }, (_, i) => 18 + i).map((a) => (
                       <option key={a} value={a}>{a}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="mb-2 block text-xs font-semibold text-cream/80">{t.home.ageTo}</label>
-                  <select className="field-navy" value={maxAge} onChange={(e) => setMaxAge(Number(e.target.value))}>
+                  <label htmlFor="home-max-age" className="mb-2 block text-xs font-semibold text-cream/80">{t.home.ageTo}</label>
+                  <select id="home-max-age" aria-label={t.home.ageTo} className="field-navy" value={maxAge} onChange={(e) => setMaxAge(Number(e.target.value))}>
                     {Array.from({ length: 43 }, (_, i) => 18 + i).map((a) => (
                       <option key={a} value={a}>{a}</option>
                     ))}
@@ -174,10 +174,10 @@ function Index() {
               </div>
 
               <div className="mt-4">
-                <label className="mb-2 block text-xs font-semibold text-cream/80">{t.home.residence}</label>
+                <label htmlFor="home-country" className="mb-2 block text-xs font-semibold text-cream/80">{t.home.residence}</label>
                 <div className="relative">
                   <MapPin className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gold" />
-                  <select className="field-navy ps-9" value={country} onChange={(e) => setCountry(e.target.value)}>
+                  <select id="home-country" aria-label={t.home.residence} className="field-navy ps-9" value={country} onChange={(e) => setCountry(e.target.value)}>
                     <option value="all">{t.home.chooseCountry}</option>
                     {COUNTRY_CODES.map((code) => (
                       <option key={code} value={code}>{t.countries[code]}</option>
