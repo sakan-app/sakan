@@ -380,11 +380,75 @@ Subscriptions · Payments · Ads · Notifications · Analytics · Activity · Se
 
 ## 19. Progressive Web App
 
-- `public/manifest.webmanifest` with icons, theme color and standalone display.
-- Service worker (`public/sw.js`) for asset caching and offline fallback to `/offline`.
-- Custom install prompt (`InstallPrompt`) surfaced at a sensible moment.
-- Offline banner, outbox-backed message queueing and background retry.
-- Safe-area insets honored across the bottom nav, composer and sheets.
+SAKAN ships as an installable, offline-capable, push-enabled PWA.
+
+### 19.1 Service worker
+
+`vite-plugin-pwa` (`generateSW`, Workbox) emits a single worker at `/sw.js`;
+`public/sw-push.js` is pulled in with `importScripts` and adds push, notification
+clicks, Background Sync and Periodic Background Sync. Caching strategies:
+
+| Traffic | Strategy | Cache |
+| --- | --- | --- |
+| HTML navigations | NetworkFirst (8s timeout) → `/offline` | `sakan-pages` |
+| Hashed build assets | Precache (Workbox manifest) | `workbox-precache` |
+| Images | CacheFirst, 150 entries / 30 days | `sakan-images` |
+| Google Fonts CSS / files | SWR / CacheFirst | `sakan-font-css`, `sakan-fonts` |
+| Supabase storage media | StaleWhileRevalidate | `sakan-remote-media` |
+
+Registration lives only in `src/lib/pwa/register.ts`. It refuses to install in
+dev, in an iframe, on Lovable preview hosts, or with `?sw=off`, and unregisters
+any worker it finds in those contexts.
+
+### 19.2 Offline queue
+
+`src/lib/outbox.ts` wraps `window.fetch` once, so **every** POST/PUT/PATCH/DELETE
+the app performs (server functions and Supabase REST alike) is captured in
+IndexedDB when the network fails — messages, likes, favorites, profile edits,
+settings, reports, verification and featured-banner actions included. Auth,
+storage and Stripe traffic is deliberately excluded. Replay happens on `online`,
+on a Background Sync event, or from the worker when no tab is open. 4xx is
+terminal, 5xx retries, and an entry is dropped after 8 failed attempts.
+
+### 19.3 Background & periodic sync
+
+- `sakan-outbox-sync` — one-off Background Sync; replays the outbox.
+- `sakan-content-refresh` — Periodic Background Sync (12h) that flushes the
+  outbox and re-warms the app shell for cold offline starts.
+
+### 19.4 Push notifications
+
+- VAPID keys live in secrets (`VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`).
+- `src/lib/push/webpush.server.ts` implements RFC 8291 (`aes128gcm`) and VAPID
+  JWT signing on Web Crypto — no Node-only dependency.
+- Devices are stored in `push_subscriptions`; 404/410 disables an endpoint
+  immediately, five consecutive failures disables it too.
+- `pg_cron` job `sakan-push-dispatch` calls `POST /api/public/push-dispatch`
+  every minute (guarded by `PUSH_DISPATCH_TOKEN`), skips Do-Not-Disturb members,
+  sends localized payloads and stamps `push_sent_at` for idempotency.
+- Clicks deep-link by notification type (`/messages/:id`, `/matches`,
+  `/notifications`, `/billing`) and focus an open tab through the router.
+- `pushsubscriptionchange` re-subscribes and replaces the stored endpoint.
+- The app icon badge tracks the unread count (`src/lib/pwa/badge.ts`,
+  `AppBadgeSync`), and pushes carry `badge_count` for background updates.
+- Members enable, test and disable push in Settings (`PushToggle`).
+
+### 19.5 Install & updates
+
+- `InstallPrompt` uses the captured `beforeinstallprompt`, detects an already
+  installed app, shows iOS instructions and re-prompts at most weekly.
+- Install funnel events (`prompt_shown`, `accepted`, `dismissed`, `installed`)
+  are stored in `pwa_install_events`.
+- `UpdateBanner` appears when a new worker takes control; the registrar also
+  checks for updates hourly.
+- `VersionIndicator` in Settings shows the running build.
+
+### 19.6 Assets & Lighthouse
+
+Real maskable icons (192/512, navy safe-area padding), `apple-touch-icon`,
+four real screenshots (narrow + wide, home + search), shortcuts for search,
+messages and notifications, `/offline` fallback route, safe-area insets across
+the bottom nav, composer and sheets.
 
 ---
 
