@@ -9,7 +9,7 @@ export function Footer() {
 
   const siteLinks = [
     { to: "/about", label: t.nav.about },
-    { to: "/guide", label: t.nav.stories },
+    { to: "/guide", label: t.nav.guide },
     { to: "/pricing", label: t.nav.plans },
     { to: "/search", label: t.nav.browse },
   ] as const;

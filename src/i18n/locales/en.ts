@@ -28,6 +28,7 @@ export const en: Dictionary = {
     myProfile: "My profile",
     browse: "Browse members",
     menu: "Menu",
+    guide: "Marriage law guide",
     language: "Language",
   },
   home: {

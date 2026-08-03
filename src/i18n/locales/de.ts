@@ -28,6 +28,7 @@ export const de: Dictionary = {
     myProfile: "Mein Profil",
     browse: "Mitglieder entdecken",
     menu: "Menü",
+    guide: "Eheratgeber",
     language: "Sprache",
   },
   home: {

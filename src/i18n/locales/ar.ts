@@ -26,6 +26,7 @@ export const ar = {
     myProfile: "ملفي الشخصي",
     browse: "تصفح الأعضاء",
     menu: "القائمة",
+    guide: "دليل قانون الزواج",
     language: "اللغة",
   },
   home: {
