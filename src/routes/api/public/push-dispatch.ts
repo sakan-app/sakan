@@ -99,6 +99,20 @@ export const Route = createFileRoute("/api/public/push-dispatch")({
         );
 
         let sent = 0;
+        // Badge counts are per member: one query, reused for every row.
+        const unreadByUser = new Map<string, number>();
+        await Promise.all(
+          userIds.map(async (userId) => {
+            const { count } = await supabaseAdmin
+              .from("notifications")
+              .select("id", { count: "exact", head: true })
+              .eq("user_id", userId)
+              .is("archived_at", null)
+              .is("read_at", null);
+            unreadByUser.set(userId, count ?? 0);
+          }),
+        );
+
         for (const row of rows) {
           const member = presence.get(row.user_id);
           if (!member?.dnd) {
@@ -110,6 +124,7 @@ export const Route = createFileRoute("/api/public/push-dispatch")({
               kind: row.type,
               lang: member?.locale ?? "ar",
               dir: (member?.locale ?? "ar") === "ar" ? "rtl" : "ltr",
+              badge_count: unreadByUser.get(row.user_id) ?? 0,
             });
             sent += result.sent;
           }
