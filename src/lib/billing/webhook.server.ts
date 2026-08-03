@@ -7,6 +7,7 @@
  * customer mapping in `billing_customers`.
  */
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import type { Database } from "@/integrations/supabase/types";
 
 import {
   activateSubscription,
@@ -193,19 +194,19 @@ export async function handleSubscriptionUpdated(sub: Obj) {
 
   const end = Number(sub["current_period_end"]);
   const status = String(sub["status"] ?? "");
-  const patch: Record<string, unknown> = {
+  const patch: Database["public"]["Tables"]["subscriptions"]["Update"] = {
     cancel_at_period_end: Boolean(sub["cancel_at_period_end"]),
     provider_ref: subscriptionRef,
     provider_customer_id: customerId,
   };
   if (Number.isFinite(end) && end > 0)
-    patch["current_period_end"] = new Date(end * 1000).toISOString();
-  if (status === "past_due" || status === "unpaid") patch["status"] = "past_due";
+    patch.current_period_end = new Date(end * 1000).toISOString();
+  if (status === "past_due" || status === "unpaid") patch.status = "past_due";
   if (status === "active" || status === "trialing") {
-    patch["status"] = status === "trialing" ? "trialing" : "active";
-    patch["grace_until"] = null;
+    patch.status = status === "trialing" ? "trialing" : "active";
+    patch.grace_until = null;
   }
-  if (!sub["cancel_at_period_end"]) patch["canceled_at"] = null;
+  if (!sub["cancel_at_period_end"]) patch.canceled_at = null;
 
   await supabaseAdmin
     .from("subscriptions")
