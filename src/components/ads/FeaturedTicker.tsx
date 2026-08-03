@@ -186,16 +186,21 @@ export const FeaturedTicker = memo(function FeaturedTicker() {
                 {s.onAir} · {s.loopsLeft}: {loopsLeft}
               </p>
             </div>
-            {current.targetUrl ? (
+            {current.userId ? (
+              <Link
+                to="/member/$id"
+                params={{ id: current.userId }}
+                onClick={trackClick}
+                className="btn-outline-gold shrink-0 px-3 py-1.5 text-[11px]"
+              >
+                {s.viewProfile}
+              </Link>
+            ) : current.targetUrl ? (
               <a
                 href={current.targetUrl}
                 target="_blank"
                 rel="nofollow noopener noreferrer sponsored"
-                onClick={() => {
-                  void trackAdEvent({ data: { adId: current.id, metric: "clicks" } }).catch(
-                    () => {},
-                  );
-                }}
+                onClick={trackClick}
                 className="btn-outline-gold shrink-0 px-3 py-1.5 text-[11px]"
               >
                 {s.viewProfile}
