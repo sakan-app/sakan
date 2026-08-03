@@ -176,6 +176,7 @@ function MemberProfile() {
 
   return (
     <div className="min-h-screen bg-cream">
+      <MemberSeo name={member.name} age={member.age ?? null} bio={member.bio ?? null} />
       <Header />
 
       <div className="bg-navy-deep pb-16 pt-8">
