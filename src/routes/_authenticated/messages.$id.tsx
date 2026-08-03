@@ -29,6 +29,7 @@ import { MessageInfoSheet } from "@/components/chat/MessageInfoSheet";
 import { PinnedBanner } from "@/components/chat/PinnedBanner";
 import { SelectionBar } from "@/components/chat/SelectionBar";
 import { WallpaperPicker } from "@/components/chat/WallpaperPicker";
+import { AiSuggestBar } from "@/components/chat/AiSuggestBar";
 import { useAuth } from "@/hooks/useAuth";
 import { myProfileQuery } from "@/lib/profile-queries";
 import { formatLastSeen, useIsOnline } from "@/hooks/usePresence";
@@ -215,6 +216,7 @@ function ConversationPage() {
 
   /* Premium chat state */
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
+  const [aiDraft, setAiDraft] = useState<{ text: string; token: number } | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [selection, setSelection] = useState<string[] | null>(null);
   const [menu, setMenu] = useState<{ message: ChatMessage; x: number; y: number } | null>(null);
@@ -860,8 +862,16 @@ function ConversationPage() {
         )}
       </div>
 
+      <AiSuggestBar
+        conversationId={id}
+        otherUserId={info.otherUserId}
+        hasMessages={(messagesQ.data?.pages.flatMap((p) => p.items).length ?? 0) > 0}
+        onPick={(text) => setAiDraft({ text, token: Date.now() })}
+      />
+
       <Composer
         strings={s}
+        draft={aiDraft}
         onSendText={handleSendText}
         onSendAttachment={handleSendAttachment}
         onTyping={sendTyping}
