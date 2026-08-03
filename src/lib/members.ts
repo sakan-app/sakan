@@ -36,6 +36,23 @@ const ONLINE_WINDOW_MS = 15 * 60 * 1000;
 export const PUBLIC_COLUMNS =
   "id, display_name, birth_date, gender, looking_for, country_code, city, bio, interests, spoken_languages, education, occupation, marital_status, religiosity, height_cm, is_verified, last_seen_at, avatar_url, presence_status, hide_last_seen";
 
+/**
+ * Anonymous visitors are only granted the showcase columns at the database
+ * level (no date of birth, bio, occupation, education, ...). Signing in
+ * unlocks the full profile payload.
+ */
+export const ANON_COLUMNS =
+  "id, display_name, birth_year, gender, looking_for, country_code, city, is_verified, last_seen_at, avatar_url, presence_status, hide_last_seen";
+
+async function isSignedIn() {
+  const { data } = await supabase.auth.getSession();
+  return Boolean(data.session);
+}
+
+async function showcaseColumns() {
+  return (await isSignedIn()) ? PUBLIC_COLUMNS : ANON_COLUMNS;
+}
+
 function ageFromBirthDate(birthDate: string | null): number | null {
   if (!birthDate) return null;
   const birth = new Date(birthDate);
