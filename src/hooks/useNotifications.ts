@@ -21,11 +21,18 @@ export type NotificationItem = {
   body: string | null;
   data: Record<string, unknown>;
   readAt: string | null;
+  archivedAt: string | null;
   createdAt: string;
   actor: NotificationActor | null;
 };
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 60;
+
+function invalidateAll(queryClient: ReturnType<typeof useQueryClient>, userId: string) {
+  void queryClient.invalidateQueries({ queryKey: notificationKeys.list(userId) });
+  void queryClient.invalidateQueries({ queryKey: notificationKeys.archived(userId) });
+  void queryClient.invalidateQueries({ queryKey: notificationKeys.unreadCount(userId) });
+}
 
 async function attachActors(rows: NotificationRow[]): Promise<NotificationItem[]> {
   const actorIds = [...new Set(rows.map((r) => r.actor_id).filter((id): id is string => Boolean(id)))];
@@ -55,6 +62,7 @@ async function attachActors(rows: NotificationRow[]): Promise<NotificationItem[]
     body: row.body,
     data: (row.data ?? {}) as Record<string, unknown>,
     readAt: row.read_at,
+    archivedAt: row.archived_at,
     createdAt: row.created_at,
     actor: row.actor_id ? actorsById.get(row.actor_id) ?? null : null,
   }));
@@ -68,6 +76,7 @@ export const notificationsQuery = (userId: string) =>
         .from("notifications")
         .select("*")
         .eq("user_id", userId)
+        .is("archived_at", null)
         .order("created_at", { ascending: false })
         .limit(PAGE_SIZE);
       if (error) throw error;
@@ -85,6 +94,7 @@ export const unreadCountQuery = (userId: string) =>
         .from("notifications")
         .select("id", { count: "exact", head: true })
         .eq("user_id", userId)
+        .is("archived_at", null)
         .is("read_at", null);
       if (error) throw error;
       return count ?? 0;
@@ -92,6 +102,30 @@ export const unreadCountQuery = (userId: string) =>
     enabled: Boolean(userId),
     staleTime: 10_000,
   });
+
+export const archivedNotificationsQuery = (userId: string) =>
+  queryOptions({
+    queryKey: notificationKeys.archived(userId),
+    queryFn: async (): Promise<NotificationItem[]> => {
+      const { data, error } = await supabase
+        .from("notifications")
+        .select("*")
+        .eq("user_id", userId)
+        .not("archived_at", "is", null)
+        .order("archived_at", { ascending: false })
+        .limit(PAGE_SIZE);
+      if (error) throw error;
+      return attachActors(data ?? []);
+    },
+    enabled: Boolean(userId),
+    staleTime: 30_000,
+  });
+
+export function useArchivedNotifications(enabled = true) {
+  const { user } = useAuth();
+  const userId = user?.id ?? "";
+  return useQuery({ ...archivedNotificationsQuery(userId), enabled: enabled && Boolean(userId) });
+}
 
 export function useNotificationsList() {
   const { user } = useAuth();
@@ -174,6 +208,81 @@ export function useDeleteNotification() {
       void queryClient.invalidateQueries({ queryKey: notificationKeys.list(userId) });
       void queryClient.invalidateQueries({ queryKey: notificationKeys.unreadCount(userId) });
     },
+  });
+}
+
+/** Archive / unarchive a batch of notifications (optimistic). */
+export function useArchiveNotifications() {
+  const { user } = useAuth();
+  const userId = user?.id ?? "";
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ ids, archived }: { ids: string[]; archived: boolean }) => {
+      const { error } = await supabase
+        .from("notifications")
+        .update({ archived_at: archived ? new Date().toISOString() : null })
+        .in("id", ids);
+      if (error) throw error;
+    },
+    onMutate: async ({ ids, archived }) => {
+      const from = archived ? notificationKeys.list(userId) : notificationKeys.archived(userId);
+      const prev = queryClient.getQueryData<NotificationItem[]>(from);
+      queryClient.setQueryData<NotificationItem[]>(from, (list) => list?.filter((n) => !ids.includes(n.id)));
+      return { prev, from };
+    },
+    onError: (_e, _v, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(ctx.from, ctx.prev);
+    },
+    onSettled: () => invalidateAll(queryClient, userId),
+  });
+}
+
+/** Delete a batch of notifications (optimistic). */
+export function useDeleteNotifications() {
+  const { user } = useAuth();
+  const userId = user?.id ?? "";
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (ids: string[]) => {
+      const { error } = await supabase.from("notifications").delete().in("id", ids);
+      if (error) throw error;
+    },
+    onMutate: async (ids: string[]) => {
+      const prevList = queryClient.getQueryData<NotificationItem[]>(notificationKeys.list(userId));
+      const prevArchived = queryClient.getQueryData<NotificationItem[]>(notificationKeys.archived(userId));
+      queryClient.setQueryData<NotificationItem[]>(notificationKeys.list(userId), (l) => l?.filter((n) => !ids.includes(n.id)));
+      queryClient.setQueryData<NotificationItem[]>(notificationKeys.archived(userId), (l) => l?.filter((n) => !ids.includes(n.id)));
+      return { prevList, prevArchived };
+    },
+    onError: (_e, _v, ctx) => {
+      if (ctx?.prevList) queryClient.setQueryData(notificationKeys.list(userId), ctx.prevList);
+      if (ctx?.prevArchived) queryClient.setQueryData(notificationKeys.archived(userId), ctx.prevArchived);
+    },
+    onSettled: () => invalidateAll(queryClient, userId),
+  });
+}
+
+/** Mark a batch of notifications as read (optimistic). */
+export function useMarkManyAsRead() {
+  const { user } = useAuth();
+  const userId = user?.id ?? "";
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (ids: string[]) => {
+      const { error } = await supabase
+        .from("notifications")
+        .update({ read_at: new Date().toISOString() })
+        .in("id", ids)
+        .is("read_at", null);
+      if (error) throw error;
+    },
+    onMutate: async (ids: string[]) => {
+      const now = new Date().toISOString();
+      queryClient.setQueryData<NotificationItem[]>(notificationKeys.list(userId), (l) =>
+        l?.map((n) => (ids.includes(n.id) ? { ...n, readAt: n.readAt ?? now } : n)),
+      );
+    },
+    onSettled: () => invalidateAll(queryClient, userId),
   });
 }
 

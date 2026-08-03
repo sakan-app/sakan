@@ -36,12 +36,41 @@ export type SocialStrings = {
     delete: string;
     bellLabel: string;
     viewAll: string;
+    filters: {
+      all: string;
+      unread: string;
+      messages: string;
+      likes: string;
+      matches: string;
+      verification: string;
+      premium: string;
+      system: string;
+    };
+    groups: { today: string; yesterday: string; earlier: string };
+    searchPlaceholder: string;
+    noResults: string;
+    inbox: string;
+    archiveView: string;
+    archive: string;
+    unarchive: string;
+    archiveEmpty: string;
+    archiveEmptyText: string;
+    select: string;
+    selectAll: string;
+    clearSelection: string;
+    selectedCount: string;
+    deleteSelected: string;
+    markSelectedRead: string;
+    archiveSelected: string;
+    swipeHint: string;
+    liveUpdates: string;
     types: {
       like: string;
       match: string;
       message: string;
       profile_view: string;
       verification: string;
+      premium: string;
       system: string;
     };
   };
@@ -88,11 +117,40 @@ export const socialStrings: FeatureDictionary<SocialStrings> = {
       delete: "حذف",
       bellLabel: "الإشعارات",
       viewAll: "عرض كل الإشعارات",
+      filters: {
+        all: "الكل",
+        unread: "غير المقروءة",
+        messages: "الرسائل",
+        likes: "الإعجابات",
+        matches: "التوافقات",
+        verification: "التوثيق",
+        premium: "بريميوم",
+        system: "النظام",
+      },
+      groups: { today: "اليوم", yesterday: "أمس", earlier: "أقدم" },
+      searchPlaceholder: "ابحث في الإشعارات…",
+      noResults: "لا توجد نتائج مطابقة",
+      inbox: "الوارد",
+      archiveView: "الأرشيف",
+      archive: "أرشفة",
+      unarchive: "إلغاء الأرشفة",
+      archiveEmpty: "الأرشيف فارغ",
+      archiveEmptyText: "الإشعارات المؤرشفة ستظهر هنا.",
+      select: "تحديد",
+      selectAll: "تحديد الكل",
+      clearSelection: "إلغاء التحديد",
+      selectedCount: "{n} محدد",
+      deleteSelected: "حذف المحدد",
+      markSelectedRead: "تعليم كمقروء",
+      archiveSelected: "أرشفة المحدد",
+      swipeHint: "اسحب لليسار للحذف",
+      liveUpdates: "تحديث مباشر",
       types: {
         like: "إعجاب جديد",
         match: "توافق جديد",
         message: "رسالة جديدة",
         profile_view: "مشاهدة للملف الشخصي",
+        premium: "اشتراكك المميز",
         verification: "توثيق الحساب",
         system: "إشعار من المنصة",
       },
@@ -138,11 +196,40 @@ export const socialStrings: FeatureDictionary<SocialStrings> = {
       delete: "Delete",
       bellLabel: "Notifications",
       viewAll: "View all notifications",
+      filters: {
+        all: "All",
+        unread: "Unread",
+        messages: "Messages",
+        likes: "Likes",
+        matches: "Matches",
+        verification: "Verification",
+        premium: "Premium",
+        system: "System",
+      },
+      groups: { today: "Today", yesterday: "Yesterday", earlier: "Earlier" },
+      searchPlaceholder: "Search notifications…",
+      noResults: "No matching notifications",
+      inbox: "Inbox",
+      archiveView: "Archive",
+      archive: "Archive",
+      unarchive: "Unarchive",
+      archiveEmpty: "Archive is empty",
+      archiveEmptyText: "Archived notifications appear here.",
+      select: "Select",
+      selectAll: "Select all",
+      clearSelection: "Clear selection",
+      selectedCount: "{n} selected",
+      deleteSelected: "Delete selected",
+      markSelectedRead: "Mark as read",
+      archiveSelected: "Archive selected",
+      swipeHint: "Swipe left to delete",
+      liveUpdates: "Live",
       types: {
         like: "New like",
         match: "New match",
         message: "New message",
         profile_view: "Profile view",
+        premium: "Premium update",
         verification: "Verification",
         system: "System notice",
       },
@@ -188,11 +275,40 @@ export const socialStrings: FeatureDictionary<SocialStrings> = {
       delete: "Löschen",
       bellLabel: "Benachrichtigungen",
       viewAll: "Alle Benachrichtigungen anzeigen",
+      filters: {
+        all: "Alle",
+        unread: "Ungelesen",
+        messages: "Nachrichten",
+        likes: "Likes",
+        matches: "Matches",
+        verification: "Verifizierung",
+        premium: "Premium",
+        system: "System",
+      },
+      groups: { today: "Heute", yesterday: "Gestern", earlier: "Früher" },
+      searchPlaceholder: "Benachrichtigungen durchsuchen…",
+      noResults: "Keine passenden Benachrichtigungen",
+      inbox: "Posteingang",
+      archiveView: "Archiv",
+      archive: "Archivieren",
+      unarchive: "Wiederherstellen",
+      archiveEmpty: "Archiv ist leer",
+      archiveEmptyText: "Archivierte Benachrichtigungen erscheinen hier.",
+      select: "Auswählen",
+      selectAll: "Alle auswählen",
+      clearSelection: "Auswahl aufheben",
+      selectedCount: "{n} ausgewählt",
+      deleteSelected: "Auswahl löschen",
+      markSelectedRead: "Als gelesen markieren",
+      archiveSelected: "Auswahl archivieren",
+      swipeHint: "Nach links wischen zum Löschen",
+      liveUpdates: "Live",
       types: {
         like: "Neues Like",
         match: "Neues Match",
         message: "Neue Nachricht",
         profile_view: "Profilansicht",
+        premium: "Premium-Update",
         verification: "Verifizierung",
         system: "Systemmeldung",
       },
@@ -238,11 +354,40 @@ export const socialStrings: FeatureDictionary<SocialStrings> = {
       delete: "Supprimer",
       bellLabel: "Notifications",
       viewAll: "Toutes les notifications",
+      filters: {
+        all: "Tout",
+        unread: "Non lues",
+        messages: "Messages",
+        likes: "J'aime",
+        matches: "Correspondances",
+        verification: "Vérification",
+        premium: "Premium",
+        system: "Système",
+      },
+      groups: { today: "Aujourd'hui", yesterday: "Hier", earlier: "Plus ancien" },
+      searchPlaceholder: "Rechercher dans les notifications…",
+      noResults: "Aucune notification correspondante",
+      inbox: "Boîte de réception",
+      archiveView: "Archives",
+      archive: "Archiver",
+      unarchive: "Désarchiver",
+      archiveEmpty: "Les archives sont vides",
+      archiveEmptyText: "Les notifications archivées apparaissent ici.",
+      select: "Sélectionner",
+      selectAll: "Tout sélectionner",
+      clearSelection: "Effacer la sélection",
+      selectedCount: "{n} sélectionné(s)",
+      deleteSelected: "Supprimer la sélection",
+      markSelectedRead: "Marquer comme lu",
+      archiveSelected: "Archiver la sélection",
+      swipeHint: "Glissez vers la gauche pour supprimer",
+      liveUpdates: "En direct",
       types: {
         like: "Nouveau j'aime",
         match: "Nouvelle correspondance",
         message: "Nouveau message",
         profile_view: "Vue du profil",
+        premium: "Mise à jour Premium",
         verification: "Vérification",
         system: "Notification système",
       },
