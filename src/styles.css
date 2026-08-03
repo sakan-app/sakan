@@ -736,3 +736,92 @@
 @media (prefers-reduced-motion: reduce) {
   .featured-track { animation: none; transform: none; }
 }
+
+/* ==========================================================================
+   Unified micro-interactions (press, hover, route + list transitions)
+   Every effect below is neutralised by the global prefers-reduced-motion rule.
+   ========================================================================== */
+
+@utility press {
+  transition:
+    transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.16s ease;
+  will-change: transform;
+}
+.press:active {
+  transform: scale(0.965);
+}
+.press:disabled,
+.press[aria-disabled="true"] {
+  transform: none;
+}
+
+@utility hover-lift {
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+@keyframes sakan-route-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/** Page-level entrance applied once per route render. */
+@utility route-enter {
+  animation: sakan-route-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes sakan-list-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/** Staggered list/menu entrance: children animate in sequence. */
+@utility list-stagger {
+  --stagger-step: 28ms;
+}
+.list-stagger > * {
+  animation: sakan-list-in 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.list-stagger > *:nth-child(1) { animation-delay: calc(var(--stagger-step) * 0); }
+.list-stagger > *:nth-child(2) { animation-delay: calc(var(--stagger-step) * 1); }
+.list-stagger > *:nth-child(3) { animation-delay: calc(var(--stagger-step) * 2); }
+.list-stagger > *:nth-child(4) { animation-delay: calc(var(--stagger-step) * 3); }
+.list-stagger > *:nth-child(5) { animation-delay: calc(var(--stagger-step) * 4); }
+.list-stagger > *:nth-child(6) { animation-delay: calc(var(--stagger-step) * 5); }
+.list-stagger > *:nth-child(n + 7) { animation-delay: calc(var(--stagger-step) * 6); }
+
+/* Accessibility: one consistent, high-contrast focus ring everywhere. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .press,
+  .hover-lift,
+  .route-enter,
+  .list-stagger > * {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    transform: none !important;
+  }
+}
