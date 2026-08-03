@@ -36,6 +36,23 @@ const ONLINE_WINDOW_MS = 15 * 60 * 1000;
 export const PUBLIC_COLUMNS =
   "id, display_name, birth_date, gender, looking_for, country_code, city, bio, interests, spoken_languages, education, occupation, marital_status, religiosity, height_cm, is_verified, last_seen_at, avatar_url, presence_status, hide_last_seen";
 
+/**
+ * Anonymous visitors are only granted the showcase columns at the database
+ * level (no date of birth, bio, occupation, education, ...). Signing in
+ * unlocks the full profile payload.
+ */
+export const ANON_COLUMNS =
+  "id, display_name, birth_year, gender, looking_for, country_code, city, is_verified, last_seen_at, avatar_url, presence_status, hide_last_seen";
+
+async function isSignedIn() {
+  const { data } = await supabase.auth.getSession();
+  return Boolean(data.session);
+}
+
+async function showcaseColumns() {
+  return (await isSignedIn()) ? PUBLIC_COLUMNS : ANON_COLUMNS;
+}
+
 function ageFromBirthDate(birthDate: string | null): number | null {
   if (!birthDate) return null;
   const birth = new Date(birthDate);
@@ -48,25 +65,30 @@ export type PublicProfile = Pick<
   ProfileRow,
   | "id"
   | "display_name"
-  | "birth_date"
   | "gender"
   | "looking_for"
   | "country_code"
   | "city"
-  | "bio"
-  | "interests"
-  | "spoken_languages"
-  | "education"
-  | "occupation"
-  | "marital_status"
-  | "religiosity"
-  | "height_cm"
   | "is_verified"
   | "last_seen_at"
   | "avatar_url"
   | "presence_status"
   | "hide_last_seen"
->;
+> &
+  Partial<
+    Pick<
+      ProfileRow,
+      | "birth_date"
+      | "bio"
+      | "interests"
+      | "spoken_languages"
+      | "education"
+      | "occupation"
+      | "marital_status"
+      | "religiosity"
+      | "height_cm"
+    >
+  > & { birth_year?: number | null };
 
 export async function toMemberViews(rows: PublicProfile[]): Promise<MemberView[]> {
   if (rows.length === 0) return [];
@@ -109,7 +131,9 @@ export async function toMemberViews(rows: PublicProfile[]): Promise<MemberView[]
     return {
       id: row.id,
       name: row.display_name,
-      age: ageFromBirthDate(row.birth_date),
+      age:
+        ageFromBirthDate(row.birth_date ?? null) ??
+        (row.birth_year ? new Date().getFullYear() - row.birth_year : null),
       gender: row.gender,
       lookingFor: row.looking_for,
       countryCode: row.country_code,
@@ -117,14 +141,14 @@ export async function toMemberViews(rows: PublicProfile[]): Promise<MemberView[]
       profilePhoto,
       gallery,
       isVerified: row.is_verified,
-      bio: row.bio,
+      bio: row.bio ?? null,
       interests: row.interests ?? [],
       languages: row.spoken_languages ?? [],
-      education: row.education,
-      occupation: row.occupation,
-      maritalStatus: row.marital_status,
-      religiosity: row.religiosity,
-      heightCm: row.height_cm,
+      education: row.education ?? null,
+      occupation: row.occupation ?? null,
+      maritalStatus: row.marital_status ?? null,
+      religiosity: row.religiosity ?? null,
+      heightCm: row.height_cm ?? null,
       // Presence privacy: invisible members and members hiding last-seen never
       // surface as online to anyone else.
       online:
@@ -166,9 +190,10 @@ function birthRange(minAge?: number, maxAge?: number) {
 }
 
 async function fetchMembers(filters: MemberFilters, limit: number, offset = 0) {
+  const signedIn = await isSignedIn();
   let query = supabase
     .from("profiles")
-    .select(PUBLIC_COLUMNS, { count: "exact" })
+    .select(signedIn ? PUBLIC_COLUMNS : ANON_COLUMNS, { count: "exact" })
     .eq("is_active", true)
     .eq("is_hidden", false)
     .order(SORT_COLUMN[filters.sort ?? "recent"], { ascending: false })
@@ -178,13 +203,20 @@ async function fetchMembers(filters: MemberFilters, limit: number, offset = 0) {
   if (filters.country && filters.country !== "all") {
     query = query.eq("country_code", filters.country);
   }
-  const { newest, oldest } = birthRange(filters.minAge, filters.maxAge);
-  if (newest) query = query.lte("birth_date", newest);
-  if (oldest) query = query.gte("birth_date", oldest);
+  if (signedIn) {
+    const { newest, oldest } = birthRange(filters.minAge, filters.maxAge);
+    if (newest) query = query.lte("birth_date", newest);
+    if (oldest) query = query.gte("birth_date", oldest);
+  } else {
+    // Anonymous visitors only have access to the coarse birth year.
+    const year = new Date().getFullYear();
+    if (filters.minAge != null) query = query.lte("birth_year", year - filters.minAge);
+    if (filters.maxAge != null) query = query.gte("birth_year", year - filters.maxAge - 1);
+  }
 
   const { data, error, count } = await query;
   if (error) throw error;
-  const items = await toMemberViews((data ?? []) as PublicProfile[]);
+  const items = await toMemberViews((data ?? []) as unknown as PublicProfile[]);
   return { items, total: count ?? items.length };
 }
 
@@ -210,14 +242,14 @@ export const memberQuery = (id: string) =>
     queryFn: async (): Promise<MemberView | null> => {
       const { data, error } = await supabase
         .from("profiles")
-        .select(PUBLIC_COLUMNS)
+        .select(await showcaseColumns())
         .eq("id", id)
         .eq("is_active", true)
         .eq("is_hidden", false)
         .maybeSingle();
       if (error) throw error;
       if (!data) return null;
-      const [view] = await toMemberViews([data as PublicProfile]);
+      const [view] = await toMemberViews([data as unknown as PublicProfile]);
       return view ?? null;
     },
   });
