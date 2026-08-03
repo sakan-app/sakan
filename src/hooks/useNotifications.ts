@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import { useAuth } from "@/hooks/useAuth";
+import { useMyPresenceStatus } from "@/hooks/usePresence";
 import { useI18n } from "@/lib/i18n";
 import { notificationKeys } from "@/lib/social/keys";
 import { socialStrings } from "@/lib/social/strings";
@@ -294,6 +295,9 @@ export function useNotificationsRealtime() {
   const strings = socialStrings[locale].notifications;
   const stringsRef = useRef(strings);
   stringsRef.current = strings;
+  const { isDnd } = useMyPresenceStatus();
+  const dndRef = useRef(isDnd);
+  dndRef.current = isDnd;
 
   useEffect(() => {
     const userId = user?.id;
@@ -312,7 +316,10 @@ export function useNotificationsRealtime() {
               prev ? [item, ...prev.filter((n) => n.id !== item.id)] : [item],
             );
             void queryClient.invalidateQueries({ queryKey: notificationKeys.unreadCount(userId) });
-            toast(item.title, { description: item.body ?? stringsRef.current.types[item.type] });
+            // Do-not-disturb (and busy) silences live toasts; the badge still updates.
+            if (!dndRef.current) {
+              toast(item.title, { description: item.body ?? stringsRef.current.types[item.type] });
+            }
           });
         },
       )

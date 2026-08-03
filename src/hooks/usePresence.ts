@@ -1,8 +1,10 @@
 import { useEffect, useSyncExternalStore } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { chatStrings } from "@/lib/chat/strings";
+import { myProfileQuery } from "@/lib/profile-queries";
 import type { Locale } from "@/i18n";
 
 const onlineIds = new Set<string>();
@@ -144,4 +146,20 @@ export function useIsAway(userId: string | null | undefined): boolean {
   useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   if (!userId) return false;
   return awayIds.has(userId);
+}
+
+/**
+ * The signed-in member's own chosen presence status. Used to honour
+ * "do not disturb" (silence toasts/haptics) across the app.
+ */
+export function useMyPresenceStatus() {
+  const { user } = useAuth();
+  const userId = user?.id ?? "";
+  const { data } = useQuery({
+    ...myProfileQuery(userId),
+    enabled: Boolean(userId),
+    staleTime: 60_000,
+  });
+  const status = data?.presence_status ?? "online";
+  return { status, isDnd: status === "dnd" || status === "busy" };
 }
