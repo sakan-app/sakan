@@ -263,7 +263,9 @@ export async function sendMessage(queryClient: QueryClient, args: SendMessageArg
     .insert({
       conversation_id: args.conversationId,
       sender_id: args.senderId,
-      body: args.body,
+      // messages_body_len rejects empty strings, so attachment-only messages
+      // must store NULL instead of "".
+      body: (args.body.trim() || null) as unknown as string,
       kind: args.kind,
       attachment_path: args.attachmentPath ?? null,
       attachment_name: args.attachmentName ?? null,
