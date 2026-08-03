@@ -190,9 +190,10 @@ function birthRange(minAge?: number, maxAge?: number) {
 }
 
 async function fetchMembers(filters: MemberFilters, limit: number, offset = 0) {
+  const signedIn = await isSignedIn();
   let query = supabase
     .from("profiles")
-    .select(PUBLIC_COLUMNS, { count: "exact" })
+    .select(signedIn ? PUBLIC_COLUMNS : ANON_COLUMNS, { count: "exact" })
     .eq("is_active", true)
     .eq("is_hidden", false)
     .order(SORT_COLUMN[filters.sort ?? "recent"], { ascending: false })
@@ -202,9 +203,16 @@ async function fetchMembers(filters: MemberFilters, limit: number, offset = 0) {
   if (filters.country && filters.country !== "all") {
     query = query.eq("country_code", filters.country);
   }
-  const { newest, oldest } = birthRange(filters.minAge, filters.maxAge);
-  if (newest) query = query.lte("birth_date", newest);
-  if (oldest) query = query.gte("birth_date", oldest);
+  if (signedIn) {
+    const { newest, oldest } = birthRange(filters.minAge, filters.maxAge);
+    if (newest) query = query.lte("birth_date", newest);
+    if (oldest) query = query.gte("birth_date", oldest);
+  } else {
+    // Anonymous visitors only have access to the coarse birth year.
+    const year = new Date().getFullYear();
+    if (filters.minAge != null) query = query.lte("birth_year", year - filters.minAge);
+    if (filters.maxAge != null) query = query.gte("birth_year", year - filters.maxAge - 1);
+  }
 
   const { data, error, count } = await query;
   if (error) throw error;
@@ -234,7 +242,7 @@ export const memberQuery = (id: string) =>
     queryFn: async (): Promise<MemberView | null> => {
       const { data, error } = await supabase
         .from("profiles")
-        .select(PUBLIC_COLUMNS)
+        .select(await showcaseColumns())
         .eq("id", id)
         .eq("is_active", true)
         .eq("is_hidden", false)
