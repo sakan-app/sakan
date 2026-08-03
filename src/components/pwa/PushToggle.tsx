@@ -33,8 +33,10 @@ export function PushToggle() {
     setBusy(true);
     try {
       setState(enabled ? await disablePush() : await enablePush());
-    } catch {
-      toast.error(t.pushUnsupported);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(`${t.pushUnsupported} (${message})`);
+      setState(await readPushState());
     } finally {
       setBusy(false);
     }
