@@ -184,6 +184,18 @@ type SubscriptionRow = {
   failure_count: number;
 };
 
+export type PushAttempt = {
+  subscriptionId: string;
+  status: number | null;
+  outcome: "accepted" | "expired" | "rejected" | "timeout" | "network_error";
+};
+
+class PushHttpError extends Error {
+  constructor(readonly status: number) {
+    super(`push_status_${status}`);
+  }
+}
+
 /** Sends to one endpoint. Returns the HTTP status Stripe-style for logging. */
 async function sendToSubscription(
   subscription: SubscriptionRow,
@@ -202,11 +214,27 @@ async function sendToSubscription(
       "Content-Encoding": "aes128gcm",
       "Content-Type": "application/octet-stream",
       TTL: "86400",
-      Urgency: "normal",
+      Urgency: "high",
     },
     body: body as BodyInit,
+    signal: AbortSignal.timeout(15_000),
   });
   return response.status;
+}
+
+async function sendWithRetry(subscription: SubscriptionRow, payload: PushPayload): Promise<number> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      const status = await sendToSubscription(subscription, payload);
+      if (status !== 408 && status !== 429 && status < 500) return status;
+      lastError = new PushHttpError(status);
+    } catch (error) {
+      lastError = error;
+    }
+    if (attempt < 2) await new Promise((resolve) => setTimeout(resolve, 250 * 2 ** attempt));
+  }
+  throw lastError instanceof Error ? lastError : new Error("push_delivery_failed");
 }
 
 /**
@@ -219,8 +247,16 @@ async function sendToSubscription(
 export async function sendPushToUser(
   userId: string,
   payload: PushPayload,
-): Promise<{ sent: number; failed: number; devices: number; skipped: boolean }> {
-  if (!vapidConfigured()) return { sent: 0, failed: 0, devices: 0, skipped: true };
+): Promise<{
+  sent: number;
+  failed: number;
+  devices: number;
+  skipped: boolean;
+  attempts: PushAttempt[];
+}> {
+  if (!vapidConfigured()) {
+    return { sent: 0, failed: 0, devices: 0, skipped: true, attempts: [] };
+  }
 
   const { data } = await supabaseAdmin
     .from("push_subscriptions")
@@ -231,13 +267,15 @@ export async function sendPushToUser(
   const subscriptions = (data ?? []) as SubscriptionRow[];
   let sent = 0;
   let failed = 0;
+  const attempts: PushAttempt[] = [];
 
   await Promise.all(
     subscriptions.map(async (subscription) => {
       try {
-        const status = await sendToSubscription(subscription, payload);
+        const status = await sendWithRetry(subscription, payload);
         if (status === 404 || status === 410) {
           failed += 1;
+          attempts.push({ subscriptionId: subscription.id, status, outcome: "expired" });
           await supabaseAdmin
             .from("push_subscriptions")
             .update({ disabled_at: new Date().toISOString() })
@@ -246,15 +284,29 @@ export async function sendPushToUser(
         }
         if (status >= 200 && status < 300) {
           sent += 1;
+          attempts.push({ subscriptionId: subscription.id, status, outcome: "accepted" });
           await supabaseAdmin
             .from("push_subscriptions")
             .update({ last_used_at: new Date().toISOString(), failure_count: 0 })
             .eq("id", subscription.id);
           return;
         }
+        attempts.push({ subscriptionId: subscription.id, status, outcome: "rejected" });
         throw new Error(`push_status_${status}`);
       } catch (error) {
         failed += 1;
+        if (!attempts.some((attempt) => attempt.subscriptionId === subscription.id)) {
+          attempts.push({
+            subscriptionId: subscription.id,
+            status: error instanceof PushHttpError ? error.status : null,
+            outcome: error instanceof PushHttpError
+              ? "rejected"
+              : error instanceof DOMException &&
+                  (error.name === "TimeoutError" || error.name === "AbortError")
+                ? "timeout"
+                : "network_error",
+          });
+        }
         const count = (subscription.failure_count ?? 0) + 1;
         await supabaseAdmin
           .from("push_subscriptions")
@@ -263,10 +315,14 @@ export async function sendPushToUser(
             disabled_at: count >= 5 ? new Date().toISOString() : null,
           })
           .eq("id", subscription.id);
-        console.error("[push] send failed", subscription.endpoint, error);
+        console.error("[push] send failed", {
+          subscriptionId: subscription.id,
+          outcome: attempts.find((attempt) => attempt.subscriptionId === subscription.id)?.outcome,
+          error: error instanceof Error ? error.message : "unknown_error",
+        });
       }
     }),
   );
 
-  return { sent, failed, devices: subscriptions.length, skipped: false };
+  return { sent, failed, devices: subscriptions.length, skipped: false, attempts };
 }

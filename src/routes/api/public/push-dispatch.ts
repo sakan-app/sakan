@@ -1,24 +1,22 @@
 /**
  * Push fan-out endpoint.
  *
- * Notifications are created by database triggers, so the browser push has to
- * be sent out-of-band. `pg_cron` calls this route every minute (see the
- * `sakan-push-dispatch` job); it picks up notifications that have not been
- * pushed yet, respects Do-Not-Disturb / invisible presence, sends them and
- * stamps `push_sent_at` so a delivery can never be duplicated.
+ * Notifications are created by database triggers. An AFTER INSERT trigger
+ * calls this route immediately with the new notification id; the route sends
+ * it to every active device and stamps `push_sent_at` after completion.
  *
  * Auth: constant-time comparison against PUSH_DISPATCH_TOKEN. The route lives
  * under /api/public/* (no site auth), so the token check is the only gate.
  */
 import { createFileRoute } from "@tanstack/react-router";
+import { z } from "zod";
 
-const BATCH_SIZE = 100;
 /**
- * A notification is only given up on after this long. Before that, a run that
- * delivered nothing (device offline queue rejected it, provider 5xx) leaves
- * the row unstamped so the next minute retries it.
+ * Failed delivery stays unstamped so it remains visible as pending rather
+ * than being incorrectly recorded as delivered.
  */
 const GIVE_UP_AFTER_MS = 15 * 60 * 1000;
+const dispatchInput = z.object({ notificationId: z.string().uuid() });
 
 function safeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
@@ -70,6 +68,9 @@ export const Route = createFileRoute("/api/public/push-dispatch")({
           return new Response("Unauthorized", { status: 401 });
         }
 
+        const parsed = dispatchInput.safeParse(await request.json().catch(() => null));
+        if (!parsed.success) return new Response("Invalid dispatch payload", { status: 400 });
+
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { sendPushToUser, vapidConfigured } = await import("@/lib/push/webpush.server");
         if (!vapidConfigured()) {
@@ -81,9 +82,8 @@ export const Route = createFileRoute("/api/public/push-dispatch")({
           .select("id, user_id, type, title, body, data, created_at")
           .is("push_sent_at", null)
           .is("read_at", null)
-          .gte("created_at", new Date(Date.now() - 60 * 60 * 1000).toISOString())
-          .order("created_at", { ascending: true })
-          .limit(BATCH_SIZE);
+          .eq("id", parsed.data.notificationId)
+          .limit(1);
 
         if (error) return new Response(error.message, { status: 500 });
         const rows = (data ?? []) as NotificationRow[];
@@ -107,6 +107,12 @@ export const Route = createFileRoute("/api/public/push-dispatch")({
 
         let sent = 0;
         let retrying = 0;
+        const attempts: Array<{
+          notificationId: string;
+          subscriptionId: string;
+          status: number | null;
+          outcome: string;
+        }> = [];
         // Badge counts are per member: one query, reused for every row.
         const unreadByUser = new Map<string, number>();
         await Promise.all(
@@ -143,11 +149,12 @@ export const Route = createFileRoute("/api/public/push-dispatch")({
               badge_count: unreadByUser.get(row.user_id) ?? 0,
           });
           sent += result.sent;
+          attempts.push(
+            ...result.attempts.map((attempt) => ({ notificationId: row.id, ...attempt })),
+          );
 
-          // Only stamp when the row is genuinely finished: something was
-          // delivered, the member has no devices at all, or we have retried
-          // past the give-up window. Stamping a failed send would drop the
-          // notification permanently.
+          // Only stamp when the row is genuinely finished. Stamping a failed
+          // send would suppress a later explicit replay of the notification.
           const expired = Date.now() - new Date(row.created_at).getTime() > GIVE_UP_AFTER_MS;
           if (result.sent === 0 && result.devices > 0 && !expired) {
             retrying += 1;
@@ -160,7 +167,7 @@ export const Route = createFileRoute("/api/public/push-dispatch")({
             .eq("id", row.id);
         }
 
-        return Response.json({ processed: rows.length, sent, retrying });
+        return Response.json({ processed: rows.length, sent, retrying, attempts });
       },
     },
   },
