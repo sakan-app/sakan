@@ -10,7 +10,7 @@ import {
   pushSupported,
   readPushState,
   type PushState,
-} from "@/lib/push/push.client";
+} from "@/lib/push/push-browser";
 import { sendTestPush } from "@/lib/push/push.functions";
 import { APP_VERSION } from "@/lib/pwa/register";
 

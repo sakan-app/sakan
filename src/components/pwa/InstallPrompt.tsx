@@ -7,7 +7,7 @@ import {
   getDeferredInstallPrompt,
   isAppInstalled,
 } from "@/components/pwa/PwaProvider";
-import { logInstallEvent } from "@/lib/push/push.client";
+import { logInstallEvent } from "@/lib/push/push-browser";
 
 const DISMISS_KEY = "sakan-install-dismissed";
 /** Re-offer the install after a week instead of never again. */

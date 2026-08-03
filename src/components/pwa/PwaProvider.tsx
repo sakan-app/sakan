@@ -3,7 +3,7 @@ import { useEffect, type ReactNode } from "react";
 import { flushOutbox, installOfflineWriteInterceptor } from "@/lib/outbox";
 import { installAudioUnlock } from "@/lib/audio/engine";
 import { startServiceWorker } from "@/lib/pwa/register";
-import { logInstallEvent, resubscribePush } from "@/lib/push/push.client";
+import { logInstallEvent, resubscribePush } from "@/lib/push/push-browser";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
