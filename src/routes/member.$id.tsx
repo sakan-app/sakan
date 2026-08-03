@@ -148,6 +148,7 @@ function MemberProfile() {
     (url): url is string => Boolean(url),
   );
   const notProvided = t.member.notProvided;
+  const isFavorited = (favoritesQ.data ?? []).some((entry) => entry.member.id === member.id);
   const maritalLabel = member.maritalStatus
     ? t.enums.marital[member.maritalStatus]
     : notProvided;
