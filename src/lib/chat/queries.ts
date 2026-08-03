@@ -330,6 +330,25 @@ export async function editMessage(
   queryClient: QueryClient,
   args: { conversationId: string; messageId: string; body: string },
 ) {
+/** Reads a single cached message, used to roll optimistic patches back. */
+function readMessageFromCache(
+  queryClient: QueryClient,
+  conversationId: string,
+  messageId: string,
+): ChatMessage | undefined {
+  const cache = queryClient.getQueryData<MessagesCache>(chatKeys.messages(conversationId));
+  if (!cache) return undefined;
+  for (const page of cache.pages) {
+    const found = page.items.find((m) => m.id === messageId);
+    if (found) return found;
+  }
+  return undefined;
+}
+
+export async function editMessage(
+  queryClient: QueryClient,
+  args: { conversationId: string; messageId: string; body: string },
+) {
   const editedAt = new Date().toISOString();
   const previous = readMessageFromCache(queryClient, args.conversationId, args.messageId);
   patchMessageInCache(queryClient, args.conversationId, args.messageId, {
