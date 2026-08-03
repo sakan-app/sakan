@@ -129,10 +129,10 @@ function Index() {
             <form onSubmit={submit} className="glass-card fade-up rounded-3xl p-5">
               <div className="mb-4 text-center text-xs text-gold/70">{t.home.searchBadge}</div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="min-w-0">
                   <label className="mb-2 block text-xs font-semibold text-cream/80">{t.home.iAm}</label>
-                  <div className="flex gap-2">
+                  <div className="flex min-w-0 gap-1.5">
                     <button type="button" className={genderBtn(iAm === "male")} onClick={() => setIAm("male")}>
                       <User className="h-4 w-4 shrink-0" /> <span className="truncate">{t.home.male}</span>
                     </button>
@@ -141,9 +141,9 @@ function Index() {
                     </button>
                   </div>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <label className="mb-2 block text-xs font-semibold text-cream/80">{t.home.lookingFor}</label>
-                  <div className="flex gap-2">
+                  <div className="flex min-w-0 gap-1.5">
                     <button type="button" className={genderBtn(lookingFor === "male")} onClick={() => setLookingFor("male")}>
                       <User className="h-4 w-4 shrink-0" /> <span className="truncate">{t.home.male}</span>
                     </button>
@@ -177,7 +177,7 @@ function Index() {
                 <label className="mb-2 block text-xs font-semibold text-cream/80">{t.home.residence}</label>
                 <div className="relative">
                   <MapPin className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gold" />
-                  <select className="field-navy" value={country} onChange={(e) => setCountry(e.target.value)}>
+                  <select className="field-navy ps-9" value={country} onChange={(e) => setCountry(e.target.value)}>
                     <option value="all">{t.home.chooseCountry}</option>
                     {COUNTRY_CODES.map((code) => (
                       <option key={code} value={code}>{t.countries[code]}</option>
