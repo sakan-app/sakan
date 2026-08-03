@@ -22,6 +22,7 @@ import { RealtimeBridge } from "@/components/RealtimeBridge";
 import { PwaProvider } from "@/components/pwa/PwaProvider";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { UpdateBanner } from "@/components/pwa/UpdateBanner";
+import { AppBadgeSync } from "@/components/pwa/AppBadgeSync";
 import { LocalizedSeo } from "@/components/LocalizedSeo";
 
 /** Routes rendered inside the authenticated native app shell. */
@@ -198,6 +199,7 @@ function RootComponent() {
             {mounted && !inAppShell && <BottomNav />}
             <InstallPrompt />
             <UpdateBanner />
+            <AppBadgeSync />
             <Toaster richColors position="top-center" />
           </PwaProvider>
         </I18nProvider>
