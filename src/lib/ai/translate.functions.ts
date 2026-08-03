@@ -7,7 +7,7 @@ import { buildTranslateMessages, translateSchema } from "@/lib/ai/prompts";
 
 const translateInput = z.object({
   text: z.string().min(1).max(4000),
-  targetLanguage: z.enum(["ar", "en", "de", "ru"]),
+  targetLanguage: z.enum(["ar", "en", "de", "fr"]),
 });
 
 export const translateText = createServerFn({ method: "POST" })

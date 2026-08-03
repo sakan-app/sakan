@@ -28,14 +28,14 @@ export const billingKeys = {
 
 type LocalizedText = Record<string, string>;
 
-function asLocalized(value: unknown): Record<"ar" | "en" | "de" | "ru", string> {
+function asLocalized(value: unknown): Record<"ar" | "en" | "de" | "fr", string> {
   const v = (value ?? {}) as LocalizedText;
-  return { ar: v["ar"] ?? "", en: v["en"] ?? "", de: v["de"] ?? "", ru: v["ru"] ?? "" };
+  return { ar: v["ar"] ?? "", en: v["en"] ?? "", de: v["de"] ?? "", fr: v["fr"] ?? "" };
 }
 
-function asLocalizedList(value: unknown): Record<"ar" | "en" | "de" | "ru", string[]> {
+function asLocalizedList(value: unknown): Record<"ar" | "en" | "de" | "fr", string[]> {
   const v = (value ?? {}) as Record<string, string[]>;
-  return { ar: v["ar"] ?? [], en: v["en"] ?? [], de: v["de"] ?? [], ru: v["ru"] ?? [] };
+  return { ar: v["ar"] ?? [], en: v["en"] ?? [], de: v["de"] ?? [], fr: v["fr"] ?? [] };
 }
 
 export const plansQuery = () =>

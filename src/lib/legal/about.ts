@@ -92,32 +92,32 @@ export const aboutContent: FeatureDictionary<LegalPageContent> = {
       },
     ],
   },
-  ru: {
-    title: "О нас",
-    subtitle: "Sakan — технологии ИИ, соединяющие сердца и создающие дом",
+  fr: {
+    title: "À propos de nous",
+    subtitle: "Sakan – une technologie d'IA qui rapproche les cœurs et construit un foyer",
     sections: [
       {
-        title: "Наша миссия",
+        title: "Notre mission",
         body: [
-          '«Сакан» — ведущая защищённая международная платформа для серьёзных знакомств и стабильного брака в Германии, Европе и арабском мире. Это не обычный сайт знакомств, а цифровая экосистема, на 100% управляемая ИИ-агентами и работающая полностью автоматически.',
-          "Мы убеждены, что создание семьи начинается с безопасности и приватности. Наш умный ИИ-менеджер круглосуточно проверяет и верифицирует профили, гарантируя настоящее сообщество без фейков и мошенничества.",
-          "Благодаря алгоритмам подбора и мгновенному переводу в чате мы стираем языковые барьеры и расстояния.",
+          '« Sakan » est la première plateforme internationale sécurisée conçue spécialement pour les rencontres sérieuses et le mariage stable en Allemagne, en Europe et dans le monde arabe. Sakan n\'est pas un site de rencontres classique, mais un écosystème numérique révolutionnaire géré à 100 % par des agents d\'intelligence artificielle, fonctionnant de manière totalement automatisée sans intervention humaine quotidienne.',
+          "Nous sommes convaincus que fonder une famille commence par la sécurité et la confidentialité. Notre gestionnaire IA intelligent travaille jour et nuit pour examiner et vérifier rigoureusement les profils, garantissant une communauté authentique, exempte de faux comptes et d'arnaques.",
+          "Grâce à des algorithmes de mise en relation intelligents et à un système de traduction instantanée dans le chat, nous brisons les barrières linguistiques et les distances pour vous rapprocher de votre âme sœur en un seul clic. « Sakan » est votre refuge sûr et fiable pour bâtir un foyer fondé sur l'affection et la stabilité.",
         ],
       },
       {
-        title: "Как работает Sakan",
+        title: "Comment fonctionne la plateforme",
         body: [
-          "100% бесплатный чат и членство для всех верифицированных участников.",
-          "Автоматическая проверка фото и текстов до публикации профиля, затем золотой значок верификации.",
-          "Умный перевод в фоне: анкета и сообщения отображаются на языке посетителя.",
-          "Дополнительная премиум-функция: ваше фото в верхней ленте целых 3 минуты всего за 99 центов.",
+          "Chat et abonnement gratuits à 100 % pour tous les membres vérifiés.",
+          "Vérification automatique des photos et des textes avant toute publication du profil, avec attribution du badge de vérification doré après validation.",
+          "Traduction intelligente en coulisses : votre présentation et vos messages sont automatiquement traduits pour apparaître dans la langue de chaque visiteur.",
+          "Fonction de mise en avant optionnelle : votre photo affichée dans le bandeau supérieur pendant 3 minutes complètes pour seulement 99 centimes.",
         ],
       },
       {
-        title: "Приватность и соответствие",
+        title: "Confidentialité et conformité",
         body: [
-          "Все данные хранятся в ЕС (AWS Frankfurt) в соответствии с GDPR и немецким BDSG.",
-          "Вы имеете право на доступ к данным (ст. 15 GDPR) и полное удаление профиля и фотографий (ст. 17 GDPR).",
+          "Les données sont hébergées au sein de l'Union européenne (AWS Francfort) conformément au règlement général européen sur la protection des données (RGPD/DSGVO) et à la loi allemande sur la protection des données (BDSG).",
+          "Vous disposez du droit complet d'accéder à vos données (article 15) et de supprimer définitivement votre profil et vos photos en un clic (article 17).",
         ],
       },
     ],

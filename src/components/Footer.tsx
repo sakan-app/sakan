@@ -18,8 +18,16 @@ const LEGAL_LINKS = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-gold/15 bg-navy-deep pt-12 text-cream/80">
-      <div className="mx-auto grid max-w-[1360px] gap-10 px-6 pb-8 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
+    <footer className="relative overflow-hidden border-t border-gold/15 bg-navy-deep pt-14 text-cream/80">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-32 start-1/3 h-[320px] w-[320px] rounded-full bg-gold/10 blur-[120px]"
+      />
+      <div className="relative mx-auto grid max-w-[1360px] gap-10 px-6 pb-10 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
         <div>
           <div className="flex items-center gap-2">
             <img src={logo.url} alt="شعار سكن" className="h-12 w-12 object-contain" loading="lazy" />
@@ -35,7 +43,7 @@ export function Footer() {
             {[Facebook, Instagram, Youtube, Twitter].map((Icon, i) => (
               <span
                 key={i}
-                className="grid h-9 w-9 place-items-center rounded-full border border-gold/30 text-gold"
+                className="tap-scale grid h-9 w-9 place-items-center rounded-full border border-gold/30 text-gold transition-colors hover:border-gold hover:bg-gold/10"
               >
                 <Icon className="h-4 w-4" />
               </span>
@@ -109,7 +117,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-gold/10 py-4 text-center text-xs text-cream/50">
+      <div className="relative border-t border-gold/10 py-5 text-center text-xs text-cream/50">
         © {COMPANY.year} {COMPANY.brandAr} — {COMPANY.legalName} · {COMPANY.city},{" "}
         {COMPANY.country}
       </div>

@@ -394,14 +394,19 @@ export type Database = {
           clicks: number
           created_at: string
           currency: string
+          display_started_at: string | null
           ends_at: string | null
+          extra_loops: number
           headline: string | null
           id: string
           image_path: string
           impressions: number
+          loops_total: number
           paid_at: string | null
+          paused_at: string | null
           provider: string | null
           provider_ref: string | null
+          queue_position: number | null
           review_note: string | null
           starts_at: string | null
           status: Database["public"]["Enums"]["featured_ad_status"]
@@ -415,14 +420,19 @@ export type Database = {
           clicks?: number
           created_at?: string
           currency?: string
+          display_started_at?: string | null
           ends_at?: string | null
+          extra_loops?: number
           headline?: string | null
           id?: string
           image_path: string
           impressions?: number
+          loops_total?: number
           paid_at?: string | null
+          paused_at?: string | null
           provider?: string | null
           provider_ref?: string | null
+          queue_position?: number | null
           review_note?: string | null
           starts_at?: string | null
           status?: Database["public"]["Enums"]["featured_ad_status"]
@@ -436,14 +446,19 @@ export type Database = {
           clicks?: number
           created_at?: string
           currency?: string
+          display_started_at?: string | null
           ends_at?: string | null
+          extra_loops?: number
           headline?: string | null
           id?: string
           image_path?: string
           impressions?: number
+          loops_total?: number
           paid_at?: string | null
+          paused_at?: string | null
           provider?: string | null
           provider_ref?: string | null
+          queue_position?: number | null
           review_note?: string | null
           starts_at?: string | null
           status?: Database["public"]["Enums"]["featured_ad_status"]
@@ -1292,7 +1307,7 @@ export type Database = {
         | "expired"
         | "rejected"
       gender: "male" | "female"
-      language_code: "ar" | "en" | "de" | "ru"
+      language_code: "ar" | "en" | "de" | "ru" | "fr"
       log_level: "debug" | "info" | "warn" | "error"
       marital_status: "single" | "divorced" | "widowed"
       message_kind: "text" | "image" | "file"
@@ -1471,7 +1486,7 @@ export const Constants = {
         "rejected",
       ],
       gender: ["male", "female"],
-      language_code: ["ar", "en", "de", "ru"],
+      language_code: ["ar", "en", "de", "ru", "fr"],
       log_level: ["debug", "info", "warn", "error"],
       marital_status: ["single", "divorced", "widowed"],
       message_kind: ["text", "image", "file"],

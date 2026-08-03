@@ -20,6 +20,12 @@ export const createFeaturedCheckout = createServerFn({ method: "POST" })
   });
 
 /** Fire-and-forget analytics for the rotating banner. */
+export const getFeaturedQueue = createServerFn({ method: "POST" }).handler(async () => {
+  const { listFeaturedQueue } = await import("./ads.server");
+  return listFeaturedQueue();
+});
+
+/** Fire-and-forget analytics for the rotating banner. */
 export const trackAdEvent = createServerFn({ method: "POST" })
   .validator(z.object({ adId: z.string().uuid(), metric: z.enum(["impressions", "clicks"]) }))
   .handler(async ({ data }) => {

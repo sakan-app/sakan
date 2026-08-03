@@ -15,11 +15,18 @@ export type PlanLimits = {
   boost_per_month: number;
   incognito: boolean;
   priority_support: boolean;
+  featured_banner?: boolean;
+  voice_calls?: boolean;
+  video_calls?: boolean;
+  priority_search?: boolean;
+  priority_matching?: boolean;
+  premium_badge?: boolean;
+  exclusive_features?: boolean;
 };
 
 export const FREE_LIMITS: PlanLimits = {
-  likes_per_day: 5,
-  conversations: 3,
+  likes_per_day: -1,
+  conversations: -1,
   advanced_filters: false,
   see_who_liked: false,
   ai_matching: false,
@@ -27,6 +34,13 @@ export const FREE_LIMITS: PlanLimits = {
   boost_per_month: 0,
   incognito: false,
   priority_support: false,
+  featured_banner: false,
+  voice_calls: false,
+  video_calls: false,
+  priority_search: false,
+  priority_matching: false,
+  premium_badge: false,
+  exclusive_features: false,
 };
 
 export type Plan = {
@@ -101,7 +115,7 @@ export function entitlementsFor(planCode: PlanCode, tier: number, limits: PlanLi
 export const FREE_ENTITLEMENTS: Entitlements = entitlementsFor("free", 0, FREE_LIMITS);
 
 export function formatPrice(cents: number, currency: string, locale: Locale): string {
-  const tag = locale === "ar" ? "ar-EG" : locale === "de" ? "de-DE" : locale === "ru" ? "ru-RU" : "en-GB";
+  const tag = locale === "ar" ? "ar-EG" : locale === "de" ? "de-DE" : locale === "fr" ? "fr-FR" : "en-GB";
   return new Intl.NumberFormat(tag, {
     style: "currency",
     currency: currency || "EUR",

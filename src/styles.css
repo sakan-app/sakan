@@ -716,7 +716,7 @@
   }
 }
 
-/* Featured ticker — one creative travels the full width over three minutes. */
+/* Featured ticker — one creative travels the full width in sixty seconds. */
 @keyframes featured-travel {
   from { transform: translateX(110%); }
   to { transform: translateX(-110%); }
@@ -724,9 +724,10 @@
 .featured-track {
   display: inline-flex;
   align-items: center;
-  animation: featured-travel 180s linear forwards;
+  animation: featured-travel 60s linear infinite;
   will-change: transform;
 }
+.featured-track[data-paused="true"] { animation-play-state: paused; }
 [dir="rtl"] .featured-track { animation-name: featured-travel-rtl; }
 @keyframes featured-travel-rtl {
   from { transform: translateX(-110%); }

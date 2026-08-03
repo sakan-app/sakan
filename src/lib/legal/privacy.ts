@@ -172,58 +172,59 @@ export const privacyContent: FeatureDictionary<LegalPageContent> = {
       },
     ],
   },
-  ru: {
-    title: "Политика конфиденциальности (GDPR)",
-    subtitle: `Sakan (${COMPANY.websiteLabel}) защищает ваши данные согласно ст. 13 GDPR и немецкому BDSG.`,
+  fr: {
+    title: "Politique de confidentialité (RGPD / DSGVO)",
+    subtitle: `La plateforme Sakan (${COMPANY.websiteLabel}) s'engage à protéger vos données conformément à l'article 13 du RGPD européen et à la loi allemande sur la protection des données (BDSG).`,
     sections: [
       {
-        title: "1. Оператор данных",
+        title: "1. Responsable du traitement",
         body: [
           `${COMPANY.legalName}, ${COMPANY.street}, ${COMPANY.postalCode} ${COMPANY.city}, ${COMPANY.country}`,
-          `Запросы по данным: ${COMPANY.serviceEmail}`,
+          `Pour toute question relative aux données : ${COMPANY.serviceEmail}`,
         ],
       },
       {
-        title: "2. Какие данные обрабатываются",
+        title: "2. Données que nous traitons",
         body: [
-          "Данные аккаунта: имя, e-mail, дата рождения, пол, страна и город.",
-          "Данные профиля: фото, описание, предпочтения и добровольно загруженные документы верификации.",
-          "Данные использования: сообщения, лайки, журналы входа и технические данные для безопасности.",
+          "Données de compte : nom, e-mail, date de naissance, sexe, pays et ville.",
+          "Données de profil : photos, présentation, préférences et informations de vérification que vous téléversez volontairement.",
+          "Données d'utilisation : messages, likes, journaux de connexion et données techniques à des fins de sécurité et de prévention de la fraude.",
         ],
       },
       {
-        title: "3. Обработка с помощью ИИ",
+        title: "3. Traitement par intelligence artificielle",
         body: [
-          "Фото и тексты проверяются автоматически через зашифрованные API. Эти данные не используются для обучения публичных моделей ИИ и не передаются третьим лицам (ст. 9 GDPR).",
-          "Машинный перевод служит только для общения между участниками.",
+          "Les photos et les textes sont analysés automatiquement via des interfaces de programmation chiffrées afin d'empêcher tout contenu inapproprié ou frauduleux ; ces données ne sont jamais utilisées pour entraîner des modèles d'IA publics ni divulguées à des tiers, conformément à l'article 9 du RGPD.",
+          "La traduction automatique de la présentation et des messages a pour seul objectif de faciliter la communication.",
         ],
       },
       {
-        title: "4. Правовая основа и сроки хранения",
+        title: "4. Base juridique et durée de conservation",
         body: [
-          "Исполнение договора (ст. 6(1)(b)), законный интерес в безопасности (ст. 6(1)(f)) и явное согласие для особых категорий (ст. 9(2)(a)).",
-          "Данные хранятся, пока аккаунт активен, и удаляются в течение 30 дней после запроса на удаление.",
+          "Base juridique : exécution du contrat (art. 6§1 b), intérêt légitime pour la sécurité (art. 6§1 f) et consentement explicite pour les données sensibles (art. 9§2 a).",
+          "Les données sont conservées tant que le compte est actif et sont supprimées dans un délai de 30 jours après la demande de suppression, sauf obligation légale contraire.",
         ],
       },
       {
-        title: "5. Хранение и шифрование",
+        title: "5. Stockage et chiffrement",
         body: [
-          "Все данные размещены на зашифрованных серверах в ЕС (AWS Frankfurt); изображения хранятся в приватных хранилищах и отдаются по подписанным ссылкам.",
+          "Toutes les données sont stockées sur des serveurs chiffrés au sein de l'Union européenne (AWS Francfort), avec un chiffrement lors du transfert et du stockage ; les photos de profil sont conservées dans des espaces privés accessibles via des liens temporaires signés.",
         ],
       },
       {
-        title: "6. Ваши права",
+        title: "6. Vos droits",
         body: [
-          "Ст. 15 — доступ, ст. 16 — исправление, ст. 18 — ограничение, ст. 20 — переносимость.",
-          "Ст. 17 — удаление: полное удаление профиля и фотографий одним нажатием в настройках.",
-          "Вы также вправе подать жалобу в надзорный орган по защите данных.",
+          "Article 15 : droit d'accès à vos données et d'en obtenir une copie.",
+          "Article 16 : droit de rectification. Article 18 : droit à la limitation du traitement. Article 20 : droit à la portabilité des données.",
+          "Article 17 : droit à la suppression complète et définitive de votre profil et de vos photos en un clic depuis les paramètres du compte.",
+          "Vous avez également le droit de déposer une plainte auprès de l'autorité de protection des données compétente.",
         ],
       },
       {
-        title: "7. Платежи и cookie",
+        title: "7. Paiements et cookies",
         body: [
-          "Платежи проходят через Stripe; данные карты не хранятся на наших серверах.",
-          "Мы используем только технически необходимые cookie для сессии и выбора языка.",
+          "Les paiements sont traités via Stripe ; nous ne stockons jamais les données de votre carte sur nos serveurs.",
+          "Nous utilisons uniquement des cookies strictement nécessaires au fonctionnement de la session et à la préférence linguistique, sans traçage publicitaire sans votre consentement.",
         ],
       },
     ],
