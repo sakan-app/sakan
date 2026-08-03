@@ -156,6 +156,7 @@ function AdminPayments() {
           ) : (
             <>
               <TableShell
+                caption="Payments table"
                 head={
                   <tr>
                     <Th>Invoice</Th>

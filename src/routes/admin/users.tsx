@@ -171,6 +171,7 @@ function AdminUsers() {
           ) : (
             <>
               <TableShell
+                caption="Members table"
                 head={
                   <tr>
                     <Th>Member</Th>

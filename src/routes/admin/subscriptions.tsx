@@ -181,6 +181,7 @@ function AdminSubscriptions() {
           ) : (
             <>
               <TableShell
+                caption="Subscriptions table"
                 head={
                   <tr>
                     <Th>Member</Th>

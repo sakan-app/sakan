@@ -75,6 +75,7 @@ function AdminMatches() {
           ) : (
             <>
               <TableShell
+                caption="Matches table"
                 head={
                   <tr>
                     <Th>Member A</Th>

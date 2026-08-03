@@ -112,6 +112,7 @@ function AdminReports() {
           ) : (
             <>
               <TableShell
+                caption="Reports table"
                 head={
                   <tr>
                     <Th>Reported</Th>

@@ -106,6 +106,7 @@ function AdminAds() {
           <EmptyState label="No featured purchases yet." />
         ) : (
           <TableShell
+                caption="Featured ads table"
             head={
               <tr>
                 <Th>Headline</Th>
