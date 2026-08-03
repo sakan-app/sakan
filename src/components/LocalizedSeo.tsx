@@ -16,6 +16,16 @@ function setMeta(selector: string, attr: "name" | "property", key: string, conte
   el.setAttribute("content", content);
 }
 
+/** Writes a title/description pair into the live document head. */
+export function applyDocumentSeo(entry: { title: string; description: string }) {
+  document.title = entry.title;
+  setMeta('meta[name="description"]', "name", "description", entry.description);
+  setMeta('meta[property="og:title"]', "property", "og:title", entry.title);
+  setMeta('meta[property="og:description"]', "property", "og:description", entry.description);
+  setMeta('meta[name="twitter:title"]', "name", "twitter:title", entry.title);
+  setMeta('meta[name="twitter:description"]', "name", "twitter:description", entry.description);
+}
+
 /**
  * Keeps the document title and social metadata in the visitor's language.
  *
@@ -32,13 +42,7 @@ export function LocalizedSeo() {
   useEffect(() => {
     const page = pageForPath(pathname);
     if (page) {
-      const { title, description } = seoFor(page, locale);
-      document.title = title;
-      setMeta('meta[name="description"]', "name", "description", description);
-      setMeta('meta[property="og:title"]', "property", "og:title", title);
-      setMeta('meta[property="og:description"]', "property", "og:description", description);
-      setMeta('meta[name="twitter:title"]', "name", "twitter:title", title);
-      setMeta('meta[name="twitter:description"]', "name", "twitter:description", description);
+      applyDocumentSeo(seoFor(page, locale));
     }
     setMeta('meta[property="og:locale"]', "property", "og:locale", OG_LOCALE[locale]);
 
