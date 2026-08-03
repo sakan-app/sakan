@@ -23,6 +23,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as AuthenticatedBillingRouteImport } from './routes/_authenticated/billing'
+import { Route as AuthenticatedDiagnosticsRouteImport } from './routes/_authenticated/diagnostics'
 import { Route as AuthenticatedDiscoverRouteImport } from './routes/_authenticated/discover'
 import { Route as AuthenticatedFavoritesRouteImport } from './routes/_authenticated/favorites'
 import { Route as AuthenticatedFeaturedRouteImport } from './routes/_authenticated/featured'
@@ -127,6 +128,12 @@ const AuthenticatedBillingRoute = AuthenticatedBillingRouteImport.update({
   path: '/billing',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDiagnosticsRoute =
+  AuthenticatedDiagnosticsRouteImport.update({
+    id: '/diagnostics',
+    path: '/diagnostics',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDiscoverRoute = AuthenticatedDiscoverRouteImport.update({
   id: '/discover',
   path: '/discover',
@@ -316,6 +323,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/billing': typeof AuthenticatedBillingRoute
+  '/diagnostics': typeof AuthenticatedDiagnosticsRoute
   '/discover': typeof AuthenticatedDiscoverRoute
   '/favorites': typeof AuthenticatedFavoritesRoute
   '/featured': typeof AuthenticatedFeaturedRoute
@@ -364,6 +372,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/billing': typeof AuthenticatedBillingRoute
+  '/diagnostics': typeof AuthenticatedDiagnosticsRoute
   '/discover': typeof AuthenticatedDiscoverRoute
   '/favorites': typeof AuthenticatedFavoritesRoute
   '/featured': typeof AuthenticatedFeaturedRoute
@@ -415,6 +424,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/_authenticated/billing': typeof AuthenticatedBillingRoute
+  '/_authenticated/diagnostics': typeof AuthenticatedDiagnosticsRoute
   '/_authenticated/discover': typeof AuthenticatedDiscoverRoute
   '/_authenticated/favorites': typeof AuthenticatedFavoritesRoute
   '/_authenticated/featured': typeof AuthenticatedFeaturedRoute
@@ -466,6 +476,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unauthorized'
     | '/billing'
+    | '/diagnostics'
     | '/discover'
     | '/favorites'
     | '/featured'
@@ -514,6 +525,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unauthorized'
     | '/billing'
+    | '/diagnostics'
     | '/discover'
     | '/favorites'
     | '/featured'
@@ -564,6 +576,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unauthorized'
     | '/_authenticated/billing'
+    | '/_authenticated/diagnostics'
     | '/_authenticated/discover'
     | '/_authenticated/favorites'
     | '/_authenticated/featured'
@@ -720,6 +733,13 @@ declare module '@tanstack/react-router' {
       path: '/billing'
       fullPath: '/billing'
       preLoaderRoute: typeof AuthenticatedBillingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/diagnostics': {
+      id: '/_authenticated/diagnostics'
+      path: '/diagnostics'
+      fullPath: '/diagnostics'
+      preLoaderRoute: typeof AuthenticatedDiagnosticsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/discover': {
@@ -978,6 +998,7 @@ const AuthenticatedProfileRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedBillingRoute: typeof AuthenticatedBillingRoute
+  AuthenticatedDiagnosticsRoute: typeof AuthenticatedDiagnosticsRoute
   AuthenticatedDiscoverRoute: typeof AuthenticatedDiscoverRoute
   AuthenticatedFavoritesRoute: typeof AuthenticatedFavoritesRoute
   AuthenticatedFeaturedRoute: typeof AuthenticatedFeaturedRoute
@@ -993,6 +1014,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBillingRoute: AuthenticatedBillingRoute,
+  AuthenticatedDiagnosticsRoute: AuthenticatedDiagnosticsRoute,
   AuthenticatedDiscoverRoute: AuthenticatedDiscoverRoute,
   AuthenticatedFavoritesRoute: AuthenticatedFavoritesRoute,
   AuthenticatedFeaturedRoute: AuthenticatedFeaturedRoute,
@@ -1073,13 +1095,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
