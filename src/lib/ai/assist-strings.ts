@@ -10,6 +10,10 @@ export type AiAssistStrings = {
   bioAction: string;
   bioApply: string;
   bioDismiss: string;
+  qualityTitle: string;
+  qualityHint: string;
+  qualityAction: string;
+  qualityScore: string;
 };
 
 export const aiAssistStrings: FeatureDictionary<AiAssistStrings> = {
@@ -23,6 +27,10 @@ export const aiAssistStrings: FeatureDictionary<AiAssistStrings> = {
     bioAction: "حسّن نبذتي",
     bioApply: "استخدام هذه النبذة",
     bioDismiss: "تجاهل",
+    qualityTitle: "مراجعة الملف بالذكاء الاصطناعي",
+    qualityHint: "تحليل فوري لجودة ملفك مع خطوات عملية للتحسين",
+    qualityAction: "حلّل ملفي",
+    qualityScore: "تقييم الذكاء الاصطناعي",
   },
   en: {
     ideas: "Smart suggestions",
@@ -34,6 +42,10 @@ export const aiAssistStrings: FeatureDictionary<AiAssistStrings> = {
     bioAction: "Improve my bio",
     bioApply: "Use this bio",
     bioDismiss: "Dismiss",
+    qualityTitle: "AI profile review",
+    qualityHint: "Instant quality analysis with actionable improvements",
+    qualityAction: "Analyse my profile",
+    qualityScore: "AI score",
   },
   de: {
     ideas: "Intelligente Vorschläge",
@@ -45,6 +57,10 @@ export const aiAssistStrings: FeatureDictionary<AiAssistStrings> = {
     bioAction: "Beschreibung verbessern",
     bioApply: "Diese Beschreibung übernehmen",
     bioDismiss: "Verwerfen",
+    qualityTitle: "KI-Profilanalyse",
+    qualityHint: "Sofortige Qualitätsanalyse mit konkreten Verbesserungen",
+    qualityAction: "Profil analysieren",
+    qualityScore: "KI-Bewertung",
   },
   fr: {
     ideas: "Suggestions intelligentes",
@@ -56,5 +72,9 @@ export const aiAssistStrings: FeatureDictionary<AiAssistStrings> = {
     bioAction: "Améliorer ma bio",
     bioApply: "Utiliser cette bio",
     bioDismiss: "Ignorer",
+    qualityTitle: "Analyse IA du profil",
+    qualityHint: "Analyse instantanée avec des améliorations concrètes",
+    qualityAction: "Analyser mon profil",
+    qualityScore: "Score IA",
   },
 };
