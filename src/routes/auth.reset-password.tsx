@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { authErrorMessage } from "@/lib/auth-errors";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/auth/reset-password")({
   ssr: false,
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/auth/reset-password")({
     ],
   }),
   component: ResetPasswordPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function ResetPasswordPage() {

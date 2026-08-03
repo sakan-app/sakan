@@ -21,8 +21,9 @@ import {
 } from "@/components/admin/ui";
 import { actOnReport, listReportsFull } from "@/lib/admin/ops.functions";
 import { cn } from "@/lib/utils";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/reports")({ component: AdminReports });
+export const Route = createFileRoute("/admin/reports")({ component: AdminReports, errorComponent: RouteErrorBoundary });
 
 const STATUSES = ["open", "reviewing", "resolved", "dismissed", "all"] as const;
 const REASONS = ["all", "spam", "fake_profile", "harassment", "scam", "inappropriate_photos", "duplicate_account", "other"];

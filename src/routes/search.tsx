@@ -18,6 +18,7 @@ import { SearchRefine, useSearchRefine } from "@/components/search/SearchRefine"
 import { AiRecommendations } from "@/components/search/AiRecommendations";
 import { useFeatureStrings } from "@/i18n/feature";
 import { searchStrings } from "@/components/search/strings";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/search")({
   validateSearch: (s: Record<string, unknown>): SearchParams =>
@@ -39,6 +40,7 @@ export const Route = createFileRoute("/search")({
     ],
   }),
   component: SearchPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function SearchPage() {

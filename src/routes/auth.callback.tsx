@@ -4,6 +4,7 @@ import { useEffect } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/auth/callback")({
   ssr: false,
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/auth/callback")({
     ],
   }),
   component: AuthCallback,
+  errorComponent: RouteErrorBoundary,
 });
 
 function AuthCallback() {

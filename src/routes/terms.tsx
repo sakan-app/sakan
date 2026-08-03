@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/legal/LegalPage";
 import { useFeatureStrings } from "@/i18n/feature";
 import { termsContent } from "@/lib/legal/terms";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/terms")({
   head: () => ({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/terms")({
     ],
   }),
   component: TermsPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function TermsPage() {

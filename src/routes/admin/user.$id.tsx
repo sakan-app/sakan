@@ -17,8 +17,9 @@ import {
 } from "@/components/admin/ui";
 import { addAdminNote, getUserDetailFull, runUserAction } from "@/lib/admin/ops.functions";
 import { useAdminAccess } from "@/routes/admin/route";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/user/$id")({ component: AdminUserDetail });
+export const Route = createFileRoute("/admin/user/$id")({ component: AdminUserDetail, errorComponent: RouteErrorBoundary });
 
 function AdminUserDetail() {
   const { id } = Route.useParams();

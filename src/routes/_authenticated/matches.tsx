@@ -10,6 +10,7 @@ import { useFeatureStrings } from "@/i18n/feature";
 import { socialStrings } from "@/lib/social/strings";
 import { matchesQuery, type MatchSort } from "@/lib/social/queries";
 import { COUNTRY_CODES, countryLabel } from "@/lib/countries";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/_authenticated/matches")({
   head: () => ({
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/_authenticated/matches")({
     ],
   }),
   component: MatchesPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function MatchesPage() {

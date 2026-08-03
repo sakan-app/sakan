@@ -2,10 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { WifiOff } from "lucide-react";
 import { useFeatureStrings } from "@/i18n/feature";
 import { pwaStrings } from "@/components/pwa/pwa.strings";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/offline")({
   ssr: false,
   component: OfflinePage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function OfflinePage() {

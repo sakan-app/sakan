@@ -21,8 +21,9 @@ import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YA
 
 import { AdminPageHeader, ErrorState, LoadingState, Panel, StatCard } from "@/components/admin/ui";
 import { getLiveStats } from "@/lib/admin/ops.functions";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/dashboard")({ component: AdminDashboard });
+export const Route = createFileRoute("/admin/dashboard")({ component: AdminDashboard, errorComponent: RouteErrorBoundary });
 
 function AdminDashboard() {
   const fn = useServerFn(getLiveStats);

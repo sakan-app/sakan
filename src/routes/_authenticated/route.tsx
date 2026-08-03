@@ -2,6 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import { AppShell } from "@/components/app/AppShell";
 import { supabase } from "@/integrations/supabase/client";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -14,4 +15,5 @@ export const Route = createFileRoute("/_authenticated")({
     return { user: data.user };
   },
   component: AppShell,
+  errorComponent: RouteErrorBoundary,
 });

@@ -23,8 +23,9 @@ import {
 } from "@/components/admin/ui";
 import { changeUserRoleV2, listUsersAdvanced, runUserAction } from "@/lib/admin/ops.functions";
 import { useAdminAccess } from "@/routes/admin/route";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/users")({ component: AdminUsers });
+export const Route = createFileRoute("/admin/users")({ component: AdminUsers, errorComponent: RouteErrorBoundary });
 
 type Sort = "created_at" | "last_seen_at" | "display_name" | "completeness";
 

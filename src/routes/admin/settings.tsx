@@ -16,8 +16,9 @@ import {
 } from "@/components/admin/ui";
 import { getPlatformSettings, updatePlatformSettings } from "@/lib/admin/ops.functions";
 import { useAdminAccess } from "@/routes/admin/route";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/settings")({ component: AdminSettings });
+export const Route = createFileRoute("/admin/settings")({ component: AdminSettings, errorComponent: RouteErrorBoundary });
 
 type Draft = {
   support_email: string;

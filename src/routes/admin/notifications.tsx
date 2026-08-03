@@ -20,8 +20,9 @@ import {
 import { broadcastNotification, listAdminNotifications } from "@/lib/admin/ops.functions";
 import { useAdminAccess } from "@/routes/admin/route";
 import { cn } from "@/lib/utils";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/notifications")({ component: AdminNotifications });
+export const Route = createFileRoute("/admin/notifications")({ component: AdminNotifications, errorComponent: RouteErrorBoundary });
 
 const FILTERS = ["all", "unread", "read", "system", "verification", "match", "message", "like"] as const;
 

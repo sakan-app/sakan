@@ -16,6 +16,7 @@ import {
   type NotificationFilter,
 } from "@/lib/notifications/shared";
 import {
+import { RouteErrorBoundary } from "@/components/RouteError";
   useArchiveNotifications,
   useArchivedNotifications,
   useDeleteNotifications,
@@ -34,6 +35,7 @@ export const Route = createFileRoute("/_authenticated/notifications")({
     ],
   }),
   component: NotificationsPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function relativeTime(iso: string, locale: string) {

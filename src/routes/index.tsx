@@ -29,6 +29,7 @@ import { activeMembersQuery, type Gender } from "@/lib/members";
 import { useI18n } from "@/lib/i18n";
 import { COUNTRY_CODES, countryFlag } from "@/lib/countries";
 import hero from "@/assets/hero-couple.jpg";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -76,6 +77,7 @@ export const Route = createFileRoute("/")({
     ],
   }),
   component: Index,
+  errorComponent: RouteErrorBoundary,
 });
 
 const featureIcons = [Lock, BadgeCheck, Brain, Globe2];

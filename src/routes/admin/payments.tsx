@@ -23,8 +23,9 @@ import {
 } from "@/components/admin/ui";
 import { exportPaymentsCsv, getBillingOverview, listPaymentsAdmin, markPaymentRefunded } from "@/lib/admin/ops.functions";
 import { cn } from "@/lib/utils";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/payments")({ component: AdminPayments });
+export const Route = createFileRoute("/admin/payments")({ component: AdminPayments, errorComponent: RouteErrorBoundary });
 
 const STATUSES = ["all", "succeeded", "pending", "failed", "refunded"] as const;
 type StatusFilter = (typeof STATUSES)[number];

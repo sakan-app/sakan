@@ -28,6 +28,7 @@ import { haptic } from "@/lib/notifications/shared";
 import { ProfileQualityCard } from "@/components/profile/ProfileQualityCard";
 import { useFeatureStrings as useAssistStrings } from "@/i18n/feature";
 import { aiAssistStrings } from "@/lib/ai/assist-strings";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/_authenticated/profile/appearance")({
   head: () => ({
@@ -41,6 +42,7 @@ export const Route = createFileRoute("/_authenticated/profile/appearance")({
     ],
   }),
   component: AppearanceStudio,
+  errorComponent: RouteErrorBoundary,
 });
 
 function AppearanceStudio() {

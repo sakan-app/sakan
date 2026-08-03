@@ -20,8 +20,9 @@ import {
 import { AdminPageHeader, ErrorState, LoadingState, Panel, StatCard } from "@/components/admin/ui";
 import { getAnalytics } from "@/lib/admin/ops.functions";
 import { cn } from "@/lib/utils";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/analytics")({ component: AdminAnalytics });
+export const Route = createFileRoute("/admin/analytics")({ component: AdminAnalytics, errorComponent: RouteErrorBoundary });
 
 const PALETTE = ["#D4AF37", "#6EA8FE", "#5CD6A8", "#F08C8C", "#B79CED", "#F5C36E", "#7FD1DE", "#E68FC3"];
 const TOOLTIP = {

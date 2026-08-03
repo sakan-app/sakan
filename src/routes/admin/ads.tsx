@@ -18,8 +18,9 @@ import {
   Th,
 } from "@/components/admin/ui";
 import { listFeaturedAdsAdmin, reviewFeaturedAd } from "@/lib/ads/ads.functions";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/ads")({ component: AdminAds });
+export const Route = createFileRoute("/admin/ads")({ component: AdminAds, errorComponent: RouteErrorBoundary });
 
 type AdRow = {
   id: string;

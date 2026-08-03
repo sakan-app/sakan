@@ -13,6 +13,7 @@ import { useI18n } from "@/lib/i18n";
 import { chatStrings } from "@/lib/chat/strings";
 import { chatKeys, conversationsQuery, startConversation } from "@/lib/chat/queries";
 import type { ConversationListItem } from "@/lib/chat/types";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 const messagesIndexSearchSchema = z.object({
   to: z.string().uuid().optional().catch(undefined),
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/_authenticated/messages/")({
     ],
   }),
   component: MessagesIndexPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function formatRelativeTime(iso: string | null, locale: string): string {

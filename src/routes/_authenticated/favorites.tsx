@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useFeatureStrings } from "@/i18n/feature";
 import { socialStrings } from "@/lib/social/strings";
 import { favoritesQuery, useToggleFavorite } from "@/lib/social/queries";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/_authenticated/favorites")({
   head: () => ({
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/_authenticated/favorites")({
     ],
   }),
   component: FavoritesPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function FavoritesPage() {

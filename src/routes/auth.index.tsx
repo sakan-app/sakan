@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useI18n, format } from "@/lib/i18n";
 import { authErrorMessage } from "@/lib/auth-errors";
 import { resetRequestSchema, signInSchema, signUpSchema } from "@/lib/validation";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/auth/")({
   head: () => ({
@@ -29,6 +30,7 @@ export const Route = createFileRoute("/auth/")({
     ],
   }),
   component: AuthPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 type Mode = "signin" | "signup" | "reset";

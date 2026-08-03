@@ -15,8 +15,9 @@ import {
 } from "@/components/admin/ui";
 import { getConversationMessages, listConversations } from "@/lib/admin/ops.functions";
 import { cn } from "@/lib/utils";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/conversations")({ component: AdminConversations });
+export const Route = createFileRoute("/admin/conversations")({ component: AdminConversations, errorComponent: RouteErrorBoundary });
 
 function AdminConversations() {
   const listFn = useServerFn(listConversations);

@@ -22,6 +22,7 @@ import { LoadingState } from "@/components/admin/ui";
 import { getAdminAccess } from "@/lib/admin/ops.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
@@ -37,6 +38,7 @@ export const Route = createFileRoute("/admin")({
     return { user: data.user };
   },
   component: AdminLayout,
+  errorComponent: RouteErrorBoundary,
 });
 
 const NAV = [

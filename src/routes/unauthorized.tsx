@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { useAuth } from "@/hooks/useAuth";
 import { useI18n } from "@/lib/i18n";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/unauthorized")({
   head: () => ({
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/unauthorized")({
     ],
   }),
   component: UnauthorizedPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function UnauthorizedPage() {

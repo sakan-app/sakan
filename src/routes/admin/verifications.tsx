@@ -17,8 +17,9 @@ import {
 } from "@/components/admin/ui";
 import { decideVerification, listVerificationQueue } from "@/lib/admin/ops.functions";
 import { cn } from "@/lib/utils";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/verifications")({ component: AdminVerifications });
+export const Route = createFileRoute("/admin/verifications")({ component: AdminVerifications, errorComponent: RouteErrorBoundary });
 
 const TABS = ["pending", "approved", "rejected", "expired", "all"] as const;
 

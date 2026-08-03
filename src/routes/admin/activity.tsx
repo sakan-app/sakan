@@ -18,8 +18,9 @@ import {
 import { VirtualTableShell } from "@/components/admin/VirtualTableShell";
 import { listActivity } from "@/lib/admin/ops.functions";
 import { cn } from "@/lib/utils";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/activity")({ component: AdminActivity });
+export const Route = createFileRoute("/admin/activity")({ component: AdminActivity, errorComponent: RouteErrorBoundary });
 
 function AdminActivity() {
   const listFn = useServerFn(listActivity);

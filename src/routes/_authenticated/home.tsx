@@ -13,6 +13,7 @@ import { activeMembersQuery } from "@/lib/members";
 import { myProfileQuery } from "@/lib/profile-queries";
 import { favoritesQuery, likedMeQuery, matchesQuery } from "@/lib/social/queries";
 import { socialStrings } from "@/lib/social/strings";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/_authenticated/home")({
     ],
   }),
   component: HomeFeed,
+  errorComponent: RouteErrorBoundary,
 });
 
 function greetingKey() {

@@ -29,8 +29,9 @@ import {
   runSubscriptionAction,
 } from "@/lib/admin/ops.functions";
 import { cn } from "@/lib/utils";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/subscriptions")({ component: AdminSubscriptions });
+export const Route = createFileRoute("/admin/subscriptions")({ component: AdminSubscriptions, errorComponent: RouteErrorBoundary });
 
 const STATUSES = ["all", "active", "trialing", "past_due", "canceled", "expired"] as const;
 type StatusFilter = (typeof STATUSES)[number];

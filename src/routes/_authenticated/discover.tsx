@@ -13,6 +13,7 @@ import { useFeatureStrings } from "@/i18n/feature";
 import { useI18n } from "@/lib/i18n";
 import { COUNTRY_CODES, COUNTRY_FLAGS, countryLabel } from "@/lib/countries";
 import { searchMembersQuery, type Gender, type MemberSort } from "@/lib/members";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 const discoverSearchSchema = z.object({
   q: z.string().optional().catch(undefined),
@@ -32,6 +33,7 @@ export const Route = createFileRoute("/_authenticated/discover")({
     ],
   }),
   component: DiscoverPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function Chip({
