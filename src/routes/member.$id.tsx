@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BadgeCheck,
   Briefcase,
@@ -25,6 +25,8 @@ import { startConversation } from "@/lib/chat/queries";
 import { chatStrings } from "@/lib/chat/strings";
 import { useFeatureStrings } from "@/i18n/feature";
 import { toast } from "sonner";
+import { applyDocumentSeo } from "@/components/LocalizedSeo";
+import { memberSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/member/$id")({
   loader: async ({ params, context }) => {
@@ -69,6 +71,23 @@ export const Route = createFileRoute("/member/$id")({
   errorComponent: MemberError,
   notFoundComponent: MemberError,
 });
+
+/** Localised title/description for the viewed member, in the active language. */
+function MemberSeo({
+  name,
+  age,
+  bio,
+}: {
+  name: string | null;
+  age: number | null;
+  bio: string | null;
+}) {
+  const { locale } = useI18n();
+  useEffect(() => {
+    applyDocumentSeo(memberSeo(locale, name, age, bio));
+  }, [locale, name, age, bio]);
+  return null;
+}
 
 function MemberError() {
   const { t } = useI18n();
