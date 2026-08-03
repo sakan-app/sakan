@@ -104,6 +104,7 @@ export async function bumpAdMetric(adId: string, metric: "impressions" | "clicks
 
 type QueueRow = {
   id: string;
+  user_id: string;
   image_path: string;
   headline: string | null;
   subtitle: string | null;
