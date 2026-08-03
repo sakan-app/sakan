@@ -13,6 +13,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 const BATCH_SIZE = 100;
+/**
+ * A notification is only given up on after this long. Before that, a run that
+ * delivered nothing (device offline queue rejected it, provider 5xx) leaves
+ * the row unstamped so the next minute retries it.
+ */
+const GIVE_UP_AFTER_MS = 15 * 60 * 1000;
 
 function safeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
