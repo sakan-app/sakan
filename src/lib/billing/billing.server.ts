@@ -118,15 +118,33 @@ export async function activateSubscription(args: {
   interval: Interval;
   provider: string;
   providerRef: string;
+  customerId?: string | null;
+  /** Provider-side period end (Stripe is authoritative when present). */
+  periodEndIso?: string | null;
+  /** Amount actually charged, when the provider reports it. */
+  amountCentsOverride?: number | null;
+  /** Skips work if a payment with this provider ref was already recorded. */
+  idempotencyRef?: string | null;
 }) {
+  if (args.idempotencyRef) {
+    const { data: seen } = await supabaseAdmin
+      .from("payments")
+      .select("id")
+      .eq("provider", args.provider)
+      .eq("provider_ref", args.idempotencyRef)
+      .maybeSingle();
+    if (seen) return { subscriptionId: null, eventType: "duplicate" as const };
+  }
+
   const plan = await loadPlan(args.planCode);
   if (plan.tier === 0) throw new Error("cannot_purchase_free_plan");
 
   const amountCents =
-    args.interval === "annual" ? plan.price_annual_cents : plan.price_monthly_cents;
+    args.amountCentsOverride ??
+    (args.interval === "annual" ? plan.price_annual_cents : plan.price_monthly_cents);
   const existing = await liveSubscription(args.userId);
   const now = new Date();
-  const end = periodEnd(now, args.interval);
+  const end = args.periodEndIso ? new Date(args.periodEndIso) : periodEnd(now, args.interval);
 
   let subscriptionId: string;
   let eventType: "activated" | "upgraded" | "downgraded" | "renewed" = "activated";
@@ -143,12 +161,16 @@ export async function activateSubscription(args: {
         status: "active",
         billing_interval: args.interval,
         current_period_start: now.toISOString(),
-        current_period_end: periodEnd(base, args.interval).toISOString(),
+        current_period_end: (args.periodEndIso
+          ? new Date(args.periodEndIso)
+          : periodEnd(base, args.interval)
+        ).toISOString(),
         cancel_at_period_end: false,
         canceled_at: null,
         grace_until: null,
         provider: args.provider,
         provider_ref: args.providerRef,
+        provider_customer_id: args.customerId ?? existing.provider_customer_id ?? null,
       })
       .eq("id", existing.id);
     if (error) throw new Error(error.message);
@@ -174,6 +196,7 @@ export async function activateSubscription(args: {
         billing_interval: args.interval,
         provider: args.provider,
         provider_ref: args.providerRef,
+        provider_customer_id: args.customerId ?? null,
         started_at: now.toISOString(),
         current_period_start: now.toISOString(),
         current_period_end: end.toISOString(),
@@ -198,7 +221,7 @@ export async function activateSubscription(args: {
     amountCents,
     currency: plan.currency,
     provider: args.provider,
-    providerRef: args.providerRef,
+    providerRef: args.idempotencyRef ?? args.providerRef,
     description: `${args.planCode} · ${args.interval}`,
     periodStart: fresh?.current_period_start ?? now.toISOString(),
     periodEnd: fresh?.current_period_end ?? end.toISOString(),
@@ -285,6 +308,12 @@ export async function cancelAtPeriodEnd(userId: string) {
 export async function resumeSubscription(userId: string) {
   const sub = await liveSubscription(userId);
   if (!sub) throw new Error("no_active_subscription");
+  if (!sub.cancel_at_period_end) return { planCode: sub.plan_code };
+
+  // Provider first: if Stripe refuses (already ended), the local row keeps its
+  // canceled state instead of drifting out of sync.
+  await getPaymentProvider().resume(sub.provider_ref);
+
   const { error } = await supabaseAdmin
     .from("subscriptions")
     .update({ cancel_at_period_end: false, canceled_at: null })
@@ -297,6 +326,136 @@ export async function resumeSubscription(userId: string) {
     plan_code: sub.plan_code,
   });
   return { planCode: sub.plan_code };
+}
+
+/** Hosted provider portal (payment methods, invoices, cancel/resume). */
+export async function billingPortalUrl(userId: string, returnUrl: string) {
+  const url = await getPaymentProvider().portal(userId, returnUrl);
+  if (!url) throw new Error("portal_not_available");
+  return { url };
+}
+
+/** Marks a failed charge and opens the grace window. Idempotent. */
+export async function markPaymentFailed(args: {
+  userId: string;
+  amountCents: number;
+  currency: string;
+  providerRef: string;
+  reason?: string | null;
+}) {
+  const sub = await liveSubscription(args.userId);
+  const { data: seen } = await supabaseAdmin
+    .from("payments")
+    .select("id")
+    .eq("provider", "stripe")
+    .eq("provider_ref", args.providerRef)
+    .eq("status", "failed")
+    .maybeSingle();
+
+  if (!seen) {
+    await supabaseAdmin.from("payments").insert({
+      user_id: args.userId,
+      subscription_id: sub?.id ?? null,
+      amount_cents: args.amountCents,
+      currency: args.currency,
+      status: "failed",
+      provider: "stripe",
+      provider_ref: args.providerRef,
+      description: "renewal_failed",
+      failure_reason: args.reason ?? "payment_failed",
+    });
+    await logEvent({
+      user_id: args.userId,
+      subscription_id: sub?.id ?? null,
+      type: "payment_failed",
+      amount_cents: args.amountCents,
+      currency: args.currency,
+    });
+  }
+
+  if (sub && (sub.status === "active" || sub.status === "trialing")) {
+    const grace = new Date(Date.now() + GRACE_DAYS * 86_400_000).toISOString();
+    await supabaseAdmin
+      .from("subscriptions")
+      .update({ status: "past_due", grace_until: grace })
+      .eq("id", sub.id);
+    await logEvent({
+      user_id: args.userId,
+      subscription_id: sub.id,
+      type: "grace_started",
+      plan_code: sub.plan_code,
+    });
+    await notifyBilling(args.userId, "payment_failed");
+  }
+  return { ok: true };
+}
+
+/** Refund: reverses the payment record and ends access. Idempotent. */
+export async function applyRefund(args: {
+  userId: string;
+  providerRef: string;
+  amountRefundedCents: number;
+  fullyRefunded: boolean;
+}) {
+  const { data: payment } = await supabaseAdmin
+    .from("payments")
+    .select("id, status, subscription_id")
+    .eq("provider", "stripe")
+    .eq("provider_ref", args.providerRef)
+    .maybeSingle();
+
+  if (payment && payment.status !== "refunded") {
+    await supabaseAdmin
+      .from("payments")
+      .update({ status: "refunded", refunded_at: new Date().toISOString() })
+      .eq("id", payment.id);
+  } else if (payment) {
+    return { ok: true, duplicate: true };
+  }
+
+  await logEvent({
+    user_id: args.userId,
+    subscription_id: payment?.subscription_id ?? null,
+    payment_id: payment?.id ?? null,
+    type: "refunded",
+    amount_cents: args.amountRefundedCents,
+  });
+
+  // Partial refunds keep access; a full refund revokes it immediately.
+  if (args.fullyRefunded) {
+    const sub = await liveSubscription(args.userId);
+    if (sub) {
+      await supabaseAdmin
+        .from("subscriptions")
+        .update({
+          status: "canceled",
+          cancel_at_period_end: true,
+          canceled_at: new Date().toISOString(),
+        })
+        .eq("id", sub.id);
+    }
+  }
+  await notifyBilling(args.userId, "refunded");
+  return { ok: true };
+}
+
+/** Best-effort in-app notification; never blocks a webhook. */
+async function notifyBilling(userId: string, kind: "payment_failed" | "refunded") {
+  try {
+    await supabaseAdmin.from("notifications").insert({
+      user_id: userId,
+      type: "system",
+      title:
+        kind === "payment_failed" ? "Payment failed" : "Refund processed",
+      body:
+        kind === "payment_failed"
+          ? "We could not charge your payment method. Update it to keep your benefits."
+          : "Your payment was refunded and your subscription was closed.",
+      link: "/billing",
+    });
+  } catch (error) {
+    console.error("[billing] notify", error);
+  }
 }
 
 /** Moves lapsed subscriptions into past_due → grace → expired. */
