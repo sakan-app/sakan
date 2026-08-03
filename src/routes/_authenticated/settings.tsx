@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
+  Activity,
   Bell,
   ChevronLeft,
   CreditCard,
@@ -225,6 +226,7 @@ function SettingsPage() {
 
       <Group title={s.more}>
         <Row icon={Globe} label={s.publicSite} to="/" />
+        <Row icon={Activity} label="PWA & push diagnostics" to="/diagnostics" />
         <Row icon={HelpCircle} label={t.footer.contact} to="/" />
         <Row icon={LogOut} label={s.signOut} onClick={handleSignOut} danger />
       </Group>
