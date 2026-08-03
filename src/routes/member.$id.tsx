@@ -323,10 +323,13 @@ function MemberProfile() {
                   <MessageCircle className="h-4 w-4" /> {t.member.startChat}
                 </button>
                 <button
-                  onClick={handleStartChat}
-                  className="btn-outline-gold flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold"
+                  onClick={handleToggleFavorite}
+                  disabled={toggleFavorite.isPending}
+                  aria-pressed={isFavorited}
+                  className="btn-outline-gold flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold disabled:opacity-60"
                 >
-                  <Heart className="h-4 w-4" /> {t.member.addFavorite}
+                  <Heart className={`h-4 w-4 ${isFavorited ? "fill-current" : ""}`} />{" "}
+                  {isFavorited ? socialS.unfavorite : t.member.addFavorite}
                 </button>
               </div>
 
