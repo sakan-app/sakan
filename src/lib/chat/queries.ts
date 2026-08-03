@@ -326,10 +326,6 @@ export function patchMessageInCache(
   });
 }
 
-export async function editMessage(
-  queryClient: QueryClient,
-  args: { conversationId: string; messageId: string; body: string },
-) {
 /** Reads a single cached message, used to roll optimistic patches back. */
 function readMessageFromCache(
   queryClient: QueryClient,
