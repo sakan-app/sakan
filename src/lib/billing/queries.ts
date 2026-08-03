@@ -210,3 +210,18 @@ export function useResumeSubscription(userId: string) {
     onSuccess: invalidate,
   });
 }
+
+/** Opens the hosted Stripe portal in the current tab. */
+export function useBillingPortal() {
+  return useMutation({
+    mutationFn: async () => {
+      const { createPortalSession } = await import("./billing.functions");
+      return createPortalSession({
+        data: { returnUrl: `${window.location.origin}/billing` },
+      });
+    },
+    onSuccess: (result) => {
+      if (result?.url) window.location.assign(result.url);
+    },
+  });
+}
