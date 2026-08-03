@@ -216,7 +216,7 @@ async function fetchMembers(filters: MemberFilters, limit: number, offset = 0) {
 
   const { data, error, count } = await query;
   if (error) throw error;
-  const items = await toMemberViews((data ?? []) as PublicProfile[]);
+  const items = await toMemberViews((data ?? []) as unknown as PublicProfile[]);
   return { items, total: count ?? items.length };
 }
 
@@ -249,7 +249,7 @@ export const memberQuery = (id: string) =>
         .maybeSingle();
       if (error) throw error;
       if (!data) return null;
-      const [view] = await toMemberViews([data as PublicProfile]);
+      const [view] = await toMemberViews([data as unknown as PublicProfile]);
       return view ?? null;
     },
   });
