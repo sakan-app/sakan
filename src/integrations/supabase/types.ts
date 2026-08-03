@@ -221,6 +221,59 @@ export type Database = {
         }
         Relationships: []
       }
+      call_sessions: {
+        Row: {
+          answered_at: string | null
+          callee_id: string
+          caller_id: string
+          conversation_id: string
+          created_at: string
+          end_reason: string | null
+          ended_at: string | null
+          id: string
+          kind: string
+          started_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          answered_at?: string | null
+          callee_id: string
+          caller_id: string
+          conversation_id: string
+          created_at?: string
+          end_reason?: string | null
+          ended_at?: string | null
+          id?: string
+          kind: string
+          started_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          answered_at?: string | null
+          callee_id?: string
+          caller_id?: string
+          conversation_id?: string
+          created_at?: string
+          end_reason?: string | null
+          ended_at?: string | null
+          id?: string
+          kind?: string
+          started_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_sessions_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_wallpapers: {
         Row: {
           blur: number

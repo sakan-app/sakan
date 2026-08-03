@@ -29,6 +29,8 @@ import {
 
 import logo from "@/assets/sakan-logo.png.asset.json";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { CallOverlay } from "@/components/calls/CallOverlay";
+import { CallProvider } from "@/lib/calls/CallProvider";
 import { shellStrings, type ShellStrings } from "@/components/app/shell.strings";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatureStrings } from "@/i18n/feature";
@@ -543,6 +545,7 @@ export function AppShell() {
   const shellInset = (collapsed ? SIDEBAR_COLLAPSED : width) + 32;
 
   return (
+    <CallProvider>
     <div className="app-canvas">
       <Sidebar
         width={width}
@@ -577,7 +580,9 @@ export function AppShell() {
         </main>
       </div>
       {!immersive && <TabBar />}
+      <CallOverlay />
     </div>
+    </CallProvider>
   );
 }
 

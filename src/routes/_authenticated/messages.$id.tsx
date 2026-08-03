@@ -7,12 +7,10 @@ import {
   Loader2,
   MessageSquareOff,
   Image as ImageIcon,
-  Phone,
   Search,
   SearchX,
   Sparkles,
   UserRound,
-  Video,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -30,6 +28,7 @@ import { PinnedBanner } from "@/components/chat/PinnedBanner";
 import { SelectionBar } from "@/components/chat/SelectionBar";
 import { WallpaperPicker } from "@/components/chat/WallpaperPicker";
 import { AiSuggestBar } from "@/components/chat/AiSuggestBar";
+import { CallButton } from "@/components/calls/CallButton";
 import { useAuth } from "@/hooks/useAuth";
 import { myProfileQuery } from "@/lib/profile-queries";
 import { formatLastSeen, useIsAway, useIsOnline } from "@/hooks/usePresence";
@@ -714,24 +713,24 @@ function ConversationPage() {
               </span>
             </p>
           </div>
-          <button
-            type="button"
-            aria-label={s.voiceCall}
-            title={`${s.voiceCall} — ${s.featureSoon}`}
-            disabled
-            className="hidden h-9 w-9 place-items-center rounded-full text-gold/45 sm:grid"
-          >
-            <Phone className="h-5 w-5" />
-          </button>
-          <button
-            type="button"
-            aria-label={s.videoCall}
-            title={`${s.videoCall} — ${s.featureSoon}`}
-            disabled
-            className="hidden h-9 w-9 place-items-center rounded-full text-gold/45 sm:grid"
-          >
-            <Video className="h-5 w-5" />
-          </button>
+          <CallButton
+            kind="voice"
+            conversationId={id}
+            peer={{
+              id: info.otherUserId,
+              name: info.otherName,
+              avatarUrl: info.otherAvatarUrl,
+            }}
+          />
+          <CallButton
+            kind="video"
+            conversationId={id}
+            peer={{
+              id: info.otherUserId,
+              name: info.otherName,
+              avatarUrl: info.otherAvatarUrl,
+            }}
+          />
           <button
             type="button"
             aria-label={s.searchInChat}
