@@ -19,7 +19,19 @@ import { decideVerification, listVerificationQueue } from "@/lib/admin/ops.funct
 import { cn } from "@/lib/utils";
 import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/verifications")({ component: AdminVerifications, errorComponent: RouteErrorBoundary });
+export const Route = createFileRoute("/admin/verifications")({
+  head: () => ({
+    meta: [
+      { title: "Verification Center · SAKAN Admin" },
+      { name: "description", content: "Verification Center management for SAKAN administrators." },
+      { property: "og:title", content: "Verification Center · SAKAN Admin" },
+      { property: "og:description", content: "Verification Center management for SAKAN administrators." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
+  component: AdminVerifications,
+  errorComponent: RouteErrorBoundary,
+});
 
 const TABS = ["pending", "approved", "rejected", "expired", "all"] as const;
 

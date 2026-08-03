@@ -23,7 +23,19 @@ import { AdminPageHeader, ErrorState, LoadingState, Panel, StatCard } from "@/co
 import { getLiveStats } from "@/lib/admin/ops.functions";
 import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/dashboard")({ component: AdminDashboard, errorComponent: RouteErrorBoundary });
+export const Route = createFileRoute("/admin/dashboard")({
+  head: () => ({
+    meta: [
+      { title: "Admin Dashboard · SAKAN Admin" },
+      { name: "description", content: "Admin Dashboard management for SAKAN administrators." },
+      { property: "og:title", content: "Admin Dashboard · SAKAN Admin" },
+      { property: "og:description", content: "Admin Dashboard management for SAKAN administrators." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
+  component: AdminDashboard,
+  errorComponent: RouteErrorBoundary,
+});
 
 function AdminDashboard() {
   const fn = useServerFn(getLiveStats);

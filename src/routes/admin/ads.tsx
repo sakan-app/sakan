@@ -20,7 +20,19 @@ import {
 import { listFeaturedAdsAdmin, reviewFeaturedAd } from "@/lib/ads/ads.functions";
 import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/ads")({ component: AdminAds, errorComponent: RouteErrorBoundary });
+export const Route = createFileRoute("/admin/ads")({
+  head: () => ({
+    meta: [
+      { title: "Featured Ads · SAKAN Admin" },
+      { name: "description", content: "Featured Ads management for SAKAN administrators." },
+      { property: "og:title", content: "Featured Ads · SAKAN Admin" },
+      { property: "og:description", content: "Featured Ads management for SAKAN administrators." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
+  component: AdminAds,
+  errorComponent: RouteErrorBoundary,
+});
 
 type AdRow = {
   id: string;

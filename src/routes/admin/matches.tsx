@@ -19,7 +19,19 @@ import { listMatches } from "@/lib/admin/ops.functions";
 import { cn } from "@/lib/utils";
 import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/matches")({ component: AdminMatches, errorComponent: RouteErrorBoundary });
+export const Route = createFileRoute("/admin/matches")({
+  head: () => ({
+    meta: [
+      { title: "Matches · SAKAN Admin" },
+      { name: "description", content: "Matches management for SAKAN administrators." },
+      { property: "og:title", content: "Matches · SAKAN Admin" },
+      { property: "og:description", content: "Matches management for SAKAN administrators." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
+  component: AdminMatches,
+  errorComponent: RouteErrorBoundary,
+});
 
 const FILTERS = ["all", "active", "inactive"] as const;
 

@@ -23,7 +23,19 @@ import { actOnReport, listReportsFull } from "@/lib/admin/ops.functions";
 import { cn } from "@/lib/utils";
 import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/reports")({ component: AdminReports, errorComponent: RouteErrorBoundary });
+export const Route = createFileRoute("/admin/reports")({
+  head: () => ({
+    meta: [
+      { title: "Reports · SAKAN Admin" },
+      { name: "description", content: "Reports management for SAKAN administrators." },
+      { property: "og:title", content: "Reports · SAKAN Admin" },
+      { property: "og:description", content: "Reports management for SAKAN administrators." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
+  component: AdminReports,
+  errorComponent: RouteErrorBoundary,
+});
 
 const STATUSES = ["open", "reviewing", "resolved", "dismissed", "all"] as const;
 const REASONS = ["all", "spam", "fake_profile", "harassment", "scam", "inappropriate_photos", "duplicate_account", "other"];

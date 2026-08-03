@@ -31,7 +31,19 @@ import {
 import { cn } from "@/lib/utils";
 import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/subscriptions")({ component: AdminSubscriptions, errorComponent: RouteErrorBoundary });
+export const Route = createFileRoute("/admin/subscriptions")({
+  head: () => ({
+    meta: [
+      { title: "Subscriptions · SAKAN Admin" },
+      { name: "description", content: "Subscriptions management for SAKAN administrators." },
+      { property: "og:title", content: "Subscriptions · SAKAN Admin" },
+      { property: "og:description", content: "Subscriptions management for SAKAN administrators." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
+  component: AdminSubscriptions,
+  errorComponent: RouteErrorBoundary,
+});
 
 const STATUSES = ["all", "active", "trialing", "past_due", "canceled", "expired"] as const;
 type StatusFilter = (typeof STATUSES)[number];

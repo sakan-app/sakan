@@ -18,7 +18,19 @@ import { getPlatformSettings, updatePlatformSettings } from "@/lib/admin/ops.fun
 import { useAdminAccess } from "@/routes/admin/route";
 import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/settings")({ component: AdminSettings, errorComponent: RouteErrorBoundary });
+export const Route = createFileRoute("/admin/settings")({
+  head: () => ({
+    meta: [
+      { title: "Settings · SAKAN Admin" },
+      { name: "description", content: "Settings management for SAKAN administrators." },
+      { property: "og:title", content: "Settings · SAKAN Admin" },
+      { property: "og:description", content: "Settings management for SAKAN administrators." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
+  component: AdminSettings,
+  errorComponent: RouteErrorBoundary,
+});
 
 type Draft = {
   support_email: string;

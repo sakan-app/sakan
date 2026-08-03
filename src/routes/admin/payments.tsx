@@ -25,7 +25,19 @@ import { exportPaymentsCsv, getBillingOverview, listPaymentsAdmin, markPaymentRe
 import { cn } from "@/lib/utils";
 import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/payments")({ component: AdminPayments, errorComponent: RouteErrorBoundary });
+export const Route = createFileRoute("/admin/payments")({
+  head: () => ({
+    meta: [
+      { title: "Payments · SAKAN Admin" },
+      { name: "description", content: "Payments management for SAKAN administrators." },
+      { property: "og:title", content: "Payments · SAKAN Admin" },
+      { property: "og:description", content: "Payments management for SAKAN administrators." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
+  component: AdminPayments,
+  errorComponent: RouteErrorBoundary,
+});
 
 const STATUSES = ["all", "succeeded", "pending", "failed", "refunded"] as const;
 type StatusFilter = (typeof STATUSES)[number];
