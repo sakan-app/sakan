@@ -30,6 +30,7 @@ import { PinnedBanner } from "@/components/chat/PinnedBanner";
 import { SelectionBar } from "@/components/chat/SelectionBar";
 import { WallpaperPicker } from "@/components/chat/WallpaperPicker";
 import { AiSuggestBar } from "@/components/chat/AiSuggestBar";
+import { CallButton } from "@/components/calls/CallButton";
 import { useAuth } from "@/hooks/useAuth";
 import { myProfileQuery } from "@/lib/profile-queries";
 import { formatLastSeen, useIsAway, useIsOnline } from "@/hooks/usePresence";
