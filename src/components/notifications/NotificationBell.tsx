@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Bell, Heart, MessageCircle, ShieldCheck, Sparkles, Eye } from "lucide-react";
+import { Bell } from "lucide-react";
+
+import { NOTIFICATION_ICONS } from "@/lib/notifications/shared";
 
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -9,19 +11,11 @@ import {
   useNotificationsList,
   useUnreadCount,
   type NotificationItem,
-  type NotificationType,
 } from "@/hooks/useNotifications";
 import { useFeatureStrings } from "@/i18n/feature";
 import { socialStrings } from "@/lib/social/strings";
 
-const ICONS: Record<NotificationType, typeof Heart> = {
-  like: Heart,
-  match: Sparkles,
-  message: MessageCircle,
-  profile_view: Eye,
-  verification: ShieldCheck,
-  system: Bell,
-};
+const ICONS = NOTIFICATION_ICONS;
 
 function relativeTime(iso: string) {
   const diffMs = Date.now() - new Date(iso).getTime();
