@@ -1,656 +1,472 @@
 <div align="center">
 
-# سَكَن — SAKAN
-### منصة التعارف والزواج الدولية
+# SAKAN — سَكَن
+### The International Marriage & Serious Matchmaking Platform
 
-**Navy `#0D1B3D` · Gold `#D4AF37` · Cairo (عربي) · Montserrat (لاتيني)**
+**Navy `#0D1B3D` · Gold `#D4AF37` · Cairo (Arabic) · Montserrat (Latin)**
 
-منصة زواج وتعارف جادّة، متعددة اللغات (العربية · الإنجليزية · الألمانية · الروسية)،
-بتجربة تطبيق أصلي (Native App) على الجوال ولوحة تحكم إدارية بمستوى إنتاجي.
+A production-grade, multilingual (Arabic · English · German · French) matrimonial platform
+with a native-app-quality mobile experience, real-time messaging, AI assistance,
+subscriptions, advertising monetization and a full administrative back office.
 
 </div>
 
 ---
 
-## 📑 الفهرس
+## Table of Contents
 
-1. [نظرة عامة](#1-نظرة-عامة)
-2. [الهوية البصرية ونظام التصميم](#2-الهوية-البصرية-ونظام-التصميم)
-3. [البنية التقنية](#3-البنية-التقنية)
-4. [الصفحات العامة (الزوار)](#4-الصفحات-العامة-الزوار)
-5. [نظام الحسابات والمصادقة](#5-نظام-الحسابات-والمصادقة)
-6. [الملف الشخصي والتسجيل التدريجي](#6-الملف-الشخصي-والتسجيل-التدريجي)
-7. [البحث والاكتشاف](#7-البحث-والاكتشاف)
-8. [التفاعل الاجتماعي: إعجابات، مفضلة، توافقات](#8-التفاعل-الاجتماعي)
-9. [المحادثات اللحظية](#9-المحادثات-اللحظية)
-10. [الإشعارات والحضور المباشر](#10-الإشعارات-والحضور-المباشر)
-11. [خدمات الذكاء الاصطناعي](#11-خدمات-الذكاء-الاصطناعي)
-12. [الاشتراكات والفوترة](#12-الاشتراكات-والفوترة)
-13. [التوثيق (KYC) والبلاغات](#13-التوثيق-kyc-والبلاغات)
-14. [لوحة تحكم الإدارة](#14-لوحة-تحكم-الإدارة)
-15. [تعدد اللغات و RTL](#15-تعدد-اللغات-و-rtl)
-16. [تطبيق الويب التقدمي PWA](#16-تطبيق-الويب-التقدمي-pwa)
-17. [قاعدة البيانات الكاملة](#17-قاعدة-البيانات-الكاملة)
-18. [الأمان وسياسات الوصول](#18-الأمان-وسياسات-الوصول)
-19. [الأداء و SEO وإمكانية الوصول](#19-الأداء-و-seo-وإمكانية-الوصول)
-20. [خريطة المسارات الكاملة](#20-خريطة-المسارات-الكاملة)
-21. [بنية المجلدات](#21-بنية-المجلدات)
-22. [التشغيل والصلاحيات](#22-التشغيل-والصلاحيات)
-23. [اللمسة النهائية للإنتاج](#23-اللمسة-النهائية-للإنتاج-final-production-polish)
-24. [تجربة المحادثة الاحترافية](#24-تجربة-المحادثة-الاحترافية-chat-experience-v2)
-25. [تحقيق الدخل: الشريط المميز ومساحات الإعلانات](#25-تحقيق-الدخل-الشريط-المميز-ومساحات-الإعلانات)
-26. [الاستوديو الشخصي ومركز الإشعارات الذكي](#26-الاستوديو-الشخصي-ومركز-الإشعارات-الذكي)
-27. [نظام الحضور الموحّد و DND](#27-نظام-الحضور-الموحد-و-dnd)
-28. [الحركة الدقيقة والأداء وإمكانية الوصول (WCAG AA)](#28-الحركة-الدقيقة-والأداء-وإمكانية-الوصول-wcag-aa)
+1. [Overview](#1-overview)
+2. [Brand & Design System](#2-brand--design-system)
+3. [Technical Architecture](#3-technical-architecture)
+4. [Public Pages](#4-public-pages)
+5. [Accounts & Authentication](#5-accounts--authentication)
+6. [Profiles & Progressive Onboarding](#6-profiles--progressive-onboarding)
+7. [Profile Studio (Personalization)](#7-profile-studio-personalization)
+8. [Search & Discovery](#8-search--discovery)
+9. [Social Layer: Likes, Favorites, Matches](#9-social-layer-likes-favorites-matches)
+10. [Real-Time Messaging](#10-real-time-messaging)
+11. [Chat Wallpapers](#11-chat-wallpapers)
+12. [Presence, DND & Notification Center](#12-presence-dnd--notification-center)
+13. [AI Services](#13-ai-services)
+14. [Subscriptions & Billing (Stripe)](#14-subscriptions--billing-stripe)
+15. [Monetization: Featured Banner & Ad Slots](#15-monetization-featured-banner--ad-slots)
+16. [Verification (KYC), Reports & Moderation](#16-verification-kyc-reports--moderation)
+17. [Admin Dashboard](#17-admin-dashboard)
+18. [Internationalization & RTL](#18-internationalization--rtl)
+19. [Progressive Web App](#19-progressive-web-app)
+20. [Database Schema](#20-database-schema)
+21. [Security Model](#21-security-model)
+22. [Performance, SEO & Accessibility](#22-performance-seo--accessibility)
+23. [Route Map](#23-route-map)
+24. [Folder Structure](#24-folder-structure)
+25. [Environment, Secrets & Operations](#25-environment-secrets--operations)
+26. [Legal & Company Information](#26-legal--company-information)
 
 ---
 
-## 1. نظرة عامة
+## 1. Overview
 
-**سَكَن** ليست تطبيق مواعدة عابر، بل منصة زواج جادّة موجهة للمجتمع العربي والمسلم داخل
-الوطن العربي وفي المهجر (أوروبا خصوصًا). الاسم مستوحى من قوله تعالى *«لتسكنوا إليها»* —
-والشعار نفسه يجمع بين **حلقتَي زواج** و**سقف بيت** ليشكّلا قلبًا: الزواج = سَكَن = بيت.
+**SAKAN** is not a casual dating app. It is a serious marriage platform built for the Arab and
+Muslim community both in the Arab world and in the diaspora (primarily Europe). The name comes
+from the Qur'anic phrase *«لتسكنوا إليها»* — dwelling, tranquility, home. The logo merges two
+wedding rings with a rooftop to form a heart: marriage = sakan = home.
 
-**ما الذي يميز المنصة؟**
-
-| المحور | التفصيل |
+| Pillar | What it means in the product |
 |---|---|
-| الجدّية | ملفات موثّقة بالهوية، بلاغات، حظر، إشراف بشري + آلي |
-| الخصوصية | كل الصور في مخازن **خاصة** تُقدَّم عبر روابط موقّعة مؤقتة |
-| العالمية | 4 لغات كاملة مع دعم RTL/LTR تلقائي وترجمة فورية للرسائل |
-| التجربة | واجهة زجاجية (Glassmorphism) بمستوى تطبيقات iOS/Telegram |
-| الذكاء | تقييم توافق بالذكاء الاصطناعي وفلترة محتوى تلقائية |
-| التشغيل | لوحة إدارة كاملة: مستخدمون، توثيق، بلاغات، تحليلات، إعدادات |
+| Seriousness | Identity-verified profiles, reporting, blocking, human + automated moderation |
+| Privacy | All photos live in **private** storage buckets, served through short-lived signed URLs |
+| Global reach | 4 complete languages, automatic RTL/LTR switching, instant in-chat translation |
+| Intelligence | AI compatibility scoring, ice-breakers, smart replies, bio rewriting, profile scoring |
+| Sustainability | Subscription plans + paid featured banner + ad slots, all through Stripe |
+| Trust | GDPR-first data handling, German operator imprint, explicit consent records |
 
 ---
 
-## 2. الهوية البصرية ونظام التصميم
+## 2. Brand & Design System
 
-### الألوان (Design Tokens في `src/styles.css`)
-
-| الرمز | القيمة | الاستخدام |
-|---|---|---|
-| `--navy` | `#0D1B3D` | الخلفية الأساسية، القوائم، الفوتر |
-| `--gold` | `#D4AF37` | الأزرار الرئيسية، التوكيدات، شارات التوثيق |
-| `--cream` | `#FFFFFF` / درجاته | النصوص والحدود الشفافة |
-| `--glass-*` | طبقات شفافية + `backdrop-blur` | البطاقات، الشريط السفلي، الشريط الجانبي |
-
-> ❗ لا يُسمح بألوان مكتوبة يدويًا (`bg-black`, `#hex`) داخل المكوّنات — كل شيء عبر الرموز الدلالية.
-
-### الخطوط
-- **Cairo** — كل النصوص العربية والعناوين في الوضع RTL.
-- **Montserrat** — النصوص اللاتينية (EN/DE/FR) والأرقام.
-- التبديل تلقائي حسب اللغة النشطة عبر `LanguageProvider`.
-
-### اللغة البصرية
-- بطاقات زجاجية بحواف `rounded-2xl` وحدود `border-cream/10`.
-- ظلال ناعمة، تدرّجات ذهبية خفيفة للعناصر المميّزة.
-- حركات دقيقة (transition/scale) بدون مبالغة.
-- شبكات Grid على سطح المكتب، Carousel أفقي على الجوال.
+- **Palette (design tokens only — no hardcoded colors anywhere):** Navy `#0D1B3D` as the base
+  surface, Deep Navy for elevated glass panels, Gold `#D4AF37` for all primary actions and
+  accents, Cream for text, plus semantic success / warning / destructive tokens.
+- **Typography:** Cairo for Arabic, Montserrat for Latin scripts, loaded via `<link>` in the
+  root route (never `@import` in CSS, per the Tailwind v4 build).
+- **Language:** Glassmorphism — translucent navy panels, gold hairline borders, soft elevation
+  shadows (`--shadow-card`), rounded 2xl/3xl geometry.
+- **Motion:** `fade-up`, `tap-scale`, page transitions and list stagger, all wrapped in
+  `motion-safe:` so `prefers-reduced-motion` fully disables them.
+- **Tailwind v4** configured through `src/styles.css` with `@theme` variables; every color,
+  gradient and shadow is a semantic token so theming and dark surfaces stay consistent.
 
 ---
 
-## 3. البنية التقنية
+## 3. Technical Architecture
 
-| الطبقة | التقنية |
+| Layer | Technology |
 |---|---|
-| الواجهة | React 19 + TypeScript (وضع صارم `exactOptionalPropertyTypes`) |
-| البناء | Vite 7 |
-| التوجيه | TanStack Router (توجيه بالملفات + SSR) |
-| البيانات | TanStack Query (تخزين مؤقت، إعادة جلب، `keepPreviousData`) |
-| التنسيق | Tailwind CSS v4 (عبر `@theme` في `styles.css`) |
-| الخلفية | Lovable Cloud (قاعدة بيانات + مصادقة + تخزين + Realtime) |
-| منطق الخادم | `createServerFn` — دوال خادم مُوثّقة ومُتحقَّق منها |
-| التحقق | Zod على كل مدخلات المستخدم والخادم |
-| الرسوم | Recharts |
-| التنبيهات | Sonner |
-| الأيقونات | lucide-react |
+| Framework | TanStack Start v1 (SSR + file-based routing) on React 19 |
+| Language | TypeScript (strict) |
+| Build | Vite 7, edge/Worker target |
+| Routing | TanStack Router (`src/routes`, generated `routeTree.gen.ts`) |
+| Data | TanStack Query with route-loader prefetch + `useSuspenseQuery` |
+| Styling | Tailwind CSS v4 + shadcn/ui primitives |
+| Backend | Lovable Cloud (Postgres, Auth, Realtime, Storage) |
+| Server logic | `createServerFn` from `@tanstack/react-start` |
+| Public HTTP | File routes under `src/routes/api/public/*` (Stripe webhook) |
+| AI | Lovable AI Gateway (`src/lib/ai/gateway.server.ts`) |
+| Payments | Stripe (fetch-only adapter, no SDK, Worker-safe) |
 
-**قواعد معمارية مُطبَّقة:**
-- كل عملية حسّاسة تمرّ عبر `createServerFn` مع `requireSupabaseAuth`.
-- ملفات `*.server.ts` لا تصل أبدًا إلى حزمة المتصفح.
-- لا بيانات وهمية (mock) في أي مسار — كل شيء من قاعدة البيانات الحيّة.
-
----
-
-## 4. الصفحات العامة (الزوار)
-
-### 🏠 الصفحة الرئيسية `/`
-- **Hero** بصورة ثنائي وعنوان رئيسي + عنوان فرعي.
-- **نموذج بحث فوري**: أنا (ذكر/أنثى) · أبحث عن · المدى العمري · الدولة → ينقل إلى `/search`.
-- **شريط «أعضاء نشطون بالقرب منك»** ببيانات حقيقية.
-- **بطاقات المزايا** (التوثيق، الخصوصية، الجدية، التغطية الدولية).
-- **قصص نجاح**.
-- **مبدّل اللغة** (عربي · English · Deutsch · Français).
-
-### 🔍 نتائج البحث `/search`
-- شبكة بطاقات على سطح المكتب، Carousel أفقي على الجوال.
-- كل بطاقة: صورة، اسم، عمر، مدينة، دولة + عَلَم، شارة توثيق ذهبية.
-- فلاتر جانبية، ترتيب، وتقسيم صفحات من جهة الخادم.
-
-### 👤 ملف العضو `/member/$id`
-- معرض صور، بيانات تفصيلية، نسبة توافق، وزر **ابدأ محادثة**.
-- إن لم يكن الزائر مسجّلًا يظهر نداء «سجّل للتواصل» بدل التحويل القسري.
-
-### صفحات أخرى
-`/pricing` الخطط والأسعار · `/offline` صفحة انقطاع الشبكة · `/unauthorized` صلاحيات غير كافية.
+**Boundaries.** Client components import `*.functions.ts` only; server-only code lives in
+`*.server.ts` files that never enter the client graph. Environment variables are read *inside*
+handlers. Protected server functions use the `requireSupabaseAuth` middleware and are never
+called from public route loaders.
 
 ---
 
-## 5. نظام الحسابات والمصادقة
+## 4. Public Pages
 
-- **بريد + كلمة مرور** مع تأكيد البريد.
-- **تسجيل الدخول بجوجل** (OAuth عبر وسيط آمن يعمل حتى داخل المعاينة).
-- **استرجاع كلمة المرور** عبر `/auth/reset-password`.
-- **جلسة دائمة** مع تجديد تلقائي للرمز.
-- **حماية المسارات**: كل ما تحت `_authenticated/` محميّ بوّابة واحدة تحوّل غير المسجّل إلى `/auth`.
-- **إنشاء ملف تلقائي**: عند أول تسجيل يُنشأ `profiles` + دور `user` تلقائيًا عبر مُشغِّل قاعدة بيانات.
-- رسائل خطأ مترجمة وواضحة لكل حالة (`src/lib/auth-errors.ts`).
-
----
-
-## 6. الملف الشخصي والتسجيل التدريجي
-
-### معالج الإعداد `/onboarding`
-خطوات متتابعة تجمع أكثر من 15 حقلًا:
-الاسم · تاريخ الميلاد · الجنس · المطلوب · الدولة · المدينة · الحالة الاجتماعية ·
-الطول · التعليم · المهنة · مستوى التديّن · اللغات المتحدَّث بها · الاهتمامات ·
-نبذة شخصية · الصورة الرئيسية · صور المعرض.
-
-### إدارة الملف `/profile` و `/profile/edit`
-- تعديل كل الحقول مع تحقق Zod.
-- رفع/حذف/إعادة ترتيب صور المعرض واختيار الصورة الرئيسية.
-- **مؤشر اكتمال الملف** (0–100٪) يُحسب تلقائيًا في قاعدة البيانات.
-- إخفاء الملف مؤقتًا (`is_hidden`) دون حذفه.
+- **Landing (`/`)** — hero with search entry (gender, age range, country), live stats,
+  "why SAKAN" feature grid, nearby active members, success stories, featured ticker.
+- **Search (`/search`)** — public member browsing with refinement.
+- **Member profile (`/member/$id`)** — public-safe profile view.
+- **Pricing (`/pricing`)** — plan comparison cards.
+- **About, Guide, Privacy (GDPR), Terms, Imprint** — full legal suite in 4 languages,
+  driven by `src/lib/legal/*` and rendered through a shared `LegalPage` component.
+- **Offline (`/offline`)** and **Unauthorized (`/unauthorized`)** system pages.
+- **`/sitemap.xml`** generated from the route map; `robots.txt` in `public/`.
 
 ---
 
-## 7. البحث والاكتشاف
+## 5. Accounts & Authentication
 
-- بحث من جهة الخادم مع تقسيم صفحات وترتيب.
-- فلاتر متقدمة: العمر، الدولة، المدينة، الحالة الاجتماعية، الطول، التعليم، التديّن، اللغة، موثّق فقط، متصل الآن.
-- **عمليات بحث محفوظة** (`saved_searches`) و**بحث حديث** محلي.
-- اقتراحات فورية أثناء الكتابة.
-- صفحة **الاكتشاف `/discover`**: تصفّح مقترحات مرتبة حسب درجة التوافق.
+- Email + password sign-up/sign-in, plus **Google OAuth**.
+- Email confirmation flow with resend, password reset and "set new password" screens.
+- `/auth/callback` completes OAuth and hydrates the session before redirecting to the
+  originally intended path (never straight into a protected route).
+- The `_authenticated` route subtree is gated: unauthenticated visitors are redirected to
+  `/auth` before any loader runs.
+- Client-side function middleware attaches the bearer token to every protected server call.
+- Friendly, translated error mapping (`src/lib/auth-errors.ts`) for invalid credentials,
+  unconfirmed email, rate limits, weak/leaked passwords and duplicate accounts.
 
 ---
 
-## 8. التفاعل الاجتماعي
+## 6. Profiles & Progressive Onboarding
 
-| الميزة | السلوك |
+Three-step onboarding: **Basics → About you → Photo**.
+
+Fields: display name, birth date (18+ enforced), gender, looking-for, country, city, bio,
+occupation, education, marital status, religiosity, height, interests, spoken languages.
+
+- Live **profile completeness** meter.
+- Photo upload constrained to JPG/PNG/WEBP up to 5 MB, stored privately.
+- Gallery management (add/remove) on `/profile` with signed-URL delivery.
+- `/profile/edit` for full editing, including the AI bio assistant.
+
+---
+
+## 7. Profile Studio (Personalization)
+
+`/profile/appearance` — the personalization surface:
+
+- **Accent color** selection layered over the navy/gold base.
+- **Cover image** for the profile header.
+- **Glass intensity** control for the glassmorphism panels.
+- **Avatar border styles**.
+- **Presence privacy**: invisible mode, hide last-seen, hide typing indicator.
+- **AI Profile Strength card** — calls `suggestProfileQuality` to score the profile 0–100 and
+  return concrete, localized improvement suggestions.
+
+---
+
+## 8. Search & Discovery
+
+- Filters: gender, age range, country/city, plus refinement panel (`SearchRefine`).
+- Sorting: most active, newest, most complete.
+- **Saved searches** and **recent search chips** (`saved_searches` table + local history).
+- **Virtualized member grid** (`VirtualMemberGrid`) for long result sets; plain layout is kept
+  for short lists to avoid unnecessary overhead.
+- **AI recommendations** panel surfacing compatibility-ranked suggestions.
+- `/discover`, `/matches`, `/favorites` and `/home` for signed-in members.
+
+---
+
+## 9. Social Layer: Likes, Favorites, Matches
+
+- **Likes** with optimistic updates and realtime invalidation.
+- **Favorites** list with instant add/remove feedback.
+- **Matches** created when interest is mutual, surfaced on `/matches`.
+- **Compatibility scores** persisted per pair and shown as a percentage in the chat header
+  and on member cards.
+- **Blocking** (`blocked_users`) removes a member from search, chat and notifications.
+
+---
+
+## 10. Real-Time Messaging
+
+The flagship surface, built to feel like Telegram/WhatsApp/iMessage.
+
+**Composition & delivery**
+- Text, emoji picker, image attachments, optimistic send, offline **outbox** with retry.
+- Delivery states: sending → sent → delivered → read, with clear iconography.
+- Typing indicators (respecting the sender's privacy setting).
+- Realtime via Postgres changes on `messages`, `message_reactions` and `conversations`.
+
+**Interactions**
+- **Swipe to reply** with haptic feedback on touch devices.
+- **Long-press / right-click context menu**: reply, copy, forward, edit, pin, delete,
+  translate, report, message info.
+- **Reactions** (❤️ 👍 👎 😂 😮 😢 🙏) stored in `message_reactions`, optimistic + realtime.
+- **Edit** and **delete** (for me / for everyone) with a dedicated confirmation dialog.
+- **Multi-select mode** with a selection bar for bulk forward/delete.
+- **Forward sheet** to pick a destination conversation.
+- **Pinned banner** for pinned messages.
+- **In-conversation search** with highlight and jump-to-result.
+- **Unread divider**, jump-to-latest button, image viewer with zoom.
+- **Instant translation** of any message into the reader's language via the AI gateway.
+
+**List screen (`/messages`)** — virtualized conversation list with presence dots, unread
+counts, last-message preview and empty states.
+
+---
+
+## 11. Chat Wallpapers
+
+- Curated built-in wallpaper catalog plus **custom uploads for premium members**
+  (private bucket + signed URLs).
+- Per-conversation settings *and* a global default from `/settings`.
+- Controls: opacity, blur, brightness and a readability overlay.
+- A **readability guard** (`ensureReadable`) clamps values so bubble text always stays above
+  WCAG AA contrast on any wallpaper.
+- Cross-fade transition when switching wallpapers; three non-interactive layers
+  (image → scrim → content).
+
+---
+
+## 12. Presence, DND & Notification Center
+
+**Presence**
+- States: online, away, busy, do-not-disturb, invisible.
+- Automatic transitions: away after idle, back to online on return.
+- One unified `PresenceIndicator` (colored dot + tooltip) reused across member cards, the
+  conversation list, the chat header and notifications.
+- Privacy switches for invisible mode, last-seen and typing visibility.
+
+**Notification Center (`/notifications`)**
+- Inbox / Archive tabs, filters by type, instant search.
+- Time grouping (Today / Yesterday / Earlier).
+- Multi-select with bulk read, archive and delete.
+- Swipe-to-delete with haptics on mobile.
+- Realtime updates and an unread badge in the header bell.
+- **DND is respected**: toasts and sounds are muted while the member is in do-not-disturb.
+
+---
+
+## 13. AI Services
+
+All AI runs through the Lovable AI Gateway from server functions with JSON-schema-constrained
+responses, per-user rate limiting and typed error kinds.
+
+| Feature | Where |
 |---|---|
-| ❤️ إعجاب | يُسجَّل في `likes` ويُنشئ إشعارًا فوريًا للطرف الآخر |
-| ⭐ مفضلة | قائمة خاصة `/favorites` مع إمكانية إضافة ملاحظة |
-| 🤝 توافق | عند الإعجاب المتبادل يُنشئ مُشغِّل قاعدة بيانات سجل `matches` تلقائيًا + إشعار للطرفين |
-| 🚫 حظر | يمنع الظهور والمراسلة في الاتجاهين (`is_blocked_between`) |
-| 🚩 إبلاغ | نموذج بلاغ يصل مباشرة إلى طابور الإشراف |
-
-صفحة `/matches` تعرض كل التوافقات مع اختصار لبدء المحادثة.
-
----
-
-## 9. المحادثات اللحظية
-
-`/messages` و `/messages/$id` — بجودة تطبيقات المراسلة الحديثة:
-
-- محادثات **1:1** تُنشأ عبر دالة آمنة `get_or_create_conversation`.
-- تاريخ كامل للرسائل مع تحميل تدريجي.
-- **إيصالات التسليم والقراءة** (`delivered_at` / `read_at`).
-- **مؤشر «يكتب الآن»** عبر قنوات Realtime.
-- **مرفقات**: صور وملفات في مخزن `chat-media` الخاص.
-- **إيموجي** وردود سريعة.
-- **الترجمة الفورية** للرسالة إلى لغة القارئ.
-- **طابور إرسال دون اتصال** (`outbox`) يُعاد إرساله عند عودة الشبكة.
-- حظر المحادثة يوقف الإرسال من الطرفين.
+| Compatibility scoring & ranked recommendations | Search / Discover |
+| Ice-breakers (conversation starters) | Chat AI suggestion bar |
+| Smart replies | Chat AI suggestion bar |
+| Message translation | Message context menu |
+| Bio rewriting with notes | `/profile/edit` |
+| Profile quality score + suggestions | Profile Studio |
+| Content moderation flags | Messages & photos → `moderation_flags` |
 
 ---
 
-## 10. الإشعارات والحضور المباشر
+## 14. Subscriptions & Billing (Stripe)
 
-- **جرس إشعارات** في الشريط العلوي/الجانبي مع عدّاد غير المقروء لحظيًا.
-- أنواع: `like` · `match` · `message` · `profile_view` · `verification` · `system`.
-- صفحة `/notifications`: تعليم كمقروء، فلترة حسب النوع.
-- **الحضور**: `last_seen_at` يُحدَّث تلقائيًا، ونقطة خضراء «متصل الآن» لمن ظهر خلال 5 دقائق.
-- جسر واحد `RealtimeBridge` يدير كل الاشتراكات لتفادي التضارب.
+- Plans stored in `plans`; member state in `subscriptions` with a **grace period** before
+  entitlements are revoked.
+- Entitlement checks gate premium features (custom wallpapers, advanced AI, visibility perks).
+- `/billing` shows the current plan, renewal date, invoice history and billing events.
+- **Provider-agnostic payment adapter** (`src/lib/billing/provider.server.ts`) with a real
+  Stripe implementation built on `fetch` only — Worker-safe, no Node-only SDK.
+- Signed **webhook** at `/api/public/stripe-webhook` verifies the Stripe signature before
+  processing; unsigned requests are rejected with 401.
+- Realtime: subscription, payment and billing-event changes invalidate the client cache
+  instantly after checkout, renewal, cancellation or expiry.
 
----
-
-## 11. خدمات الذكاء الاصطناعي
-
-| الخدمة | الوصف |
-|---|---|
-| **درجة التوافق** | تحليل الملفين وإنتاج درجة 0–100 + نقاط قوة + اعتبارات، مخزّنة في `compatibility_scores` |
-| **الترجمة الفورية** | ترجمة الرسائل بين العربية/الإنجليزية/الألمانية/الروسية داخل المحادثة |
-| **فلترة النصوص** | فحص الرسائل والنبذات وإنتاج حكم `approved / flagged / rejected` |
-| **فلترة الصور** | مراجعة الصور المرفوعة قبل نشرها (`is_approved`) |
-| **سجل الفحص** | كل حكم يُسجَّل في `moderation_flags` لمراجعة المشرفين |
-
-تعمل كل الخدمات عبر بوابة الذكاء الاصطناعي في Lovable Cloud — بدون مفاتيح خارجية.
+Required secrets: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (must start with `whsec_`).
 
 ---
 
-## 12. الاشتراكات والفوترة
+## 15. Monetization: Featured Banner & Ad Slots
 
-- جدول `plans` مرن (اسم ومزايا متعددة اللغات، سعر شهري وسنوي، حدود لكل خطة).
-- `subscriptions` بحالات: `trialing` · `active` · `past_due` · `canceled` · `expired`
-  مع **فترة سماح** (`grace_until`) وإلغاء في نهاية الدورة.
-- `payments` بأرقام فواتير تلقائية بصيغة `SAKAN-YYYY-000123`.
-- `billing_events` سجل كامل لكل حدث (ترقية، تخفيض، تجديد، فشل دفع، استرداد…).
-- **مزوّد دفع مجرَّد (Provider-agnostic)**: يدعم الدفع اليدوي/التحويل البنكي حاليًا،
-  وجاهز لتوصيل بوابة إلكترونية دون تغيير منطق التطبيق.
-- مكوّن `<PremiumGate>` يحجب المزايا المدفوعة بأناقة، وصفحة `/billing` لإدارة الاشتراك والفواتير.
-- دوال مساعدة: `has_premium()` · `user_plan()` · `user_plan_tier()` · `expire_due_subscriptions()`.
+- **Featured banner** — a marquee ticker of promoted member photos. Each creative travels
+  across the strip over ~3 minutes, then the next one takes over. Price: **€0.99 per creative**,
+  paid through Stripe checkout, queued in `featured_ads`, reviewed by admins.
+- **Creative cropper** in the promote flow enforces the correct aspect ratio before upload.
+- **Ad placements** (`ad_placements`) render through a generic `AdSlot` component in
+  well-defined positions, ready for AI agents or ad networks.
+- Admin review page for approving, rejecting and scheduling both featured ads and placements.
 
 ---
 
-## 13. التوثيق (KYC) والبلاغات
+## 16. Verification (KYC), Reports & Moderation
 
-**التوثيق:** يرفع العضو وثيقة هوية + صورة سيلفي إلى مخزن `verification` الخاص →
-يظهر الطلب في طابور الإدارة → عند القبول تُفعَّل شارة ✅ الذهبية تلقائيًا عبر مُشغِّل قاعدة بيانات.
-الحالات: `pending` · `approved` · `rejected` · `expired`.
-
-**البلاغات:** أسباب جاهزة (سبام، ملف مزيّف، تحرّش، احتيال، صور غير لائقة، حساب مكرر، أخرى)
-مع تفاصيل نصّية، وحالات `open` · `reviewing` · `resolved` · `dismissed`.
-
----
-
-## 14. لوحة تحكم الإدارة
-
-مسار `/admin` — بتصميم SaaS راقٍ (بأسلوب Stripe/Linear) فوق نفس النظام الزجاجي،
-محميّ بأدوار `moderator` · `admin` · `super_admin` وصفحة 403 لغيرهم.
-
-| الصفحة | المحتوى |
-|---|---|
-| `/admin/dashboard` | مؤشرات حيّة: الأعضاء، المتصلون الآن، الرسائل اليوم، البلاغات المفتوحة، طلبات التوثيق، الإيراد الشهري، تسجيلات آخر 14 يومًا |
-| `/admin/users` | جدول متقدم: بحث، فلاتر متعددة، ترتيب، صفحات — وإجراءات: إيقاف، حظر، حذف، إعادة تعيين كلمة المرور، خروج قسري، حظر خفي، توثيق، ترقية دور |
-| `/admin/user/$id` | ملف كامل + معرض + اشتراك + إحصاءات + سجل التوثيق + البلاغات ضده + **ملاحظات إدارية داخلية** + خط زمني موحّد |
-| `/admin/verifications` | طابور مراجعة الوثائق: معاينة الوثيقة والسيلفي، قبول، رفض، طلب معلومات، انتهاء صلاحية |
-| `/admin/reports` | مركز البلاغات: حل، تجاهل، تحذير، إيقاف، حظر نهائي |
-| `/admin/matches` | عرض للقراءة فقط لكل التوافقات وحالتها |
-| `/admin/subscriptions` | إدارة الاشتراكات: MRR / ARR، الإيراد الشهري، التوزيع حسب الخطة، فلاتر الحالة والخطة والعضو، وإجراءات: تمديد 30 يومًا، منح مهلة سماح 7 أيام، إلغاء الاشتراك |
-| `/admin/payments` | الفواتير والمعاملات: فلترة حسب الحالة، بحث برقم الفاتورة أو مرجع المزوّد، تعليم الاسترداد، وتصدير CSV — بمعمارية مستقلة عن مزوّد الدفع (لا يوجد أي ربط صلب بـ Stripe) |
-| `/admin/conversations` | مراجعة إشرافية للمحادثات مع بحث داخل الرسائل |
-| `/admin/notifications` | مراقبة الإشعارات + **بث إعلان** لكل الأعضاء / حسب الدولة / للمشتركين / للطاقم |
-| `/admin/activity` | **سجل تدقيق غير قابل للتعديل** لكل إجراء إداري + سجل النظام |
-| `/admin/analytics` | رسوم تفاعلية: نمو المستخدمين، التوزيع الجغرافي، اللغات، الرسائل، التوثيق، الإيراد |
-| `/admin/settings` | (سوبر أدمن فقط) بريد الدعم، اللغة الافتراضية، تفعيل التسجيل، وضع الصيانة، إلزام التوثيق، حدود الصور |
-
-### دوال الخادم الإدارية
-
-| الملف | الدور |
-|---|---|
-| `src/lib/admin/ops.functions.ts` | سطح RPC الوحيد للوحة التحكم (`createServerFn`) — كل نداء يعيد التحقق من الدور على الخادم عبر `assertStaff` / `assertAdmin` / `is_super_admin` |
-| `src/lib/admin/ops.server.ts` | منطق الخادم: الإحصاءات الحيّة، جداول المستخدمين، التوثيق، البلاغات، المحادثات، التحليلات، الإعدادات، `logAdminAction` |
-| `src/lib/admin/billing.server.ts` | منطق الفوترة الإداري: `getBillingOverview` (MRR/ARR/الإيراد/التوزيع حسب الخطة/إيراد 12 شهرًا)، `listSubscriptions`، `listPayments`، `listPlans`، `runSubscriptionAction`، `markPaymentRefunded`، `exportPaymentsCsv` |
-| `src/components/admin/ui.tsx` | مجموعة واجهة زجاجية موحّدة: Panel، StatCard، Pill، TableShell، Pagination، حالات التحميل/الخطأ/الفراغ |
-| `src/components/admin/ConfirmDialog.tsx` | نافذة تأكيد إلزامية للإجراءات الخطيرة مع حقل السبب |
-
-كل عمليات الفوترة الإدارية تُسجَّل في `admin_actions` بالأفعال:
-`subscription.set_status` · `subscription.change_plan` · `subscription.extend_period` ·
-`subscription.set_grace` · `subscription.cancel_at_period_end` · `payment.refund`
-مع القيمة السابقة والقيمة الجديدة والسبب.
-
-**ضمانات التشغيل:** كل إجراء خطير يمرّ عبر نافذة تأكيد تطلب **سببًا** يُحفظ في سجل التدقيق،
-وكل عملية إدارية تُسجَّل في `admin_actions` بلا إمكانية تعديل أو حذف.
+- Members submit identity/photo verification (`verification_requests`); status changes are
+  pushed to the client in realtime and reflected by a verified badge everywhere.
+- **Reports** (`reports`) on members and messages with reason codes and admin resolution.
+- **Automated moderation flags** from the AI moderation functions, queued for human review.
+- **Admin notes** and a full **activity log** / **admin actions** audit trail.
 
 ---
 
-## 15. تعدد اللغات و RTL
+## 17. Admin Dashboard
 
-- 4 لغات كاملة: **العربية (افتراضية) · English · Deutsch · Français**.
-- `LanguageProvider` في `src/lib/i18n.tsx` + ملفات ترجمة لكل قسم.
-- تبديل فوري لـ `dir="rtl|ltr"` و`lang` وعائلة الخط.
-- حفظ اللغة في تفضيلات الحساب (`preferred_language`) ومزامنتها عبر الأجهزة.
-- كل التخطيطات تستخدم خصائص منطقية (`start/end`) فتنعكس تلقائيًا.
+Routes under `/admin`, protected by a role gate:
 
----
+Dashboard · Users · User detail · Verifications · Reports · Conversations · Matches ·
+Subscriptions · Payments · Ads · Notifications · Analytics · Activity · Settings.
 
-## 16. تطبيق الويب التقدمي PWA
-
-- قابل للتثبيت مع أيقونات وشاشة إقلاع بهوية سَكَن.
-- عمل دون اتصال مع صفحة بديلة `/offline`.
-- تخزين مؤقت ذكي للأصول (مع استثناء ملفات التطوير).
-- مزامنة خلفية لإعادة إرسال الرسائل المعلّقة.
-- **الجوال:** شريط سفلي زجاجي ثابت (الرئيسية · الاكتشاف · الرسائل · المفضلة · الإشعارات · حسابي) — بدون قائمة هامبرغر.
-- **سطح المكتب:** شريط جانبي زجاجي عائم قابل للطي وتغيير العرض.
+- Role management from the users table: promote/demote **moderator**, **admin** and
+  **super admin** (the super-admin option is visible to super admins only).
+- Roles live in a dedicated `user_roles` table with a `has_role` security-definer function —
+  never on the profile row — to prevent privilege escalation.
+- Virtualized admin tables with captions, scoped headers and keyboard scrolling.
+- Confirm dialogs for every destructive action.
+- Platform settings stored in `platform_settings`.
 
 ---
 
-## 17. قاعدة البيانات الكاملة
+## 18. Internationalization & RTL
 
-**الجداول (25):**
-`profiles` · `user_roles` · `photos` · `conversations` · `messages` · `likes` · `matches` ·
-`favorites` · `blocked_users` · `notifications` · `reports` · `verification_requests` ·
-`saved_searches` · `consents` · `plans` · `subscriptions` · `payments` · `billing_events` ·
-`compatibility_scores` · `moderation_flags` · `admin_actions` · `admin_notes` ·
-`activity_logs` · `platform_settings`
-
-**الأنواع المعدودة (17):** `app_role` · `gender` · `language_code` · `marital_status` ·
-`religiosity_level` · `photo_kind` · `message_kind` · `notification_type` · `report_status` ·
-`verification_status` · `subscription_status` · `billing_interval` · `billing_event_type` ·
-`payment_status` · `moderation_verdict` · `consent_type` · `log_level`
-
-**المخازن الخاصة (6):** `avatars` · `gallery` · `chat-media` · `verification` · `documents` · `temporary`
-— جميعها **غير عامة**، والوصول عبر روابط موقّعة قصيرة العمر ومسارات مقيّدة بمعرّف المستخدم.
-
-**دوال ومُشغّلات بارزة:** إنشاء الملف عند التسجيل · حساب اكتمال الملف · إنشاء التوافق عند
-الإعجاب المتبادل · إشعارات الإعجاب/التوافق/الرسالة · تحديث آخر ظهور · مزامنة شارة التوثيق ·
-ترقيم الفواتير · انتهاء الاشتراكات المستحقة.
+- Official languages: **Arabic (default, RTL)**, **English**, **German**, **French**.
+- Dictionaries in `src/i18n/locales/{ar,en,de,fr}.ts`, typed against the Arabic dictionary so a
+  missing key is a compile error.
+- Direction (`dir`) and font family switch automatically with the locale.
+- Language switcher in the header and in profile preferences; preference persisted per member.
+- Every feature area ships its own strings module (chat, billing, ads, admin, legal, PWA…).
 
 ---
 
-## 18. الأمان وسياسات الوصول
+## 19. Progressive Web App
 
-- **RLS مفعّل على كل الجداول** مع سياسات مقيّدة بـ `auth.uid()`.
-- **الأدوار في جدول منفصل** (`user_roles`) وتُفحص عبر دوال `SECURITY DEFINER`
-  (`has_role`, `is_staff`, `is_super_admin`) — لا تُخزَّن أبدًا في جدول الملفات، منعًا لتصعيد الصلاحيات.
-- جداول السجلات (`admin_actions`, `activity_logs`, `billing_events`) **للقراءة فقط**: لا تعديل ولا حذف.
-- الأعمدة الحسّاسة محميّة بمُشغِّل يمنع المستخدم من تعديل `is_verified` بنفسه.
-- تحقق Zod مزدوج (عميل + خادم) على كل مدخل.
-- حدود رفع: نوع الملف وحجمه (افتراضيًا 5MB) وعدد صور المعرض.
-- لا مفاتيح سرية في كود المتصفح إطلاقًا.
+- `public/manifest.webmanifest` with icons, theme color and standalone display.
+- Service worker (`public/sw.js`) for asset caching and offline fallback to `/offline`.
+- Custom install prompt (`InstallPrompt`) surfaced at a sensible moment.
+- Offline banner, outbox-backed message queueing and background retry.
+- Safe-area insets honored across the bottom nav, composer and sheets.
 
 ---
 
-## 19. الأداء و SEO وإمكانية الوصول
+## 20. Database Schema
 
-- تحميل كسول للمسارات الثقيلة (الإدارة، الرسوم البيانية).
-- `TanStack Query` مع `keepPreviousData` لتصفح بلا وميض.
-- صور بأحجام مناسبة و`lazy loading`.
-- عناوين ووصف فريد لكل صفحة + Open Graph + Twitter Card + `sitemap.xml`.
-- HTML دلالي، عنوان `h1` واحد لكل صفحة، نصوص بديلة للصور.
-- التزام **WCAG AA**: تباين كافٍ، تنقّل بلوحة المفاتيح، تسميات ARIA، حالات تركيز واضحة.
+Public tables: `profiles`, `photos`, `user_roles`, `consents`, `likes`, `favorites`, `matches`,
+`compatibility_scores`, `blocked_users`, `conversations`, `messages`, `message_reactions`,
+`chat_wallpapers`, `notifications`, `saved_searches`, `reports`, `moderation_flags`,
+`verification_requests`, `plans`, `subscriptions`, `payments`, `billing_events`,
+`featured_ads`, `ad_placements`, `platform_settings`, `admin_actions`, `admin_notes`,
+`activity_logs`.
 
----
+Views / functions: `current_subscription`, `has_role`, `is_conversation_participant`,
+`get_or_create_conversation`.
 
-## 20. خريطة المسارات الكاملة
-
-**عام:** `/` · `/search` · `/member/$id` · `/pricing` · `/auth` · `/auth/callback` ·
-`/auth/reset-password` · `/offline` · `/unauthorized` · `/sitemap.xml`
-
-**مسجَّل (`_authenticated`):** `/home` · `/discover` · `/messages` · `/messages/$id` ·
-`/matches` · `/favorites` · `/notifications` · `/profile` · `/profile/edit` ·
-`/onboarding` · `/billing` · `/settings`
-
-**إدارة (`/admin`):** `dashboard` · `users` · `user/$id` · `verifications` · `reports` ·
-`matches` · `conversations` · `subscriptions` · `payments` · `notifications` ·
-`activity` · `analytics` · `settings`
+Storage buckets are **private**; every file is addressed as `<user_id>/<uuid>.<ext>` and
+delivered through short-lived signed URLs.
 
 ---
 
-## 21. بنية المجلدات
+## 21. Security Model
 
-```
+- **RLS enabled on every public table**, with explicit `GRANT`s per role in the same migration.
+- Ownership policies scope rows to `auth.uid()`; conversation access goes through
+  `is_conversation_participant`; admin access through `has_role`.
+- Roles are never client-trusted: privileged checks always re-verify server-side.
+- Server functions validate input with Zod and enforce per-user rate limits.
+- The Stripe webhook verifies HMAC signatures with a timing-safe comparison.
+- Secrets never reach the client bundle; only `VITE_*` values are public.
+- GDPR: consent records, private media, data-minimizing public profile projections.
+
+---
+
+## 22. Performance, SEO & Accessibility
+
+**Performance** — route-level code splitting, loader prefetch with `ensureQueryData`,
+window virtualization for search results, conversation list and admin tables, memoized
+list rows, optimistic mutations, lazy image loading.
+
+**SEO** — unique `head()` per route (title, description, OG and Twitter cards), JSON-LD for
+the organization and legal pages, canonical tags, generated sitemap, `robots.txt`, and
+`noindex` on private surfaces.
+
+**Accessibility (WCAG AA)** — verified contrast on all surfaces including wallpapers,
+visible focus rings, ARIA labels/roles (`role="group"`, `aria-pressed`, `aria-live`),
+labelled AI suggestion regions, keyboard-operable menus and tables, and full
+`prefers-reduced-motion` support.
+
+---
+
+## 23. Route Map
+
+**Public:** `/` · `/search` · `/member/$id` · `/pricing` · `/about` · `/guide` · `/privacy` ·
+`/terms` · `/impressum` · `/auth` · `/auth/callback` · `/auth/reset-password` · `/offline` ·
+`/unauthorized` · `/sitemap.xml`
+
+**Member (`_authenticated`):** `/home` · `/discover` · `/matches` · `/favorites` ·
+`/messages` · `/messages/$id` · `/notifications` · `/profile` · `/profile/edit` ·
+`/profile/appearance` · `/settings` · `/billing` · `/featured` · `/onboarding`
+
+**Admin:** `/admin` · `/admin/dashboard` · `/admin/users` · `/admin/user/$id` ·
+`/admin/verifications` · `/admin/reports` · `/admin/conversations` · `/admin/matches` ·
+`/admin/subscriptions` · `/admin/payments` · `/admin/ads` · `/admin/notifications` ·
+`/admin/analytics` · `/admin/activity` · `/admin/settings`
+
+**API:** `/api/public/stripe-webhook`
+
+---
+
+## 24. Folder Structure
+
+```text
 src/
-├── routes/                 كل الصفحات (توجيه بالملفات)
-│   ├── _authenticated/     المسارات المحمية
-│   └── admin/              لوحة الإدارة
-├── components/
-│   ├── app/                هيكل التطبيق (شريط جانبي/سفلي)
-│   ├── admin/              مكوّنات الإدارة + نافذة التأكيد
-│   ├── chat/ social/ pwa/  مكوّنات متخصصة
-│   └── ui/                 مكوّنات أساسية
-├── lib/
-│   ├── admin/              منطق الإدارة (server + functions)
-│   ├── billing/ chat/ ai/ social/
-│   ├── i18n.tsx            نظام اللغات
-│   └── validation.ts       مخططات Zod
-├── hooks/                  useAuth, useSubscription, useNotifications…
-├── integrations/           عميل الخلفية (تُولَّد تلقائيًا)
-└── styles.css              رموز التصميم والخطوط
+  routes/            file-based routes (__root, public, _authenticated, admin, api)
+  components/        admin, ads, app, billing, chat, legal, notifications,
+                     presence, profile, pwa, search, social, ui
+  lib/
+    ai/              gateway, prompts, matchmaking, moderation, coaching, translate
+    billing/         plans, provider adapter, Stripe, queries, types
+    ads/             featured ads + placements
+    chat/            queries, realtime, reactions, wallpapers, strings, types
+    admin/           admin + ops server logic and strings
+    notifications/   shared icon map and helpers
+    profile/         appearance and presence settings
+    social/          likes, favorites, matches
+    legal/           about, privacy, terms, imprint, guide content
+  i18n/              ar · en · de · fr dictionaries
+  hooks/             useAuth, useSubscription, useNotifications, usePresence
+  integrations/      Lovable Cloud clients and auth middleware
 ```
 
+Naming rules: `*.functions.ts` = client-callable server functions,
+`*.server.ts` = server-only helpers, `*.strings.ts` = localized copy.
+
 ---
 
-## 22. التشغيل والصلاحيات
+## 25. Environment, Secrets & Operations
 
-```bash
-npm install
-npm run dev      # تشغيل محلي
-npm run build    # حزمة إنتاج
+Public (client) variables come from `VITE_*`. Server secrets are configured in the project's
+secret store and read inside handlers:
+
+| Secret | Purpose |
+|---|---|
+| `STRIPE_SECRET_KEY` | Stripe API calls (subscriptions, featured-ad checkout) |
+| `STRIPE_WEBHOOK_SECRET` | Signature verification for `/api/public/stripe-webhook` |
+| `LOVABLE_API_KEY` | AI Gateway access (managed) |
+
+Secrets are **not** managed through GitHub — the repository contains code only.
+
+Stable URLs for external services (cron, Stripe webhooks):
+`project--<id>.lovable.app` (production) and `project--<id>-dev.lovable.app` (preview).
+
+Roles: assign the first `super_admin` in the database, then manage all other roles from
+`/admin/users`.
+
+---
+
+## 26. Legal & Company Information
+
+```text
+Akhmed Ismail Saied
+Ehndorfer Str. 130
+24537 Neumünster (N.M.S)
+Deutschland
 ```
 
-**الأدوار:**
-| الدور | الصلاحية |
-|---|---|
-| `user` | الاستخدام العادي للمنصة |
-| `moderator` | مراجعة التوثيق والبلاغات والمحادثات (بدون حذف حسابات) |
-| `admin` | كل ما سبق + إدارة المستخدمين والأدوار وبث الإشعارات |
-| `super_admin` | كل ما سبق + إعدادات المنصة العامة ووضع الصيانة |
+Website: **www.sakanapp.net** · General: **info@sakanapp.net** · Support: **service@sakanapp.net**
 
-> الحساب `achraf.dev.ai@gmail.com` يملك حاليًا دورَي **admin** و**super_admin**،
-> ويصل إلى لوحة التحكم من `/admin` أو من زر «الإدارة» في الشريط الجانبي.
-
----
-
-## 23. اللمسة النهائية للإنتاج (Final Production Polish)
-
-### 23.1 نظام التصميم الزجاجي (Glassmorphism) — يشمل الموبايل الآن
-
-| الأداة (Utility) | الاستخدام |
-|---|---|
-| `glass` / `glass-card` | البطاقات واللوحات الزجاجية العامة |
-| `glass-bar` | الأشرطة العلوية والسفلية داخل التطبيق |
-| `glass-mobile` | **جديد** — الشريط السفلي العائم للموبايل: ضبابية 30px + تشبّع 180% + حدود شعرية |
-| `glass-topbar` | **جديد** — الهيدر العام الشفاف مع دعم `safe-area-inset-top` |
-| `glass-sheet` | **جديد** — الأوراق السفلية (Bottom Sheets) بنمط iOS |
-| `glass-field` | حقول الإدخال الزجاجية |
-| `chip-glass` / `chip-glass-active` | الفلاتر والوسوم |
-| `skeleton-glass` | **جديد** — هياكل التحميل مع تأثير اللمعان المتحرك |
-| `tap-scale` | تصغير لحظي عند اللمس (إحساس أصلي) |
-
-### 23.2 تجربة الموبايل الأصلية
-
-- الشريط السفلي أصبح **زجاجيًا عائمًا** بحواف علوية دائرية (26px).
-- دعم كامل لـ `safe-area-inset` أعلى وأسفل (iPhone notch / Android gesture bar).
-- إلغاء وميض اللمس الرمادي (`-webkit-tap-highlight-color: transparent`).
-- تمرير بزخم أصلي مع `overscroll-behavior: contain` ومنع المطاطية العامة.
-- حجم الخط في الحقول 16px على الشاشات الصغيرة لمنع تكبير iOS التلقائي.
-
-### 23.3 الوصولية (WCAG AA)
-
-- حلقة تركيز موحّدة ذهبية (`:focus-visible`) عبر كل المنصة.
-- دعم `prefers-reduced-motion` لتعطيل الحركات والتمرير الناعم.
-- سمات ARIA و`aria-current` في التنقل، وتباين ألوان مطابق للمعايير.
-
-### 23.4 الأداء
-
-- `content-visibility: auto` للصور، تقسيم المسارات، وذاكرة TanStack Query.
-- تنعيم الخطوط و`text-rendering: optimizeLegibility` لطباعة أوضح.
-
----
-
-## 24. تجربة المحادثة الاحترافية (Chat Experience V2)
-
-### 24.1 الرد والاقتباس
-- **سحب للرد (Swipe to reply):** سحب الفقاعة باتجاه بداية القراءة (يعكس تلقائيًا في RTL) مع حدّ تفعيل 56px، حركة نابضة، واهتزاز خفيف عند الدعم (`navigator.vibrate`).
-- **معاينة الرد فوق المُدخل:** اسم المُرسل + أول سطر + أيقونة الوسائط + زر إغلاق، مع تركيز تلقائي على حقل الكتابة.
-- **اقتباس داخل الفقاعة:** الضغط عليه يقفز إلى الرسالة الأصلية مع تحميل الصفحات الأقدم عند الحاجة وإبراز متحرك (`msg-highlight`).
-
-### 24.2 التفاعلات (Reactions)
-- الرموز المدعومة: ❤️ 👍 👎 😂 😮 😢 🙏
-- تفاعل واحد لكل مستخدم لكل رسالة؛ اختيار رمز مختلف يستبدل السابق، وإعادة اختيار نفس الرمز يزيله.
-- جدول `message_reactions` (message_id, conversation_id, user_id, emoji) مع قيد فريد `(message_id, user_id)`.
-- سياسات RLS: القراءة لطرفَي المحادثة فقط، والإضافة/التعديل/الحذف لصاحب التفاعل فقط.
-- تحديث فوري عبر Realtime (`postgres_changes` على الجدول) وتحديث تفاؤلي للذاكرة قبل وصول الرد من الخادم.
-- شرائح مدمجة أسفل الفقاعة تعرض الرمز والعدد وقائمة الأسماء عند المرور/اللمس.
-
-### 24.3 قائمة السياق
-- ضغط مطوّل على الجوال (480ms) وزر يمين على سطح المكتب.
-- شريط تفاعلات سريع في أعلى القائمة + إجراءات: رد، نسخ، ترجمة، تحديد، معلومات، تثبيت/إلغاء تثبيت، تمرير، مشاركة، حذف (للرسائل الخاصة)، إبلاغ (لرسائل الطرف الآخر).
-- تصميم زجاجي مع حركة دخول، إغلاق بـ Escape، وتموضع آمن داخل حدود الشاشة.
-
-### 24.4 البحث داخل المحادثة
-- بحث من جهة الخادم على النص وأسماء المرفقات مع `debounce` 250ms.
-- إبراز المطابقات داخل الفقاعات، تنقل بين النتائج (السابق/التالي)، عدّاد النتائج، وقفز تلقائي مع تمرير ناعم.
-- حالة فارغة أنيقة عند عدم وجود نتائج.
-
-### 24.5 التثبيت والتحديد
-- لافتة الرسائل المثبتة أعلى المحادثة مع القفز إلى الرسالة وإلغاء التثبيت، ومزامنة فورية.
-- وضع التحديد المتعدد: عدّاد، نسخ، تمرير، مشاركة، حذف، إلغاء.
-
-### 24.6 الوسائط
-- عارض صور بملء الشاشة: تكبير، نقر مزدوج، سحب بين الصور، تنقّل بلوحة المفاتيح، وخلفية داكنة.
-- الملفات: أيقونة حسب النوع، الاسم والحجم، وتنزيل مباشر عبر روابط موقّعة مؤقتة.
-
-### 24.7 المُدخل الذكي
-- توسّع تلقائي، عدّاد أحرف يظهر قرب الحد (2000)، إدراج إيموجي، لصق الصور من الحافظة، سحب وإفلات على سطح المكتب، Enter للإرسال وShift+Enter لسطر جديد، وتعطيل الإرسال عند الفراغ.
-
-### 24.8 رأس المحادثة
-- الصورة، شارة التوثيق، الحالة (متصل/آخر ظهور)، نسبة التوافق المحسوبة بالذكاء الاصطناعي، وأزرار: مكالمة صوتية ومكالمة فيديو (مُعلَّمة "قريبًا")، بحث.
-
-### 24.9 حالات الرسالة
-- جارٍ الإرسال / أُرسلت / وصلت / تمت القراءة / فشل الإرسال مع إعادة المحاولة، وتلميحات نصية وARIA لكل حالة.
-
-### 24.10 الفواصل والحالات الفارغة
-- فواصل تاريخ لاصقة أثناء التمرير مع ظهور تدريجي: اليوم، أمس، ثم التاريخ الكامل بلغة الواجهة.
-- فاصل "رسائل غير مقروءة" مع زر القفز لأول رسالة غير مقروءة.
-- حالات فارغة مصمّمة: لا رسائل، لا نتائج بحث، لا رسائل مثبّتة.
-
-### 24.11 الوصولية والأداء
-- تسميات ARIA لكل زر، إدارة تركيز صحيحة، دعم كامل RTL/LTR، واحترام `prefers-reduced-motion`.
-- صفوف الرسائل ملفوفة بـ `memo`، تحميل الصور بكسل (`loading="lazy"`)، ترقيم صفحات تدريجي مع حفظ موضع التمرير، وتحديثات Realtime موجّهة للذاكرة دون إعادة رسم المحادثة كاملة.
-
-### 24.12 المدفوعات (Stripe)
-- الطبقة مستقلة عن المزوّد (`src/lib/billing/provider.server.ts`): يوجد مزوّد يدوي افتراضي، ومحوّل Stripe يعمل تلقائيًا فور توفّر `STRIPE_SECRET_KEY`.
-- عميل Stripe مكتوب بـ `fetch` فقط (`src/lib/billing/stripe.server.ts`) ليعمل داخل بيئة الحافة بدون حزم Node.
-- الاشتراكات: تُنشأ جلسة Checkout بوضع `subscription` (شهري/سنوي) ويُوجَّه المستخدم لصفحة Stripe المستضافة.
-- التفعيل لا يتم إلا بعد وصول Webhook موقّع إلى `/api/public/stripe-webhook`:
-  - `checkout.session.completed` → تفعيل الاشتراك أو نشر الإعلان المميز.
-  - `invoice.paid` (تجديد دوري) → تمديد الفترة وإصدار فاتورة.
-  - `customer.subscription.deleted` → إنهاء الاشتراك.
-- التحقق من التوقيع يتم بـ HMAC-SHA256 عبر Web Crypto مع نافذة زمنية 5 دقائق؛ أي طلب غير موقّع يُرفض بـ 401.
-- الأسرار المطلوبة: `STRIPE_SECRET_KEY` (متوفّر) و`STRIPE_WEBHOOK_SECRET` (سرّ توقيع الـ Webhook من لوحة Stripe).
-
----
-
-## 25. تحقيق الدخل: الشريط المميز ومساحات الإعلانات
-
-### 25.1 الشريط المميز (Featured Banner) — 0.99 يورو
-- شريط علوي أعلى الصفحة الرئيسية يعرض صورة/إعلانًا واحدًا في كل مرة.
-- كل صورة **تعبر الشريط من البداية إلى النهاية خلال 3 دقائق كاملة**، ثم تنتقل الدورة تلقائيًا للصورة التالية.
-- السعر: **0.99 يورو (99 سنت) لكل صورة/إعلان**، والإعلان يبقى ضمن الدورة لمدة 30 يومًا.
-- المكوّن: `src/components/ads/FeaturedTicker.tsx` مع حركة CSS (`featured-travel`) لها نسخة RTL منفصلة، وتتحوّل إلى عرض ثابت عند تفعيل `prefers-reduced-motion`.
-- صفحة الشراء: `/featured` — رفع الصورة، عنوان، وصف، رابط اختياري، ثم الدفع.
-- التتبّع: عدّاد ظهور (impressions) ونقرات (clicks) لكل إعلان، والروابط الخارجية تحمل `rel="nofollow sponsored"`.
-- الصور تُخزَّن في مخزن `featured` الخاص، وتُعرض عبر روابط موقّعة.
-
-### 25.2 مساحات الإعلانات الذكية (Ad Spaces)
-- جدول `ad_placements` يعرّف المساحات: `home_below_hero`، `home_mid`، `search_inline`، `discover_feed`، `profile_sidebar`.
-- المكوّن `src/components/ads/AdSlot.tsx` لا يظهر إطلاقًا ما لم يفعّله فريق الإدارة، ويضع سمات `data-ad-slot` و`data-ad-network` و`data-ad-unit` ليتمكّن أي وكيل إعلانات ذكي أو شبكة إعلانية من استخدامه لاحقًا دون تعديل الكود.
-
-### 25.3 قاعدة البيانات والصلاحيات
-- `featured_ads`: الحالة (`pending_payment` / `pending_review` / `active` / `expired` / `rejected`)، المبلغ، مرجع الدفع، تواريخ التشغيل، الظهور والنقرات.
-- RLS: الزوار يرون الإعلانات النشطة فقط، المالك يرى ويعدّل مسوّداته، والفريق الإداري يراجع الكل.
-- لوحة الإدارة: `/admin/ads` لعرض كل الإعلانات، الموافقة، الإيقاف، الرفض، ومتابعة إيراد الإعلانات.
-
-### 25.4 تصحيح التسعير في الواجهة
-- تم تعديل النص على الشاشة الرئيسية من "ميزة 1 يورو" إلى **"ميزة 99 سنت"** في اللغات الأربع (ar / en / de / fr).
-
-
----
-
-## 26. الاستوديو الشخصي ومركز الإشعارات الذكي
-
-### 26.1 استوديو الملف الشخصي `/profile/appearance`
-| العنصر | التفاصيل |
-| --- | --- |
-| صورة الغلاف | رفع إلى دلو `gallery` الخاص، مقاس مقترح 1600×600، حد 8 ميغابايت، صيغ JPG/PNG/WEBP |
-| اللون المميز | 6 ألوان جاهزة + منتقي لون حر، يُطبَّق عبر متغيّر `--sakan-accent` |
-| سِمة الملف | `navy` / `aurora` / `sand` / `emerald` / `rose` / `midnight` بتدرّجات مُعرَّفة في `THEME_GRADIENT` |
-| شدة الزجاج | شريط 0–100% يتحكم في `backdrop-filter` وشفافية الطبقة |
-| إطار الصورة | `none` / `gold` / `glow` / `gradient` / `verified` |
-| قوة الملف | مؤشر محلي (`profileStrength`) بعناصر قابلة للإكمال ونسبة مئوية |
-| **مراجعة الذكاء الاصطناعي** | زر «حلّل ملفي» يستدعي `suggestProfileQuality` ويعرض درجة 0–100 مع حتى 5 اقتراحات عملية بلغة العضو |
-| الحضور والخصوصية | اختيار الحالة + «إخفاء آخر ظهور» + «إخفاء مؤشر الكتابة» |
-
-المكوّن: `src/components/profile/ProfileQualityCard.tsx` — يعرض شريط تقدّم بـ `role="progressbar"` وقيم ARIA كاملة، ويهتز اهتزازة خفيفة عند نجاح التحليل.
-
-### 26.2 مركز الإشعارات `/notifications`
-- تبويبان: **الوارد** و**الأرشيف** مع عدّاد غير المقروء.
-- فلاتر حسب النوع (رسالة، إعجاب، توافق، نظام، premium) وبحث فوري.
-- تجميع زمني: اليوم / أمس / أقدم.
-- تحديد متعدد وإجراءات جماعية: تعليم كمقروء، أرشفة، حذف.
-- سحب أفقي للحذف على الجوال مع اهتزاز (`haptic`).
-- كل صف يعرض صورة المُرسِل مع **نقطة الحضور الموحّدة**.
-
----
-
-## 27. نظام الحضور الموحّد و DND
-
-### 27.1 المكوّن الموحّد `PresenceIndicator`
-`src/components/presence/PresenceIndicator.tsx` هو المصدر الوحيد لعرض الحضور في المنصة، ويُستخدم في:
-
-| الموضع | الملف |
-| --- | --- |
-| بطاقات الأعضاء | `src/components/MemberCard.tsx` |
-| قائمة المحادثات | `src/routes/_authenticated/messages.index.tsx` |
-| رأس المحادثة | `src/routes/_authenticated/messages.$id.tsx` |
-| صفوف الإشعارات | `src/components/notifications/NotificationRow.tsx` |
-
-الخصائص: `state` و`size` (sm/md/lg) و`withLabel` و`overlay` (فوق الصورة) و`hideOffline`.
-كل نقطة تحمل `title` ونصًا مخفيًا `sr-only` مترجمًا بالكامل (ar / en / de / fr).
-
-**ألوان الحالات:** متصل = أخضر، بعيد = كهرماني، مشغول = برتقالي، عدم الإزعاج = أحمر، غير مرئي/غير متصل = رمادي.
-
-### 27.2 دالة القرار `resolvePresence(status, online, away)`
-- العضو `invisible` أو من فعّل «إخفاء آخر ظهور» يُعرض دائمًا **غير متصل**.
-- إذا لم يكن متصلًا على القناة اللحظية → غير متصل.
-- إذا كانت حالته `online` وهو خامل → تُعرض **بعيد** تلقائيًا.
-
-### 27.3 التحديث التلقائي (away / online)
-في `src/hooks/usePresence.ts`:
-- خمول 5 دقائق أو إخفاء التبويب (`visibilitychange`) → بثّ `status: "away"` على قناة الحضور.
-- أي تفاعل (`pointerdown`, `keydown`, `wheel`, `touchstart`, `focus`) → عودة فورية إلى `online` مع تحديث `last_seen_at`.
-- نبضة `touch_last_seen` كل 60 ثانية، وقناة حضور واحدة مشتركة لكل التطبيق (مرجع عدّاد).
-- `useIsOnline` و`useIsAway` يقرآن من مخزن خارجي عبر `useSyncExternalStore` (بدون إعادة رسم زائدة).
-
-### 27.4 احترام «عدم الإزعاج»
-- `useMyPresenceStatus()` يقرأ حالة العضو نفسه.
-- في `useNotificationsRealtime`: عند `dnd` أو `busy` **تُكتم التنبيهات المنبثقة (toast)** تمامًا، مع استمرار تحديث الشارة والقائمة — أي لا فقدان لأي إشعار، فقط صمت.
-
-### 27.5 الترجمة الفورية داخل المحادثة
-- زر **ترجمة** داخل قائمة الرسالة (`MessageContextMenu` → `translate`).
-- ينفّذ `translateText` من `src/lib/ai/translate.functions.ts` إلى لغة الواجهة الحالية.
-- الضغط مرة أخرى يعيد **النص الأصلي** (`showOriginal`) — تبديل ثنائي الاتجاه لكل رسالة على حدة.
-
----
-
-## 28. الحركة الدقيقة والأداء وإمكانية الوصول (WCAG AA)
-
-### 28.1 أدوات الحركة الموحّدة (`src/styles.css`)
-| الأداة | الاستخدام |
-| --- | --- |
-| `press` | تأثير ضغط موحّد (تصغير 96.5%) لكل الأزرار والشرائح |
-| `hover-lift` | رفع خفيف عند التمرير على البطاقات |
-| `route-enter` | دخول الصفحة (تلاشٍ + انزلاق 8px) |
-| `list-stagger` | حركة متتابعة لعناصر القوائم والقوائم المنسدلة |
-
-- انتقال الصفحات في `AppShell` ملفوف بـ `<MotionConfig reducedMotion="user">` من framer-motion.
-- قاعدة عامة `@media (prefers-reduced-motion: reduce)` تُعطّل كل الحركات والانتقالات، بالإضافة إلى قاعدة مخصّصة تُلغي `press` / `hover-lift` / `route-enter` / `list-stagger`.
-
-### 28.2 الأداء والتحجيم (Virtualization)
-| القائمة | الآلية |
-| --- | --- |
-| نتائج البحث | `src/components/search/VirtualMemberGrid.tsx` — نافذة صفوف عبر `useWindowVirtualizer`، تعمل تلقائيًا من 24 عضوًا فأكثر، وأعمدة متجاوبة (2/3/4) |
-| قائمة المحادثات | نافذة عناصر من 20 محادثة فأكثر داخل `messages.index.tsx` |
-| جداول الإدارة | `src/components/admin/VirtualTableShell.tsx` |
-| سجل الرسائل | نافذة داخل صفحة المحادثة مع قياس ديناميكي للارتفاع |
-
-- القوائم القصيرة تبقى شبكة CSS عادية حتى لا يتغيّر الشكل البصري إطلاقًا.
-- تقسيم الحزم على مستوى المسار (route splitting) + استيراد ديناميكي لخدمات الذكاء الاصطناعي والتخزين.
-
-### 28.3 تدقيق WCAG AA
-- **حلقة تركيز موحّدة**: `outline: 2px solid var(--gold)` مع `outline-offset: 2px` على كل عنصر تفاعلي عبر `:focus-visible`.
-- **التباين**: رُفعت درجات النص الخافت في الصفحات الجديدة (استوديو الملف، مركز الإشعارات) من `text-cream/40–50` إلى `/60–70` لتجاوز نسبة 4.5:1.
-- **ARIA**: `aria-pressed` على كل شرائح الاختيار، `role="group"` على مجموعات الفلاتر، `role="progressbar"` مع `aria-valuenow/min/max` على مؤشرات القوة والدرجة، `aria-live="polite"` على مناطق النتائج والتحميل، و`role="alert"` على رسائل الخطأ.
-- **البدائل النصية**: كل نقطة حضور وكل أيقونة وظيفية تحمل نصًا مخفيًا أو `aria-label` مترجمًا؛ الأيقونات الزخرفية تحمل `aria-hidden`.
-- **لوحة المفاتيح**: كل الإجراءات (أرشفة، حذف، تحديد، ترجمة، رد) متاحة عبر أزرار حقيقية قابلة للتبويب — السحب مجرد اختصار لمسي إضافي.
+The imprint (§5 DDG/TMG), GDPR privacy policy, terms of service, cookie notice and the
+marriage-law & safety guide are all reachable from the footer on every page and are available
+in Arabic, English, German and French.
 
 ---
 
 <div align="center">
 
-**سَكَن — لأن الزواج سَكَن.**
+**© SAKAN 2026 — All rights reserved.**
 
 </div>
