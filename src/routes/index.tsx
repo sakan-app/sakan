@@ -105,7 +105,7 @@ function Index() {
   };
 
   const genderBtn = (active: boolean) =>
-    `flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg border px-2 py-2 text-center text-[13px] leading-tight transition-colors ${
+    `flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg border px-1.5 py-2 text-center text-[12px] leading-tight transition-colors ${
       active
         ? "border-gold bg-gold/15 font-bold text-gold"
         : "border-gold/25 text-cream/70 hover:border-gold/50"
@@ -134,10 +134,10 @@ function Index() {
                   <label className="mb-2 block text-xs font-semibold text-cream/80">{t.home.iAm}</label>
                   <div className="flex min-w-0 gap-1.5">
                     <button type="button" className={genderBtn(iAm === "male")} onClick={() => setIAm("male")}>
-                      <User className="h-4 w-4 shrink-0" /> <span className="truncate">{t.home.male}</span>
+                      <User className="hidden h-4 w-4 shrink-0 sm:block" /> <span>{t.home.male}</span>
                     </button>
                     <button type="button" className={genderBtn(iAm === "female")} onClick={() => setIAm("female")}>
-                      <User className="h-4 w-4 shrink-0" /> <span className="truncate">{t.home.female}</span>
+                      <User className="hidden h-4 w-4 shrink-0 sm:block" /> <span>{t.home.female}</span>
                     </button>
                   </div>
                 </div>
@@ -145,10 +145,10 @@ function Index() {
                   <label className="mb-2 block text-xs font-semibold text-cream/80">{t.home.lookingFor}</label>
                   <div className="flex min-w-0 gap-1.5">
                     <button type="button" className={genderBtn(lookingFor === "male")} onClick={() => setLookingFor("male")}>
-                      <User className="h-4 w-4 shrink-0" /> <span className="truncate">{t.home.male}</span>
+                      <User className="hidden h-4 w-4 shrink-0 sm:block" /> <span>{t.home.male}</span>
                     </button>
                     <button type="button" className={genderBtn(lookingFor === "female")} onClick={() => setLookingFor("female")}>
-                      <User className="h-4 w-4 shrink-0" /> <span className="truncate">{t.home.female}</span>
+                      <User className="hidden h-4 w-4 shrink-0 sm:block" /> <span>{t.home.female}</span>
                     </button>
                   </div>
                 </div>
