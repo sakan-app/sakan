@@ -16,7 +16,6 @@ import {
   type NotificationFilter,
 } from "@/lib/notifications/shared";
 import {
-import { RouteErrorBoundary } from "@/components/RouteError";
   useArchiveNotifications,
   useArchivedNotifications,
   useDeleteNotifications,
@@ -26,6 +25,7 @@ import { RouteErrorBoundary } from "@/components/RouteError";
   useNotificationsList,
   type NotificationItem,
 } from "@/hooks/useNotifications";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/_authenticated/notifications")({
   head: () => ({
