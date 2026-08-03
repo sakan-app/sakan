@@ -16,6 +16,7 @@ import {
 import { billingStrings } from "@/lib/billing/strings";
 import { formatPrice } from "@/lib/billing/types";
 import { useI18n } from "@/lib/i18n";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/_authenticated/billing")({
   head: () => ({
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/_authenticated/billing")({
     ],
   }),
   component: BillingPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function BillingPage() {

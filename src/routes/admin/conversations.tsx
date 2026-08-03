@@ -15,8 +15,21 @@ import {
 } from "@/components/admin/ui";
 import { getConversationMessages, listConversations } from "@/lib/admin/ops.functions";
 import { cn } from "@/lib/utils";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/conversations")({ component: AdminConversations });
+export const Route = createFileRoute("/admin/conversations")({
+  head: () => ({
+    meta: [
+      { title: "Conversations · SAKAN Admin" },
+      { name: "description", content: "Conversations management for SAKAN administrators." },
+      { property: "og:title", content: "Conversations · SAKAN Admin" },
+      { property: "og:description", content: "Conversations management for SAKAN administrators." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
+  component: AdminConversations,
+  errorComponent: RouteErrorBoundary,
+});
 
 function AdminConversations() {
   const listFn = useServerFn(listConversations);

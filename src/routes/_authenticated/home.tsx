@@ -13,6 +13,7 @@ import { activeMembersQuery } from "@/lib/members";
 import { myProfileQuery } from "@/lib/profile-queries";
 import { favoritesQuery, likedMeQuery, matchesQuery } from "@/lib/social/queries";
 import { socialStrings } from "@/lib/social/strings";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/_authenticated/home")({
     ],
   }),
   component: HomeFeed,
+  errorComponent: RouteErrorBoundary,
 });
 
 function greetingKey() {
@@ -139,6 +141,17 @@ function HomeFeed() {
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="aspect-[4/5] animate-pulse rounded-[22px] bg-white/5" />
             ))}
+          </div>
+        ) : activeQ.isError ? (
+          <div className="glass-card rounded-2xl p-8 text-center">
+            <p className="text-sm text-cream/70">{soc.errorText}</p>
+            <button
+              type="button"
+              onClick={() => void activeQ.refetch()}
+              className="mt-4 inline-flex items-center rounded-xl bg-gold px-4 py-2 text-sm font-semibold text-navy-deep"
+            >
+              {soc.retry}
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">

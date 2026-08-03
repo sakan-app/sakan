@@ -2,6 +2,7 @@ import { queryOptions } from "@tanstack/react-query";
 
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { signStoragePaths } from "@/lib/chat/queries";
 
 export type Gender = Database["public"]["Enums"]["gender"];
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
@@ -67,21 +68,6 @@ export type PublicProfile = Pick<
   | "hide_last_seen"
 >;
 
-/** Signs storage paths in bulk so private buckets can be rendered in the browser. */
-async function signPaths(bucket: "avatars" | "gallery", paths: string[]) {
-  const unique = [...new Set(paths.filter(Boolean))];
-  if (unique.length === 0) return new Map<string, string>();
-  const { data, error } = await supabase.storage
-    .from(bucket)
-    .createSignedUrls(unique, 60 * 60);
-  if (error || !data) return new Map<string, string>();
-  const map = new Map<string, string>();
-  for (const entry of data) {
-    if (entry.signedUrl && entry.path) map.set(entry.path, entry.signedUrl);
-  }
-  return map;
-}
-
 export async function toMemberViews(rows: PublicProfile[]): Promise<MemberView[]> {
   if (rows.length === 0) return [];
   const ids = rows.map((row) => row.id);
@@ -103,8 +89,8 @@ export async function toMemberViews(rows: PublicProfile[]): Promise<MemberView[]
     .map((p) => p.storage_path);
 
   const [avatarUrls, galleryUrls] = await Promise.all([
-    signPaths("avatars", [...avatarPaths, ...avatarPhotoPaths]),
-    signPaths("gallery", galleryPaths),
+    signStoragePaths("avatars", [...avatarPaths, ...avatarPhotoPaths]),
+    signStoragePaths("gallery", galleryPaths),
   ]);
 
   return rows.map((row) => {

@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Locale } from "@/i18n";
+import { enforceRateLimit, RateLimitError } from "@/lib/rate-limit.server";
 import {
   toCompatibilityProfile,
   isFresh,
@@ -21,8 +22,9 @@ const scoreCompatibilityInput = z.object({ candidateId: z.string().uuid() });
 export const scoreCompatibility = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator(scoreCompatibilityInput)
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data, context }): Promise<CompatibilityScoreRow> => {
     try {
+      await enforceRateLimit(`ai:${context.userId}`, 20, 60_000);
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const { data: meRow, error: meErr } = await supabaseAdmin
         .from("profiles")
@@ -75,6 +77,7 @@ export const scoreCompatibility = createServerFn({ method: "POST" })
       if (upsertErr || !saved) throw new Error("failed");
       return saved as CompatibilityScoreRow;
     } catch (error) {
+      if (error instanceof RateLimitError) throw error;
       throw new Error(gatewayErrorToMessage(error));
     }
   });
@@ -84,8 +87,9 @@ const recommendMatchesInput = z.object({ limit: z.number().int().min(1).max(20).
 export const recommendMatches = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator(recommendMatchesInput)
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data, context }): Promise<{ items: Array<{ candidateId: string; score: number; reason: string }> }> => {
     try {
+      await enforceRateLimit(`ai:${context.userId}`, 20, 60_000);
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const { data: meRow, error: meErr } = await supabaseAdmin
         .from("profiles")
@@ -131,6 +135,7 @@ export const recommendMatches = createServerFn({ method: "POST" })
         .slice(0, data.limit);
       return { items: top };
     } catch (error) {
+      if (error instanceof RateLimitError) throw error;
       throw new Error(gatewayErrorToMessage(error));
     }
   });

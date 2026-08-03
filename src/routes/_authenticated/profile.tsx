@@ -16,6 +16,7 @@ import {
 import { useFeatureStrings } from "@/i18n/feature";
 import { profileStudioStrings } from "@/lib/profile/strings";
 import { countryFlag, countryLabel } from "@/lib/countries";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
@@ -29,6 +30,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
     ],
   }),
   component: MyProfilePage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function MyProfilePage() {

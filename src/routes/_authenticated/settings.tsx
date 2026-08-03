@@ -25,6 +25,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { useFeatureStrings } from "@/i18n/feature";
 import { localeFlags, localeNames, localeOrder } from "@/i18n";
 import { useI18n } from "@/lib/i18n";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
@@ -35,6 +36,7 @@ export const Route = createFileRoute("/_authenticated/settings")({
     ],
   }),
   component: SettingsPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function Group({ title, children }: { title: string; children: React.ReactNode }) {

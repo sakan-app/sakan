@@ -2,10 +2,21 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { WifiOff } from "lucide-react";
 import { useFeatureStrings } from "@/i18n/feature";
 import { pwaStrings } from "@/components/pwa/pwa.strings";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/offline")({
   ssr: false,
+  head: () => ({
+    meta: [
+      { title: "لا يوجد اتصال بالإنترنت | سَكَن" },
+      { name: "description", content: "يبدو أنك غير متصل حالياً. تحقق من الاتصال وحاول مرة أخرى." },
+      { property: "og:title", content: "لا يوجد اتصال بالإنترنت | سَكَن" },
+      { property: "og:description", content: "يبدو أنك غير متصل حالياً. تحقق من الاتصال وحاول مرة أخرى." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: OfflinePage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function OfflinePage() {

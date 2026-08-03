@@ -24,6 +24,7 @@ import {
 import { profileFormSchema, validateImageFile } from "@/lib/validation";
 import { useFeatureStrings } from "@/i18n/feature";
 import { searchStrings } from "@/components/search/strings";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/_authenticated/profile/edit")({
   head: () => ({
@@ -40,6 +41,7 @@ export const Route = createFileRoute("/_authenticated/profile/edit")({
     ],
   }),
   component: EditProfilePage,
+  errorComponent: RouteErrorBoundary,
 });
 
 type FormState = {

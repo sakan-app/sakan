@@ -17,6 +17,7 @@ import { COUNTRY_CODES } from "@/lib/countries";
 import { useFeatureStrings } from "@/i18n/feature";
 import { searchStrings } from "@/components/search/strings";
 import { supabase } from "@/integrations/supabase/client";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({
@@ -30,6 +31,7 @@ export const Route = createFileRoute("/_authenticated/onboarding")({
     ],
   }),
   component: OnboardingPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 type FormState = {

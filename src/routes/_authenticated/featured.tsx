@@ -16,6 +16,7 @@ import {
 } from "@/lib/ads/queries";
 import { adsStrings } from "@/lib/ads/strings";
 import { useI18n } from "@/lib/i18n";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/_authenticated/featured")({
   head: () => ({
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/_authenticated/featured")({
     ],
   }),
   component: FeaturedPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function FeaturedPage() {

@@ -21,8 +21,21 @@ import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YA
 
 import { AdminPageHeader, ErrorState, LoadingState, Panel, StatCard } from "@/components/admin/ui";
 import { getLiveStats } from "@/lib/admin/ops.functions";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/dashboard")({ component: AdminDashboard });
+export const Route = createFileRoute("/admin/dashboard")({
+  head: () => ({
+    meta: [
+      { title: "Admin Dashboard · SAKAN Admin" },
+      { name: "description", content: "Admin Dashboard management for SAKAN administrators." },
+      { property: "og:title", content: "Admin Dashboard · SAKAN Admin" },
+      { property: "og:description", content: "Admin Dashboard management for SAKAN administrators." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
+  component: AdminDashboard,
+  errorComponent: RouteErrorBoundary,
+});
 
 function AdminDashboard() {
   const fn = useServerFn(getLiveStats);

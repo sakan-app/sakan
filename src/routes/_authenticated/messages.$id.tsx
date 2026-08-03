@@ -63,6 +63,7 @@ import { resolveSettings, wallpapersQuery } from "@/lib/chat/wallpaper-queries";
 import { wallpaperStrings } from "@/lib/chat/wallpaper-strings";
 import type { ChatMessage, MessageKind } from "@/lib/chat/types";
 import { supabase } from "@/integrations/supabase/client";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/_authenticated/messages/$id")({
   head: () => ({
@@ -72,6 +73,7 @@ export const Route = createFileRoute("/_authenticated/messages/$id")({
     ],
   }),
   component: ConversationPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 type ConversationHeaderInfo = {

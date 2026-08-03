@@ -404,14 +404,6 @@
 }
 
 /* Bottom sheet / modal surface on touch devices */
-@utility glass-sheet {
-  border-radius: 26px 26px 0 0;
-  background: color-mix(in oklab, var(--navy-deep) 78%, transparent);
-  backdrop-filter: blur(34px) saturate(175%);
-  border-top: 1px solid color-mix(in oklab, var(--cream) 14%, transparent);
-  box-shadow: 0 -24px 60px -30px oklch(0.08 0.04 265 / 0.9);
-  padding-bottom: env(safe-area-inset-bottom);
-}
 
 /* Loading skeleton shimmer that matches the glass surfaces */
 @utility skeleton-glass {
@@ -627,23 +619,7 @@
   border-radius: 1rem;
 }
 
-@keyframes sakan-msg-remove {
-  from {
-    opacity: 1;
-    transform: none;
-    max-height: 300px;
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.92);
-    max-height: 0;
-  }
-}
 
-@utility msg-remove {
-  animation: sakan-msg-remove 0.24s ease-in both;
-  overflow: hidden;
-}
 
 @keyframes sakan-menu-in {
   from {
@@ -698,16 +674,8 @@
   padding-inline: 0.1rem;
 }
 
-@utility search-hit-active {
-  background: var(--gold);
-  color: oklch(0.18 0.05 265);
-  border-radius: 0.25rem;
-  padding-inline: 0.1rem;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .msg-highlight,
-  .msg-remove,
   .menu-pop,
   .pin-enter,
   .swipe-row {
@@ -754,16 +722,6 @@
 .press:disabled,
 .press[aria-disabled="true"] {
   transform: none;
-}
-
-@utility hover-lift {
-  transition:
-    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.22s ease,
-    border-color 0.22s ease;
-}
-.hover-lift:hover {
-  transform: translateY(-2px);
 }
 
 @keyframes sakan-route-in {
@@ -817,7 +775,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .press,
-  .hover-lift,
   .route-enter,
   .list-stagger > * {
     animation: none !important;

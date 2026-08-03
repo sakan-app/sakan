@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { enforceRateLimit, RateLimitError } from "@/lib/rate-limit.server";
 
 const checkoutInput = z.object({
   planCode: z.enum(["premium", "premium_plus"]),
@@ -15,6 +16,7 @@ export const createCheckout = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { startCheckout } = await import("./billing.server");
     try {
+      await enforceRateLimit(`billing_checkout:${context.userId}`, 10, 60 * 60_000);
       return await startCheckout({
         userId: context.userId,
         planCode: data.planCode,
@@ -22,6 +24,7 @@ export const createCheckout = createServerFn({ method: "POST" })
         returnUrl: data.returnUrl,
       });
     } catch (error) {
+      if (error instanceof RateLimitError) throw error;
       throw new Error(error instanceof Error ? error.message : "checkout_failed");
     }
   });

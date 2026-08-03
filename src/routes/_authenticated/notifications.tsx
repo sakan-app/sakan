@@ -25,6 +25,7 @@ import {
   useNotificationsList,
   type NotificationItem,
 } from "@/hooks/useNotifications";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/_authenticated/notifications")({
   head: () => ({
@@ -34,6 +35,7 @@ export const Route = createFileRoute("/_authenticated/notifications")({
     ],
   }),
   component: NotificationsPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function relativeTime(iso: string, locale: string) {

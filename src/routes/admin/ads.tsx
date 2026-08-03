@@ -18,8 +18,21 @@ import {
   Th,
 } from "@/components/admin/ui";
 import { listFeaturedAdsAdmin, reviewFeaturedAd } from "@/lib/ads/ads.functions";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
-export const Route = createFileRoute("/admin/ads")({ component: AdminAds });
+export const Route = createFileRoute("/admin/ads")({
+  head: () => ({
+    meta: [
+      { title: "Featured Ads · SAKAN Admin" },
+      { name: "description", content: "Featured Ads management for SAKAN administrators." },
+      { property: "og:title", content: "Featured Ads · SAKAN Admin" },
+      { property: "og:description", content: "Featured Ads management for SAKAN administrators." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
+  component: AdminAds,
+  errorComponent: RouteErrorBoundary,
+});
 
 type AdRow = {
   id: string;
@@ -93,6 +106,7 @@ function AdminAds() {
           <EmptyState label="No featured purchases yet." />
         ) : (
           <TableShell
+                caption="Featured ads table"
             head={
               <tr>
                 <Th>Headline</Th>

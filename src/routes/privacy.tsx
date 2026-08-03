@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/legal/LegalPage";
 import { useFeatureStrings } from "@/i18n/feature";
 import { privacyContent } from "@/lib/legal/privacy";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/privacy")({
     ],
   }),
   component: PrivacyPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function PrivacyPage() {

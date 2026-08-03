@@ -5,6 +5,7 @@ import { Header } from "@/components/Header";
 import { PlanCards } from "@/components/billing/PlanCards";
 import { useFeatureStrings } from "@/i18n/feature";
 import { billingStrings } from "@/lib/billing/strings";
+import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -44,6 +45,7 @@ export const Route = createFileRoute("/pricing")({
     ],
   }),
   component: PricingPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function PricingPage() {
