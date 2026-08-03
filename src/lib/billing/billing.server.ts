@@ -444,14 +444,14 @@ async function notifyBilling(userId: string, kind: "payment_failed" | "refunded"
   try {
     await supabaseAdmin.from("notifications").insert({
       user_id: userId,
-      type: "system",
+      type: "premium",
       title:
         kind === "payment_failed" ? "Payment failed" : "Refund processed",
       body:
         kind === "payment_failed"
           ? "We could not charge your payment method. Update it to keep your benefits."
           : "Your payment was refunded and your subscription was closed.",
-      link: "/billing",
+      data: { link: "/billing", kind },
     });
   } catch (error) {
     console.error("[billing] notify", error);
