@@ -85,3 +85,61 @@ export const sendTestPush = createServerFn({ method: "POST" })
       kind: "system",
     });
   });
+
+/**
+ * Read-only console data: the caller's stored devices plus the most recent
+ * dispatch outcome for their notifications.
+ */
+export const getPushDiagnostics = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { vapidConfigured } = await import("./webpush.server");
+
+    const [devices, dispatched, pending] = await Promise.all([
+      context.supabase
+        .from("push_subscriptions")
+        .select(
+          "id, endpoint, user_agent, locale, failure_count, disabled_at, last_used_at, created_at",
+        )
+        .order("created_at", { ascending: false })
+        .limit(20),
+      context.supabase
+        .from("notifications")
+        .select("id, type, title, push_sent_at, created_at")
+        .not("push_sent_at", "is", null)
+        .order("push_sent_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      context.supabase
+        .from("notifications")
+        .select("id", { count: "exact", head: true })
+        .is("push_sent_at", null)
+        .is("read_at", null),
+    ]);
+
+    return {
+      configured: vapidConfigured(),
+      publicKey: process.env["VAPID_PUBLIC_KEY"] ?? null,
+      devices: (devices.data ?? []).map((row) => ({
+        id: row.id as string,
+        // Endpoints are long and secret-ish; show only the recognisable head/tail.
+        endpoint: row.endpoint as string,
+        userAgent: (row.user_agent as string | null) ?? null,
+        locale: (row.locale as string | null) ?? null,
+        failureCount: (row.failure_count as number | null) ?? 0,
+        disabledAt: (row.disabled_at as string | null) ?? null,
+        lastUsedAt: (row.last_used_at as string | null) ?? null,
+        createdAt: row.created_at as string,
+      })),
+      lastDispatch: dispatched.data
+        ? {
+            id: dispatched.data.id as string,
+            type: dispatched.data.type as string,
+            title: dispatched.data.title as string,
+            pushSentAt: dispatched.data.push_sent_at as string,
+            createdAt: dispatched.data.created_at as string,
+          }
+        : null,
+      pendingCount: pending.count ?? 0,
+    };
+  });
