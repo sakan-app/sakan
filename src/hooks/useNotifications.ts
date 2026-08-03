@@ -21,11 +21,12 @@ export type NotificationItem = {
   body: string | null;
   data: Record<string, unknown>;
   readAt: string | null;
+  archivedAt: string | null;
   createdAt: string;
   actor: NotificationActor | null;
 };
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 60;
 
 async function attachActors(rows: NotificationRow[]): Promise<NotificationItem[]> {
   const actorIds = [...new Set(rows.map((r) => r.actor_id).filter((id): id is string => Boolean(id)))];
@@ -55,6 +56,7 @@ async function attachActors(rows: NotificationRow[]): Promise<NotificationItem[]
     body: row.body,
     data: (row.data ?? {}) as Record<string, unknown>,
     readAt: row.read_at,
+    archivedAt: row.archived_at,
     createdAt: row.created_at,
     actor: row.actor_id ? actorsById.get(row.actor_id) ?? null : null,
   }));
