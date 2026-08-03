@@ -11,8 +11,13 @@ import {
 } from "react";
 
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { signStoragePath } from "@/lib/chat/queries";
+import { useI18n } from "@/lib/i18n";
+import { primeAudio } from "@/lib/audio/engine";
+import { playCallEndTone, startCallTone, stopCallTone } from "./tones";
+import { callStrings } from "./strings";
 import { answerCallFn, callEntitlementsFn, closeCallFn, startCallFn } from "./calls.functions";
 import {
   RECONNECT_TIMEOUT_MS,
@@ -114,6 +119,7 @@ function errorCodeOf(error: unknown): string {
 export function CallProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const userId = user?.id ?? "";
+  const { locale } = useI18n();
   const [state, setState] = useState<CallState>(INITIAL);
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
@@ -371,6 +377,8 @@ export function CallProvider({ children }: { children: ReactNode }) {
       peer: CallPeer;
     }) => {
       if (stateRef.current.phase !== "idle" && stateRef.current.phase !== "ended") return;
+      // Placing a call is a user gesture — the safest moment to unlock audio.
+      primeAudio();
       facing.current = "user";
       setState({ ...INITIAL, phase: "outgoing", kind, peer });
       try {
@@ -407,6 +415,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
   );
 
   const accept = useCallback(async () => {
+    primeAudio();
     const callId = stateRef.current.callId;
     const kind = stateRef.current.kind;
     if (!callId) return;
@@ -577,6 +586,58 @@ export function CallProvider({ children }: { children: ReactNode }) {
   }, [closeCurrent, finish, userId]);
 
   useEffect(() => () => teardown(), [teardown]);
+
+  /* ----------------------------------------------------------- call audio */
+
+  // Ringtone (incoming), ringback (outgoing), busy and end-of-call cues.
+  // Tones stop as soon as the call connects or the overlay closes.
+  useEffect(() => {
+    const { phase, endReason } = state;
+    if (phase === "incoming") {
+      startCallTone("ringtone");
+      return;
+    }
+    if (phase === "outgoing") {
+      startCallTone("ringback");
+      return;
+    }
+    if (phase === "ended") {
+      if (endReason === "busy") {
+        startCallTone("busy");
+        const timer = window.setTimeout(() => stopCallTone(), 2400);
+        return () => {
+          window.clearTimeout(timer);
+          stopCallTone();
+        };
+      }
+      playCallEndTone(endReason === "failed");
+      return;
+    }
+    stopCallTone();
+    return;
+  }, [state.phase, state.endReason]);
+
+  // Missed incoming call → surface it even if the tab is in the background.
+  useEffect(() => {
+    if (state.phase !== "ended" || state.endReason !== "missed") return;
+    const label = callStrings[locale].missed;
+    const name = state.peer?.name ?? "";
+    if (
+      typeof Notification !== "undefined" &&
+      Notification.permission === "granted" &&
+      document.visibilityState !== "visible"
+    ) {
+      try {
+        new Notification(label, { body: name, icon: "/icons/icon-192.png", tag: "sakan-missed-call" });
+        return;
+      } catch {
+        /* fall through to the in-app toast */
+      }
+    }
+    toast(label, { description: name });
+  }, [state.phase, state.endReason, state.peer?.name, locale]);
+
+  useEffect(() => () => stopCallTone(), []);
 
   const value = useMemo<CallContextValue>(
     () => ({
