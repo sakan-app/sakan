@@ -121,8 +121,7 @@ export function Footer() {
       </div>
 
       <div className="relative border-t border-gold/10 py-5 text-center text-xs text-cream/50">
-        © {COMPANY.year} {COMPANY.brandAr} — {COMPANY.legalName} · {COMPANY.city},{" "}
-        {COMPANY.country}
+        {t.footer.rights}
       </div>
     </footer>
   );
