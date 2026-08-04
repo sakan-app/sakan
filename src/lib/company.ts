@@ -12,7 +12,6 @@ export const COMPANY = {
   street: "Ehndorfer Str. 130",
   postalCode: "24537",
   city: "Neumünster",
-  cityShort: "N.M.S",
   country: "Deutschland",
   countryCode: "DE",
   website: "https://www.sakanapp.net",
@@ -25,6 +24,6 @@ export const COMPANY = {
 export const COMPANY_ADDRESS_LINES = [
   COMPANY.legalName,
   COMPANY.street,
-  `${COMPANY.postalCode} ${COMPANY.city} (${COMPANY.cityShort})`,
+  `${COMPANY.postalCode} ${COMPANY.city}`,
   COMPANY.country,
 ];

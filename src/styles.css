@@ -684,10 +684,11 @@
   }
 }
 
-/* Featured ticker — one creative travels the full width in sixty seconds. */
+/* Featured ticker — one creative travels the full width in sixty seconds.
+   Latin locales (LTR) travel left → right, Arabic (RTL) travels right → left. */
 @keyframes featured-travel {
-  from { transform: translateX(110%); }
-  to { transform: translateX(-110%); }
+  from { transform: translateX(-110%); }
+  to { transform: translateX(110%); }
 }
 .featured-track {
   display: inline-flex;
@@ -698,8 +699,8 @@
 .featured-track[data-paused="true"] { animation-play-state: paused; }
 [dir="rtl"] .featured-track { animation-name: featured-travel-rtl; }
 @keyframes featured-travel-rtl {
-  from { transform: translateX(-110%); }
-  to { transform: translateX(110%); }
+  from { transform: translateX(110%); }
+  to { transform: translateX(-110%); }
 }
 @media (prefers-reduced-motion: reduce) {
   .featured-track { animation: none; transform: none; }

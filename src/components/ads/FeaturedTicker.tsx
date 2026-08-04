@@ -37,6 +37,10 @@ export const FeaturedTicker = memo(function FeaturedTicker() {
   const fetchQueue = useServerFn(getFeaturedQueue);
   const reduced = useReducedMotion();
   const [hovered, setHovered] = useState(false);
+  // A click (desktop) or tap (mobile) on the travelling image freezes it.
+  // Opening the profile navigates away; coming back remounts the strip and
+  // the travel continues from the server-locked phase.
+  const [paused, setPaused] = useState(false);
 
   const { data } = useQuery({
     queryKey: ["featured-queue"],
@@ -87,6 +91,7 @@ export const FeaturedTicker = memo(function FeaturedTicker() {
   );
 
   const trackClick = () => {
+    setPaused(true);
     void trackAdEvent({ data: { adId: current.id, metric: "clicks" } }).catch(() => {});
   };
 
@@ -123,9 +128,10 @@ export const FeaturedTicker = memo(function FeaturedTicker() {
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setHovered(true)}
       onBlur={() => setHovered(false)}
-      onTouchStart={() => setHovered(true)}
-      onTouchEnd={() => setHovered(false)}
-      onTouchCancel={() => setHovered(false)}
+      onPointerDown={() => {
+        setPaused(true);
+        setHovered(true);
+      }}
       className="relative overflow-hidden border-y border-gold/15 bg-navy/60 backdrop-blur-xl"
     >
       <div className="pointer-events-none absolute inset-y-0 start-0 z-10 flex items-center gap-1.5 bg-gradient-to-r from-navy-deep via-navy-deep/90 to-transparent px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-gold">
@@ -139,7 +145,7 @@ export const FeaturedTicker = memo(function FeaturedTicker() {
         ) : (
           <div
             key={current.id}
-            data-paused={hovered ? "true" : "false"}
+            data-paused={paused || hovered ? "true" : "false"}
             style={{ animationDelay: `${delay}ms` }}
             className="featured-track whitespace-nowrap"
           >

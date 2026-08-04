@@ -1,0 +1,5 @@
+UPDATE public.plans SET features = '{"ar":["محادثات","صور"],"en":["Chat","Photos"],"de":["Chat","Fotos"],"fr":["Messagerie","Photos"]}'::jsonb WHERE code = 'free';
+
+UPDATE public.plans SET features = '{"ar":["ظهور ملفك في الشريط العلوي","مكالمات صوتية","محادثات"],"en":["Your profile appears in the top ribbon","Voice calls","Chat"],"de":["Dein Profil erscheint im oberen Laufband","Sprachanrufe","Chat"],"fr":["Votre profil apparaît dans le bandeau supérieur","Appels vocaux","Messagerie"]}'::jsonb WHERE code = 'premium';
+
+UPDATE public.plans SET features = '{"ar":["ظهور ملفك في الشريط العلوي","مكالمات صوتية","مكالمات فيديو"],"en":["Your profile appears in the top ribbon","Voice calls","Video calls"],"de":["Dein Profil erscheint im oberen Laufband","Sprachanrufe","Videoanrufe"],"fr":["Votre profil apparaît dans le bandeau supérieur","Appels vocaux","Appels vidéo"]}'::jsonb WHERE code = 'premium_plus';

@@ -2,7 +2,7 @@ import type { FeatureDictionary } from "@/i18n/feature";
 import type { LegalPageContent } from "./types";
 import { COMPANY } from "@/lib/company";
 
-const address = `${COMPANY.legalName}\n${COMPANY.street}\n${COMPANY.postalCode} ${COMPANY.city} (${COMPANY.cityShort})\n${COMPANY.country}`;
+const address = `${COMPANY.legalName}\n${COMPANY.street}\n${COMPANY.postalCode} ${COMPANY.city}\n${COMPANY.country}`;
 
 export const impressumContent: FeatureDictionary<LegalPageContent> = {
   ar: {
