@@ -21,6 +21,12 @@ export const COMPANY = {
   year: 2026,
 } as const;
 
+/**
+ * Public-facing location line. Shown outside the Impressum (footer, privacy
+ * page) instead of the personal name and street address. Never translated.
+ */
+export const COMPANY_PUBLIC_LOCATION = "Neumünster - Deutschland";
+
 export const COMPANY_ADDRESS_LINES = [
   COMPANY.legalName,
   COMPANY.street,
