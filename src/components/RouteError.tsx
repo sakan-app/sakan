@@ -1,8 +1,59 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { AlertTriangle, Loader2, RefreshCw, WifiOff } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { reportLovableError } from "@/lib/lovable-error-reporting";
+import { defaultLocale, isLocale, type Locale } from "@/i18n";
+
+/** Reads the active locale from the document, so the boundary also works when
+ *  it renders above the i18n provider. */
+function useDocumentLocale(): Locale {
+  const [locale, setLocale] = useState<Locale>(defaultLocale);
+  useEffect(() => {
+    const lang = document.documentElement.lang;
+    if (isLocale(lang)) setLocale(lang);
+  }, []);
+  return locale;
+}
+
+const errorStrings = {
+  ar: {
+    offlineTitle: "لا يوجد اتصال بالإنترنت",
+    errorTitle: "تعذّر تحميل هذه الصفحة",
+    offlineText: "تحقّق من اتصالك ثم أعد المحاولة. سيتم استئناف عملك تلقائياً عند عودة الشبكة.",
+    errorText: "حدث خطأ غير متوقّع. يمكنك إعادة المحاولة أو العودة إلى الصفحة الرئيسية.",
+    retry: "إعادة المحاولة",
+    home: "الصفحة الرئيسية",
+    loading: "جارٍ التحميل…",
+  },
+  en: {
+    offlineTitle: "No internet connection",
+    errorTitle: "This page could not be loaded",
+    offlineText: "Check your connection and try again. Your work resumes automatically once the network is back.",
+    errorText: "An unexpected error occurred. You can retry or return to the home page.",
+    retry: "Try again",
+    home: "Home page",
+    loading: "Loading…",
+  },
+  de: {
+    offlineTitle: "Keine Internetverbindung",
+    errorTitle: "Diese Seite konnte nicht geladen werden",
+    offlineText: "Prüfe deine Verbindung und versuche es erneut. Deine Arbeit wird fortgesetzt, sobald das Netz zurück ist.",
+    errorText: "Ein unerwarteter Fehler ist aufgetreten. Du kannst es erneut versuchen oder zur Startseite zurückkehren.",
+    retry: "Erneut versuchen",
+    home: "Startseite",
+    loading: "Wird geladen…",
+  },
+  fr: {
+    offlineTitle: "Aucune connexion Internet",
+    errorTitle: "Impossible de charger cette page",
+    offlineText: "Vérifiez votre connexion puis réessayez. Votre travail reprendra automatiquement au retour du réseau.",
+    errorText: "Une erreur inattendue s'est produite. Vous pouvez réessayer ou revenir à la page d'accueil.",
+    retry: "Réessayer",
+    home: "Page d'accueil",
+    loading: "Chargement…",
+  },
+};
 
 function isNetworkError(error: Error) {
   const message = `${error?.message ?? ""}`.toLowerCase();
@@ -22,6 +73,7 @@ function isNetworkError(error: Error) {
 export function RouteErrorBoundary({ error, reset }: { error: Error; reset: () => void }) {
   const router = useRouter();
   const offline = isNetworkError(error);
+  const s = errorStrings[useDocumentLocale()];
 
   useEffect(() => {
     reportLovableError(error, { boundary: "route_error_component" });
@@ -38,12 +90,10 @@ export function RouteErrorBoundary({ error, reset }: { error: Error; reset: () =
           )}
         </span>
         <h1 className="mt-4 text-lg font-bold text-foreground">
-          {offline ? "لا يوجد اتصال بالإنترنت" : "تعذّر تحميل هذه الصفحة"}
+          {offline ? s.offlineTitle : s.errorTitle}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          {offline
-            ? "تحقّق من اتصالك ثم أعد المحاولة. سيتم استئناف عملك تلقائياً عند عودة الشبكة."
-            : "حدث خطأ غير متوقّع. يمكنك إعادة المحاولة أو العودة إلى الصفحة الرئيسية."}
+          {offline ? s.offlineText : s.errorText}
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
@@ -55,13 +105,13 @@ export function RouteErrorBoundary({ error, reset }: { error: Error; reset: () =
             className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
           >
             <RefreshCw className="h-4 w-4" aria-hidden="true" />
-            إعادة المحاولة
+            {s.retry}
           </button>
           <Link
             to="/"
             className="inline-flex items-center rounded-xl border border-input bg-background px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-accent"
           >
-            الصفحة الرئيسية
+            {s.home}
           </Link>
         </div>
       </div>
@@ -70,7 +120,8 @@ export function RouteErrorBoundary({ error, reset }: { error: Error; reset: () =
 }
 
 /** Unified route-level pending UI used while loaders and suspense resolve. */
-export function RoutePending({ label = "جارٍ التحميل…" }: { label?: string }) {
+export function RoutePending({ label }: { label?: string }) {
+  const s = errorStrings[useDocumentLocale()];
   return (
     <div
       role="status"
@@ -78,7 +129,7 @@ export function RoutePending({ label = "جارٍ التحميل…" }: { label?:
       className="flex min-h-[50vh] flex-col items-center justify-center gap-3 text-muted-foreground"
     >
       <Loader2 className="h-5 w-5 animate-spin text-gold" aria-hidden="true" />
-      <span className="text-sm">{label}</span>
+      <span className="text-sm">{label ?? s.loading}</span>
     </div>
   );
 }

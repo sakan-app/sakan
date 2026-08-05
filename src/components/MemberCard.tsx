@@ -9,7 +9,7 @@ import { PresenceIndicator, resolvePresence } from "@/components/presence/Presen
 import { useIsAway } from "@/hooks/usePresence";
 
 export function MemberCard({ member }: { member: MemberView }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const away = useIsAway(member.id);
   const presence = resolvePresence(member.presenceStatus, member.online, away);
 
@@ -55,7 +55,7 @@ export function MemberCard({ member }: { member: MemberView }) {
         </p>
         <p className="mt-0.5 truncate text-[11px] text-cream/60">
           {countryFlag(member.countryCode)} {member.city}
-          {member.city && member.countryCode ? "، " : ""}
+          {member.city && member.countryCode ? (locale === "ar" ? "، " : ", ") : ""}
           {countryLabel(t, member.countryCode)}
         </p>
       </div>

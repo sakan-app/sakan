@@ -1,0 +1,5 @@
+update public.plans set features = '{"ar":["محادثات","مشاركة الصور"],"en":["Chat","Photo sharing"],"de":["Chat","Fotos teilen"],"fr":["Messagerie","Partage de photos"]}'::jsonb where code = 'free';
+
+update public.plans set features = '{"ar":["محادثات","مكالمات صوتية","ظهور ملفك في الشريط العلوي"],"en":["Chat","Voice calls","Featured profile in the top ribbon"],"de":["Chat","Sprachanrufe","Profil im oberen Laufband hervorgehoben"],"fr":["Messagerie","Appels vocaux","Profil mis en avant dans le bandeau supérieur"]}'::jsonb where code = 'premium';
+
+update public.plans set features = '{"ar":["مكالمات صوتية","مكالمات فيديو","ظهور ملفك في الشريط العلوي"],"en":["Voice calls","Video calls","Featured profile in the top ribbon"],"de":["Sprachanrufe","Videoanrufe","Profil im oberen Laufband hervorgehoben"],"fr":["Appels vocaux","Appels vidéo","Profil mis en avant dans le bandeau supérieur"]}'::jsonb where code = 'premium_plus';

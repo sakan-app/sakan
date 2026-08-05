@@ -247,7 +247,7 @@ export const fr: Dictionary = {
     legal: "Mentions légales",
     privacy: "Politique de confidentialité (RGPD)",
     terms: "Conditions d'utilisation",
-    imprint: "Mentions légales",
+    imprint: "Impressum",
     cookies: "Cookies",
     contact: "Nous contacter",
     city: "Berlin, Allemagne",

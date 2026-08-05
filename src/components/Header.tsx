@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Check, Globe } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import logo from "@/assets/sakan-logo.png.asset.json";
@@ -22,12 +22,13 @@ export function Header() {
   const { isAuthenticated, signOut } = useAuth();
   const hs = useFeatureStrings(headerStrings);
   const navigate = useNavigate();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
 
   const nav = [
-    { label: t.nav.home, to: "/" },
-    { label: t.nav.about, to: "/" },
-    { label: t.nav.stories, to: "/" },
-    { label: t.nav.plans, to: "/" },
+    { label: t.nav.home, to: "/", hash: undefined as string | undefined },
+    { label: t.nav.about, to: "/about" },
+    { label: t.nav.stories, to: "/", hash: "stories" },
+    { label: t.nav.plans, to: "/pricing" },
   ];
 
   useEffect(() => {
@@ -57,12 +58,13 @@ export function Header() {
         </Link>
 
         <nav className="hidden items-center justify-center gap-8 lg:flex">
-          {nav.map((item, i) => (
+          {nav.map((item) => (
             <Link
               key={item.label}
               to={item.to}
+              {...(item.hash ? { hash: item.hash } : {})}
               className={`text-sm transition-colors hover:text-gold ${
-                i === 0
+                pathname === item.to && !item.hash
                   ? "border-b-2 border-gold pb-1 font-semibold text-gold"
                   : "text-cream/80"
               }`}
@@ -107,7 +109,7 @@ export function Header() {
           {isAuthenticated && <NotificationBell />}
           {isAuthenticated ? (
             <div className="hidden items-center gap-2 sm:flex">
-              <Link to="/pricing" className="text-xs font-semibold text-cream/85 hover:text-gold">
+              <Link to="/pricing" className="text-xs font-semibold text-cream/85 hover:text-gold lg:hidden">
                 {hs.pricing}
               </Link>
               <Link to="/messages" className="text-xs font-semibold text-cream/85 hover:text-gold">
@@ -125,7 +127,7 @@ export function Header() {
             </div>
           ) : (
             <div className="hidden items-center gap-2 sm:flex">
-              <Link to="/pricing" className="text-xs font-semibold text-cream/85 hover:text-gold">
+              <Link to="/pricing" className="text-xs font-semibold text-cream/85 hover:text-gold lg:hidden">
                 {hs.pricing}
               </Link>
               <Link to="/auth" className="btn-outline-gold px-4 py-2 text-xs font-semibold">

@@ -103,7 +103,7 @@ function PeerAvatar({ url, name, size = 112 }: { url: string | null; name: strin
   return url ? (
     <img
       src={url}
-      alt=""
+      alt={name}
       style={{ width: size, height: size }}
       className="rounded-full object-cover ring-2 ring-gold/40"
     />

@@ -3,7 +3,6 @@ import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 
 import { useAuth } from "@/hooks/useAuth";
-import { useI18n } from "@/lib/i18n";
 import { isLikedQuery, useToggleLike } from "@/lib/social/queries";
 import { useFeatureStrings } from "@/i18n/feature";
 import { socialStrings } from "@/lib/social/strings";
