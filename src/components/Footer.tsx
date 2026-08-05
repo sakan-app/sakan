@@ -21,7 +21,7 @@ export function Footer() {
   ] as const;
 
   return (
-    <footer className="relative overflow-hidden border-t border-gold/15 bg-navy-deep pt-14 text-cream/80">
+    <footer className="relative overflow-hidden border-t border-gold/15 bg-navy-deep pb-24 pt-14 text-cream/80 lg:pb-0">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent"
