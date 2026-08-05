@@ -25,9 +25,9 @@ export function Header() {
 
   const nav = [
     { label: t.nav.home, to: "/" },
-    { label: t.nav.about, to: "/" },
+    { label: t.nav.about, to: "/about" },
     { label: t.nav.stories, to: "/" },
-    { label: t.nav.plans, to: "/" },
+    { label: t.nav.plans, to: "/pricing" },
   ];
 
   useEffect(() => {
@@ -107,7 +107,7 @@ export function Header() {
           {isAuthenticated && <NotificationBell />}
           {isAuthenticated ? (
             <div className="hidden items-center gap-2 sm:flex">
-              <Link to="/pricing" className="text-xs font-semibold text-cream/85 hover:text-gold">
+              <Link to="/pricing" className="text-xs font-semibold text-cream/85 hover:text-gold lg:hidden">
                 {hs.pricing}
               </Link>
               <Link to="/messages" className="text-xs font-semibold text-cream/85 hover:text-gold">
@@ -125,7 +125,7 @@ export function Header() {
             </div>
           ) : (
             <div className="hidden items-center gap-2 sm:flex">
-              <Link to="/pricing" className="text-xs font-semibold text-cream/85 hover:text-gold">
+              <Link to="/pricing" className="text-xs font-semibold text-cream/85 hover:text-gold lg:hidden">
                 {hs.pricing}
               </Link>
               <Link to="/auth" className="btn-outline-gold px-4 py-2 text-xs font-semibold">
