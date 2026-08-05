@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Facebook, Instagram, Youtube, Twitter, Mail, Globe, MapPin } from "lucide-react";
 import logo from "@/assets/sakan-logo.png.asset.json";
-import { COMPANY, COMPANY_ADDRESS_LINES } from "@/lib/company";
+import { COMPANY, COMPANY_PUBLIC_LOCATION } from "@/lib/company";
 import { useI18n } from "@/lib/i18n";
 
 export function Footer() {
@@ -109,11 +109,7 @@ export function Footer() {
             <li className="flex items-start gap-2">
               <MapPin className="mt-1 h-4 w-4 shrink-0 text-gold" />
               <address className="latin not-italic leading-6">
-                {COMPANY_ADDRESS_LINES.map((line) => (
-                  <span key={line} className="block">
-                    {line}
-                  </span>
-                ))}
+                <span className="block">{COMPANY_PUBLIC_LOCATION}</span>
               </address>
             </li>
           </ul>

@@ -1,6 +1,6 @@
 import type { FeatureDictionary } from "@/i18n/feature";
 import type { LegalPageContent } from "./types";
-import { COMPANY } from "@/lib/company";
+import { COMPANY, COMPANY_PUBLIC_LOCATION } from "@/lib/company";
 
 export const privacyContent: FeatureDictionary<LegalPageContent> = {
   ar: {
@@ -10,7 +10,7 @@ export const privacyContent: FeatureDictionary<LegalPageContent> = {
       {
         title: "1. المسؤول عن المعالجة",
         body: [
-          `${COMPANY.legalName}، ${COMPANY.street}، ${COMPANY.postalCode} ${COMPANY.city}، ${COMPANY.country}`,
+          COMPANY_PUBLIC_LOCATION,
           `للاستفسارات المتعلقة بالبيانات: ${COMPANY.serviceEmail}`,
         ],
       },
@@ -67,7 +67,7 @@ export const privacyContent: FeatureDictionary<LegalPageContent> = {
       {
         title: "1. Verantwortlicher",
         body: [
-          `${COMPANY.legalName}, ${COMPANY.street}, ${COMPANY.postalCode} ${COMPANY.city}, ${COMPANY.country}`,
+          COMPANY_PUBLIC_LOCATION,
           `Datenschutzanfragen: ${COMPANY.serviceEmail}`,
         ],
       },
@@ -123,7 +123,7 @@ export const privacyContent: FeatureDictionary<LegalPageContent> = {
       {
         title: "1. Controller",
         body: [
-          `${COMPANY.legalName}, ${COMPANY.street}, ${COMPANY.postalCode} ${COMPANY.city}, ${COMPANY.country}`,
+          COMPANY_PUBLIC_LOCATION,
           `Data requests: ${COMPANY.serviceEmail}`,
         ],
       },
@@ -179,7 +179,7 @@ export const privacyContent: FeatureDictionary<LegalPageContent> = {
       {
         title: "1. Responsable du traitement",
         body: [
-          `${COMPANY.legalName}, ${COMPANY.street}, ${COMPANY.postalCode} ${COMPANY.city}, ${COMPANY.country}`,
+          COMPANY_PUBLIC_LOCATION,
           `Pour toute question relative aux données : ${COMPANY.serviceEmail}`,
         ],
       },
