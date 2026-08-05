@@ -9,7 +9,7 @@ import { PresenceIndicator, resolvePresence } from "@/components/presence/Presen
 import { useIsAway } from "@/hooks/usePresence";
 
 export function MemberCard({ member }: { member: MemberView }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const away = useIsAway(member.id);
   const presence = resolvePresence(member.presenceStatus, member.online, away);
 
