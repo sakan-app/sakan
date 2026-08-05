@@ -42,6 +42,20 @@ export const FeaturedTicker = memo(function FeaturedTicker() {
   // the travel continues from the server-locked phase.
   const [paused, setPaused] = useState(false);
 
+  // Tapping elsewhere (or pressing Escape) releases the freeze so the queue
+  // keeps travelling when the visitor never leaves the page.
+  useEffect(() => {
+    if (!paused) return;
+    const release = (event: Event) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("[data-featured-ticker]")) return;
+      setPaused(false);
+      setHovered(false);
+    };
+    document.addEventListener("pointerdown", release);
+    return () => document.removeEventListener("pointerdown", release);
+  }, [paused]);
+
   const { data } = useQuery({
     queryKey: ["featured-queue"],
     queryFn: () => fetchQueue(),
@@ -124,6 +138,7 @@ export const FeaturedTicker = memo(function FeaturedTicker() {
   return (
     <section
       aria-label={s.tickerLabel}
+      data-featured-ticker=""
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setHovered(true)}
