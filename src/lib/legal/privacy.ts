@@ -1,6 +1,6 @@
 import type { FeatureDictionary } from "@/i18n/feature";
 import type { LegalPageContent } from "./types";
-import { COMPANY } from "@/lib/company";
+import { COMPANY, COMPANY_PUBLIC_LOCATION } from "@/lib/company";
 
 export const privacyContent: FeatureDictionary<LegalPageContent> = {
   ar: {
