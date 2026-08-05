@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Check, Globe } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import logo from "@/assets/sakan-logo.png.asset.json";
@@ -22,6 +22,7 @@ export function Header() {
   const { isAuthenticated, signOut } = useAuth();
   const hs = useFeatureStrings(headerStrings);
   const navigate = useNavigate();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
 
   const nav = [
     { label: t.nav.home, to: "/" },
@@ -57,12 +58,12 @@ export function Header() {
         </Link>
 
         <nav className="hidden items-center justify-center gap-8 lg:flex">
-          {nav.map((item, i) => (
+          {nav.map((item) => (
             <Link
               key={item.label}
               to={item.to}
               className={`text-sm transition-colors hover:text-gold ${
-                i === 0
+                pathname === item.to
                   ? "border-b-2 border-gold pb-1 font-semibold text-gold"
                   : "text-cream/80"
               }`}
