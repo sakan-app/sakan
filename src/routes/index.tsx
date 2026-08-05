@@ -267,7 +267,7 @@ function Index() {
                   <BadgeCheck className="absolute -bottom-1 -start-1 h-4 w-4 text-sky-400" />
                 </div>
                 <div className="text-[11px] leading-4">
-                  <p className="font-semibold text-cream">{m.name}، {m.age}</p>
+                  <p className="font-semibold text-cream">{m.name}{locale === "ar" ? "، " : ", "}{m.age}</p>
                   <p className="text-cream/55">{countryFlag(m.countryCode)} {m.city}</p>
                 </div>
               </div>

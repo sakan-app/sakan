@@ -55,7 +55,7 @@ export function MemberCard({ member }: { member: MemberView }) {
         </p>
         <p className="mt-0.5 truncate text-[11px] text-cream/60">
           {countryFlag(member.countryCode)} {member.city}
-          {member.city && member.countryCode ? "، " : ""}
+          {member.city && member.countryCode ? (locale === "ar" ? "، " : ", ") : ""}
           {countryLabel(t, member.countryCode)}
         </p>
       </div>
