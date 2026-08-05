@@ -10,7 +10,6 @@ import {
   Globe,
   Heart,
   Home,
-  LogOut,
   MessageCircle,
   Megaphone,
   Search,
