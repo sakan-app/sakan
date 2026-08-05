@@ -27,7 +27,7 @@ export function Header() {
   const nav = [
     { label: t.nav.home, to: "/" },
     { label: t.nav.about, to: "/about" },
-    { label: t.nav.stories, to: "/" },
+    { label: t.nav.stories, to: "/", hash: "stories" },
     { label: t.nav.plans, to: "/pricing" },
   ];
 
@@ -62,8 +62,9 @@ export function Header() {
             <Link
               key={item.label}
               to={item.to}
+              hash={item.hash}
               className={`text-sm transition-colors hover:text-gold ${
-                pathname === item.to
+                pathname === item.to && !item.hash
                   ? "border-b-2 border-gold pb-1 font-semibold text-gold"
                   : "text-cream/80"
               }`}

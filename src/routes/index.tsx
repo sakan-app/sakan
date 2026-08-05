@@ -238,6 +238,7 @@ function Index() {
       </section>
 
       {/* LIVE STRIP */}
+      {live.length > 0 && (
       <section className="mx-auto mt-6 max-w-[1360px] px-4 lg:px-8">
         <div className="panel-navy flex flex-col gap-4 p-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-2 text-gold">
@@ -282,6 +283,7 @@ function Index() {
           </div>
         </div>
       </section>
+      )}
 
       {/* WHY SAKAN */}
       <section className="bg-cream py-14">
@@ -343,7 +345,7 @@ function Index() {
       </section>
 
       {/* SUCCESS STORIES */}
-      <section className="bg-cream pb-16">
+      <section id="stories" className="scroll-mt-24 bg-cream pb-16">
         <div className="mx-auto max-w-[1360px] px-6 lg:px-8">
           <h2 className="mb-8 flex items-center justify-center gap-2 text-center text-xl font-black text-navy">
             <Heart className="h-5 w-5 text-gold" /> {t.home.storiesTitle}
