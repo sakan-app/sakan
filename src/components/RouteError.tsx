@@ -1,9 +1,20 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { AlertTriangle, Loader2, RefreshCw, WifiOff } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { reportLovableError } from "@/lib/lovable-error-reporting";
-import { useFeatureStrings } from "@/i18n/feature";
+import { defaultLocale, isLocale, type Locale } from "@/i18n";
+
+/** Reads the active locale from the document, so the boundary also works when
+ *  it renders above the i18n provider. */
+function useDocumentLocale(): Locale {
+  const [locale, setLocale] = useState<Locale>(defaultLocale);
+  useEffect(() => {
+    const lang = document.documentElement.lang;
+    if (isLocale(lang)) setLocale(lang);
+  }, []);
+  return locale;
+}
 
 const errorStrings = {
   ar: {
@@ -62,7 +73,7 @@ function isNetworkError(error: Error) {
 export function RouteErrorBoundary({ error, reset }: { error: Error; reset: () => void }) {
   const router = useRouter();
   const offline = isNetworkError(error);
-  const s = useFeatureStrings(errorStrings);
+  const s = errorStrings[useDocumentLocale()];
 
   useEffect(() => {
     reportLovableError(error, { boundary: "route_error_component" });
@@ -110,7 +121,7 @@ export function RouteErrorBoundary({ error, reset }: { error: Error; reset: () =
 
 /** Unified route-level pending UI used while loaders and suspense resolve. */
 export function RoutePending({ label }: { label?: string }) {
-  const s = useFeatureStrings(errorStrings);
+  const s = errorStrings[useDocumentLocale()];
   return (
     <div
       role="status"
