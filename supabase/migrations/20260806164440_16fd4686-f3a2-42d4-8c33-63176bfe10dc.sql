@@ -1,0 +1,1 @@
+DELETE FROM auth.users WHERE email = 'qa.release.check+1@example.com';
