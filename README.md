@@ -590,6 +590,8 @@ the documents below are the authoritative reference for each area.
 
 | Document | Contents |
 |---|---|
+| [INSTALL.md](./docs/INSTALL.md) | Requirements, local setup, scripts, configuration and verification |
+| [RELEASE_NOTES.md](./docs/RELEASE_NOTES.md) | Delivery scope, verification, post-delivery checklist for 1.0.0 |
 | [ARCHITECTURE.md](./docs/ARCHITECTURE.md) | System, frontend, backend, realtime, rendering and caching architecture |
 | [FOLDER_STRUCTURE.md](./docs/FOLDER_STRUCTURE.md) | Directory responsibilities and naming conventions |
 | [ROUTES.md](./docs/ROUTES.md) | Every public, authenticated, admin and API route |
