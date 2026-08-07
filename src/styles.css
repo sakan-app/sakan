@@ -233,11 +233,6 @@
   }
 }
 
-/* PWA shell additions */
-@utility pwa-safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
 /* ==========================================================================
    Native app shell — premium glassmorphism layer (authenticated experience)
    ========================================================================== */
