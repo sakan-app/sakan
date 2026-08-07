@@ -106,9 +106,6 @@ export const ar = {
     verifiedNote: "تم التحقق من الهوية والصور يدوياً",
     notProvided: "غير محدد",
     photoAlt: "صورة",
-    chatSoon: "المحادثات ستتوفر في المرحلة القادمة.",
-    favoriteAdded: "تمت الإضافة إلى المفضلة",
-    favoriteRemoved: "تمت الإزالة من المفضلة",
   },
   auth: {
     signInTitle: "تسجيل الدخول",
@@ -139,7 +136,6 @@ export const ar = {
     resendVerification: "إعادة إرسال رسالة التأكيد",
     verificationResent: "تم إرسال رسالة التأكيد مجدداً.",
     backToSignIn: "العودة لتسجيل الدخول",
-    checking: "جارٍ التحقق…",
     callbackTitle: "جارٍ إتمام تسجيل الدخول…",
     errors: {
       required: "هذا الحقل مطلوب",
@@ -232,8 +228,6 @@ export const ar = {
   system: {
     unauthorizedTitle: "لا تملك صلاحية الوصول",
     unauthorizedText: "هذه الصفحة تتطلب تسجيل الدخول أو صلاحيات إضافية.",
-    notFoundTitle: "الصفحة غير موجودة",
-    notFoundText: "الرابط الذي فتحته غير صحيح أو تم نقله.",
     goHome: "العودة إلى الرئيسية",
     offline: "أنت غير متصل بالإنترنت",
     signIn: "تسجيل الدخول",

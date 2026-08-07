@@ -108,9 +108,6 @@ export const fr: Dictionary = {
     verifiedNote: "Identité et photos vérifiées manuellement",
     notProvided: "Non précisé",
     photoAlt: "Photo de",
-    chatSoon: "Les conversations arrivent dans la prochaine phase.",
-    favoriteAdded: "Ajouté aux favoris",
-    favoriteRemoved: "Retiré des favoris",
   },
   auth: {
     signInTitle: "Se connecter",
@@ -141,7 +138,6 @@ export const fr: Dictionary = {
     resendVerification: "Renvoyer l'e-mail de confirmation",
     verificationResent: "E-mail de confirmation renvoyé.",
     backToSignIn: "Retour à la connexion",
-    checking: "Vérification…",
     callbackTitle: "Connexion en cours…",
     errors: {
       required: "Ce champ est obligatoire",
@@ -234,8 +230,6 @@ export const fr: Dictionary = {
   system: {
     unauthorizedTitle: "Accès refusé",
     unauthorizedText: "Cette page nécessite une connexion ou des autorisations supplémentaires.",
-    notFoundTitle: "Page introuvable",
-    notFoundText: "Le lien que vous avez ouvert n'est pas valide ou a été déplacé.",
     goHome: "Retour à l'accueil",
     offline: "Vous êtes hors ligne",
     signIn: "Se connecter",
