@@ -108,9 +108,6 @@ export const en: Dictionary = {
     verifiedNote: "Identity and photos verified manually",
     notProvided: "Not specified",
     photoAlt: "Photo of",
-    chatSoon: "Conversations arrive in the next phase.",
-    favoriteAdded: "Added to favorites",
-    favoriteRemoved: "Removed from favorites",
   },
   auth: {
     signInTitle: "Sign in",
@@ -141,7 +138,6 @@ export const en: Dictionary = {
     resendVerification: "Resend confirmation email",
     verificationResent: "Confirmation email sent again.",
     backToSignIn: "Back to sign in",
-    checking: "Checking…",
     callbackTitle: "Completing sign in…",
     errors: {
       required: "This field is required",
@@ -234,8 +230,6 @@ export const en: Dictionary = {
   system: {
     unauthorizedTitle: "Access denied",
     unauthorizedText: "This page requires you to sign in or have additional permissions.",
-    notFoundTitle: "Page not found",
-    notFoundText: "The link you opened is invalid or has been moved.",
     goHome: "Go home",
     offline: "You are offline",
     signIn: "Sign in",
