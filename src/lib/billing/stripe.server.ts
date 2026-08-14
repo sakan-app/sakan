@@ -68,7 +68,11 @@ export async function stripeRequest<T = Record<string, unknown>>(
   });
   const json = (await res.json()) as { error?: { message?: string } };
   if (!res.ok) {
-    throw new Error(json?.error?.message ?? `stripe_error_${res.status}`);
+    // Never surface Stripe's raw message: it echoes back the (masked) API key
+    // and other provider internals. Log server-side, return a stable code.
+    console.error(`Stripe ${method} ${path} failed (${res.status}):`, json?.error?.message);
+    if (res.status === 401) throw new Error("stripe_not_configured");
+    throw new Error(`stripe_error_${res.status}`);
   }
   return json as T;
 }
