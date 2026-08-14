@@ -216,9 +216,11 @@ export function useBillingPortal() {
   return useMutation({
     mutationFn: async () => {
       const { createPortalSession } = await import("./billing.functions");
-      return createPortalSession({
+      const result = await createPortalSession({
         data: { returnUrl: `${window.location.origin}/billing` },
       });
+      if (!result?.url) throw new Error("portal_unavailable");
+      return result;
     },
     onSuccess: (result) => {
       if (result?.url) window.location.assign(result.url);
