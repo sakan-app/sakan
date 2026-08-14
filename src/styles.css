@@ -701,6 +701,29 @@
   .featured-track { animation: none; transform: none; }
 }
 
+
+/* Featured member photo strip (0.99 € slot) */
+.featured-strip-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  animation: featured-strip 60s linear infinite;
+  will-change: transform;
+}
+.featured-strip-track[data-paused="true"] { animation-play-state: paused; }
+@keyframes featured-strip {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+[dir="rtl"] .featured-strip-track { animation-name: featured-strip-rtl; }
+@keyframes featured-strip-rtl {
+  from { transform: translateX(0); }
+  to { transform: translateX(50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .featured-strip-track { animation: none; }
+}
+
 /* ==========================================================================
    Unified micro-interactions (press, hover, route + list transitions)
    Every effect below is neutralised by the global prefers-reduced-motion rule.
