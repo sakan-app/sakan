@@ -1,0 +1,5 @@
+UPDATE public.plans SET features = '{"ar":["محادثات","صور"],"en":["Chat","Photos"],"de":["Chat","Fotos"],"fr":["Messagerie","Photos"]}'::jsonb WHERE code = 'free';
+
+UPDATE public.plans SET features = '{"ar":["ملفك للأعلى (ميزة 0.99€)","اتصال صوتي","محادثات","صور"],"en":["Profile boosted to the top (0.99€ feature)","Voice calls","Chat","Photos"],"de":["Profil ganz oben (0,99-€-Funktion)","Sprachanrufe","Chat","Fotos"],"fr":["Profil mis en avant (fonction 0,99 €)","Appels vocaux","Messagerie","Photos"]}'::jsonb WHERE code = 'premium';
+
+UPDATE public.plans SET price_monthly_cents = 2990, price_annual_cents = 29900, features = '{"ar":["ملفك للأعلى (ميزة 0.99€)","اتصال صوتي","اتصال فيديو","محادثات","صور"],"en":["Profile boosted to the top (0.99€ feature)","Voice calls","Video calls","Chat","Photos"],"de":["Profil ganz oben (0,99-€-Funktion)","Sprachanrufe","Videoanrufe","Chat","Fotos"],"fr":["Profil mis en avant (fonction 0,99 €)","Appels vocaux","Appels vidéo","Messagerie","Photos"]}'::jsonb WHERE code = 'premium_plus';
