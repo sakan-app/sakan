@@ -33,26 +33,37 @@ export async function startFeaturedCheckout(args: {
     return { status: "active" as const, testMode: true };
   }
 
-  const session = await stripeRequest<{ id: string; url: string }>("/checkout/sessions", {
-    mode: "payment",
-    success_url: `${args.returnUrl}?ad=success`,
-    cancel_url: `${args.returnUrl}?ad=canceled`,
-    client_reference_id: args.userId,
-    line_items: [
-      {
-        quantity: 1,
-        price_data: {
-          currency: (ad.currency ?? "EUR").toLowerCase(),
-          unit_amount: ad.amount_cents ?? FEATURED_AD_PRICE_CENTS,
-          product_data: {
-            name: "SAKAN featured banner",
-            description: ad.headline ?? "Rotating featured placement",
+  let session: { id: string; url: string };
+  try {
+    session = await stripeRequest<{ id: string; url: string }>("/checkout/sessions", {
+      mode: "payment",
+      success_url: `${args.returnUrl}?ad=success`,
+      cancel_url: `${args.returnUrl}?ad=canceled`,
+      client_reference_id: args.userId,
+      line_items: [
+        {
+          quantity: 1,
+          price_data: {
+            currency: (ad.currency ?? "EUR").toLowerCase(),
+            unit_amount: ad.amount_cents ?? FEATURED_AD_PRICE_CENTS,
+            product_data: {
+              name: "SAKAN featured banner",
+              description: ad.headline ?? "Rotating featured placement",
+            },
           },
         },
-      },
-    ],
-    metadata: { kind: "featured_ad", ad_id: ad.id, user_id: args.userId },
-  });
+      ],
+      metadata: { kind: "featured_ad", ad_id: ad.id, user_id: args.userId },
+    });
+  } catch (err) {
+    // Placeholder/rejected key: behave exactly like "no key configured"
+    // instead of failing the whole flow.
+    if (err instanceof Error && err.message === "stripe_not_configured") {
+      await publishFeaturedAd(args.adId, "manual", `manual_ad_${Date.now()}`);
+      return { status: "active" as const, testMode: true };
+    }
+    throw err;
+  }
 
   await supabaseAdmin
     .from("featured_ads")
