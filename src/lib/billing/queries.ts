@@ -222,6 +222,7 @@ export function useBillingPortal() {
     },
     onSuccess: (result) => {
       if (result?.url) window.location.assign(result.url);
+      else toast.error(billingStrings.en.portalUnavailable);
     },
   });
 }
