@@ -330,9 +330,16 @@ export async function resumeSubscription(userId: string) {
 
 /** Hosted provider portal (payment methods, invoices, cancel/resume). */
 export async function billingPortalUrl(userId: string, returnUrl: string) {
-  const url = await getPaymentProvider().portal(userId, returnUrl);
-  if (!url) throw new Error("portal_not_available");
-  return { url };
+  try {
+    const url = await getPaymentProvider().portal(userId, returnUrl);
+    if (!url) return { url: null, unavailable: true as const };
+    return { url, unavailable: false as const };
+  } catch (error) {
+    // Provider not wired up yet (test placeholder keys): degrade gracefully
+    // instead of crashing the billing page.
+    console.error("billingPortalUrl failed:", (error as Error).message);
+    return { url: null, unavailable: true as const };
+  }
 }
 
 /** Marks a failed charge and opens the grace window. Idempotent. */
