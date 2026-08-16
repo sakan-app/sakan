@@ -549,6 +549,27 @@ export type Database = {
         }
         Relationships: []
       }
+      founding_members: {
+        Row: {
+          created_at: string
+          id: string
+          member_number: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          member_number: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          member_number?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       likes: {
         Row: {
           created_at: string
@@ -1032,6 +1053,7 @@ export type Database = {
           country_code: string | null
           cover_url: string | null
           created_at: string
+          custom_country: string | null
           display_name: string
           education: string | null
           gender: Database["public"]["Enums"]["gender"] | null
@@ -1068,6 +1090,7 @@ export type Database = {
           country_code?: string | null
           cover_url?: string | null
           created_at?: string
+          custom_country?: string | null
           display_name: string
           education?: string | null
           gender?: Database["public"]["Enums"]["gender"] | null
@@ -1104,6 +1127,7 @@ export type Database = {
           country_code?: string | null
           cover_url?: string | null
           created_at?: string
+          custom_country?: string | null
           display_name?: string
           education?: string | null
           gender?: Database["public"]["Enums"]["gender"] | null
@@ -1454,6 +1478,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_founding_membership: { Args: { _user_id: string }; Returns: number }
       current_subscription: {
         Args: { _user_id: string }
         Returns: {
@@ -1502,6 +1527,7 @@ export type Database = {
         Args: { _conversation_id: string; _user_id: string }
         Returns: boolean
       }
+      is_founding_member: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       is_super_admin: { Args: { _user_id: string }; Returns: boolean }
       sweep_billing_lifecycle: { Args: { _grace_days?: number }; Returns: Json }
