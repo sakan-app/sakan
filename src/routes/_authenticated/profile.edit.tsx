@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { localeNames, localeOrder } from "@/i18n";
 import { COUNTRY_CODES } from "@/lib/countries";
+import { countryFormStrings } from "@/lib/forms/country-strings";
 import {
   deleteGalleryPhoto,
   myGalleryQuery,
@@ -50,6 +51,7 @@ type FormState = {
   gender: "" | "male" | "female";
   looking_for: "" | "male" | "female";
   country_code: string;
+  custom_country: string;
   city: string;
   bio: string;
   occupation: string;
@@ -67,6 +69,7 @@ const EMPTY: FormState = {
   gender: "",
   looking_for: "",
   country_code: "",
+  custom_country: "",
   city: "",
   bio: "",
   occupation: "",
@@ -116,6 +119,7 @@ function EditProfilePage() {
       gender: p.gender ?? "",
       looking_for: p.looking_for ?? "",
       country_code: p.country_code ?? "",
+      custom_country: p.custom_country ?? "",
       city: p.city ?? "",
       bio: p.bio ?? "",
       occupation: p.occupation ?? "",
@@ -235,6 +239,7 @@ function EditProfilePage() {
       looking_for: form.looking_for || undefined,
       country_code: form.country_code,
       city: form.city || undefined,
+      city: form.city || undefined,
       bio: form.bio || undefined,
       occupation: form.occupation || undefined,
       education: form.education || undefined,
@@ -278,6 +283,8 @@ function EditProfilePage() {
       gender: d.gender ?? null,
       looking_for: d.looking_for ?? null,
       country_code: d.country_code ?? null,
+      custom_country:
+        form.country_code === "OTHER" ? form.custom_country.trim() || null : null,
       city: d.city ?? null,
       bio: d.bio ?? null,
       occupation: d.occupation ?? null,
@@ -448,7 +455,17 @@ function EditProfilePage() {
                       {c.label}
                     </option>
                   ))}
+                  <option value="OTHER">{cfs.other}</option>
                 </select>
+                {form.country_code === "OTHER" ? (
+                  <input
+                    className="field-navy mt-2 w-full"
+                    value={form.custom_country}
+                    placeholder={cfs.customPlaceholder}
+                    maxLength={60}
+                    onChange={(e) => set("custom_country", e.target.value)}
+                  />
+                ) : null}
               </Field>
               <Field label={t.onboarding.city} id="city">
                 <input
