@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-/** Output size of a banner creative. */
-const OUT_W = 1200;
-const OUT_H = 400;
+/** Output size of a featured creative (portrait 3:4). */
+const OUT_W = 900;
+const OUT_H = 1200;
 
 type Props = {
   file: File;
@@ -16,9 +16,9 @@ type Props = {
 /**
  * Lightweight preview + crop + zoom for a featured creative.
  *
- * The user drags the photo inside a 3:1 frame and zooms with a slider; the
- * framing is rendered to a canvas so the uploaded file is exactly what the
- * banner will show.
+ * The user drags the photo inside a fixed 3:4 portrait frame and zooms with a
+ * slider; the framing is rendered to a canvas so the uploaded file is exactly
+ * what the featured area will show (cover, never stretched).
  */
 export function CreativeCropper({ file, label, zoomLabel, hint, onChange }: Props) {
   const [url, setUrl] = useState<string | null>(null);
@@ -52,8 +52,8 @@ export function CreativeCropper({ file, label, zoomLabel, hint, onChange }: Prop
     const scale = base * zoom;
     const w = img.width * scale;
     const h = img.height * scale;
-    const x = (OUT_W - w) / 2 + offset.x * (OUT_W / 600);
-    const y = (OUT_H - h) / 2 + offset.y * (OUT_H / 200);
+    const x = (OUT_W - w) / 2 + offset.x * (OUT_W / FRAME_W);
+    const y = (OUT_H - h) / 2 + offset.y * (OUT_H / FRAME_H);
     ctx.drawImage(img, x, y, w, h);
 
     canvas.toBlob(
