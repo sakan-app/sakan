@@ -103,6 +103,7 @@ function EditProfilePage() {
   const [notice, setNotice] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const modStrings = useFeatureStrings(searchStrings).moderation;
+  const cfs = useFeatureStrings(countryFormStrings);
   const avatarInput = useRef<HTMLInputElement>(null);
   const galleryInput = useRef<HTMLInputElement>(null);
   const hydrated = useRef(false);
@@ -238,7 +239,6 @@ function EditProfilePage() {
       gender: form.gender || undefined,
       looking_for: form.looking_for || undefined,
       country_code: form.country_code,
-      city: form.city || undefined,
       city: form.city || undefined,
       bio: form.bio || undefined,
       occupation: form.occupation || undefined,
