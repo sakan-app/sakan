@@ -24,6 +24,7 @@ import { plansQuery } from "@/lib/billing/queries";
 import { formatPrice } from "@/lib/billing/types";
 import { FeaturedTicker } from "@/components/ads/FeaturedTicker";
 import { AdSlot } from "@/components/ads/AdSlot";
+import { HEADER_BANNER_SLOT } from "@/lib/ads/commercial";
 import { MemberCard } from "@/components/MemberCard";
 import { activeMembersQuery, type Gender } from "@/lib/members";
 import { useI18n } from "@/lib/i18n";
@@ -114,6 +115,7 @@ function Index() {
   return (
     <div className="min-h-screen bg-navy-deep">
       <Header />
+      <AdSlot slot={HEADER_BANNER_SLOT} className="mt-3 max-w-[728px] px-4" />
       <FeaturedTicker />
 
       {/* HERO */}
