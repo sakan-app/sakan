@@ -146,6 +146,8 @@ function OnboardingPage() {
     if (age < 18) return t.onboarding.ageError;
     if (!form.gender || !form.looking_for) return t.auth.errors.required;
     if (!form.country_code || !form.city.trim()) return t.auth.errors.required;
+    if (form.country_code === "OTHER" && !form.custom_country.trim())
+      return t.auth.errors.required;
     return null;
   }
 
