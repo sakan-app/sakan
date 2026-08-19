@@ -35,7 +35,8 @@ export const birthDateSchema = z
     return age >= MIN_AGE && age <= 120;
   }, "ageError");
 
-export const countryCodeSchema = z.string().regex(/^[A-Z]{2}$/);
+/** ISO-2 country code, or the "OTHER" sentinel with a free-text country. */
+export const countryCodeSchema = z.string().regex(/^([A-Z]{2}|OTHER)$/);
 export const bioSchema = z.string().trim().max(1200);
 
 export const profileFormSchema = z.object({

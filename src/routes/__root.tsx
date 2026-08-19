@@ -24,6 +24,7 @@ import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { UpdateBanner } from "@/components/pwa/UpdateBanner";
 import { AppBadgeSync } from "@/components/pwa/AppBadgeSync";
 import { LocalizedSeo } from "@/components/LocalizedSeo";
+import { CookieConsent } from "@/components/legal/CookieConsent";
 
 /** Routes rendered inside the authenticated native app shell. */
 const APP_SHELL_PREFIXES = [
@@ -200,6 +201,7 @@ function RootComponent() {
             <InstallPrompt />
             <UpdateBanner />
             <AppBadgeSync />
+            <CookieConsent />
             <Toaster richColors position="top-center" />
           </PwaProvider>
         </I18nProvider>

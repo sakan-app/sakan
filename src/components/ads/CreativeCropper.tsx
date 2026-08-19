@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-/** Output size of a banner creative. */
-const OUT_W = 1200;
-const OUT_H = 400;
+/** Output size of a featured creative (portrait 3:4). */
+const OUT_W = 900;
+const OUT_H = 1200;
+/** On-screen framing box (CSS px) used to map drag distance to output px. */
+const FRAME_W = 300;
+const FRAME_H = 400;
 
 type Props = {
   file: File;
@@ -16,9 +19,9 @@ type Props = {
 /**
  * Lightweight preview + crop + zoom for a featured creative.
  *
- * The user drags the photo inside a 3:1 frame and zooms with a slider; the
- * framing is rendered to a canvas so the uploaded file is exactly what the
- * banner will show.
+ * The user drags the photo inside a fixed 3:4 portrait frame and zooms with a
+ * slider; the framing is rendered to a canvas so the uploaded file is exactly
+ * what the featured area will show (cover, never stretched).
  */
 export function CreativeCropper({ file, label, zoomLabel, hint, onChange }: Props) {
   const [url, setUrl] = useState<string | null>(null);
@@ -52,8 +55,8 @@ export function CreativeCropper({ file, label, zoomLabel, hint, onChange }: Prop
     const scale = base * zoom;
     const w = img.width * scale;
     const h = img.height * scale;
-    const x = (OUT_W - w) / 2 + offset.x * (OUT_W / 600);
-    const y = (OUT_H - h) / 2 + offset.y * (OUT_H / 200);
+    const x = (OUT_W - w) / 2 + offset.x * (OUT_W / FRAME_W);
+    const y = (OUT_H - h) / 2 + offset.y * (OUT_H / FRAME_H);
     ctx.drawImage(img, x, y, w, h);
 
     canvas.toBlob(
@@ -75,7 +78,8 @@ export function CreativeCropper({ file, label, zoomLabel, hint, onChange }: Prop
     <div className="sm:col-span-2">
       <p className="mb-1 text-xs font-bold uppercase tracking-wide text-cream/60">{label}</p>
       <div
-        className="relative h-[200px] w-full cursor-grab overflow-hidden rounded-2xl border border-gold/25 bg-navy-deep active:cursor-grabbing"
+        style={{ width: FRAME_W, height: FRAME_H }}
+        className="relative mx-auto max-w-full cursor-grab touch-none overflow-hidden rounded-2xl border border-gold/25 bg-navy-deep active:cursor-grabbing"
         onPointerDown={(e) => {
           dragRef.current = { x: e.clientX - offset.x, y: e.clientY - offset.y };
           e.currentTarget.setPointerCapture(e.pointerId);

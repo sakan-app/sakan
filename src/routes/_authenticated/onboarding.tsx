@@ -14,6 +14,7 @@ import {
   type ProfileUpdate,
 } from "@/lib/profile-queries";
 import { COUNTRY_CODES } from "@/lib/countries";
+import { countryFormStrings } from "@/lib/forms/country-strings";
 import { useFeatureStrings } from "@/i18n/feature";
 import { searchStrings } from "@/components/search/strings";
 import { supabase } from "@/integrations/supabase/client";
@@ -40,6 +41,7 @@ type FormState = {
   gender: "" | "male" | "female";
   looking_for: "" | "male" | "female";
   country_code: string;
+  custom_country: string;
   city: string;
   bio: string;
   occupation: string;
@@ -57,6 +59,7 @@ const EMPTY: FormState = {
   gender: "",
   looking_for: "",
   country_code: "",
+  custom_country: "",
   city: "",
   bio: "",
   occupation: "",
@@ -83,6 +86,7 @@ function OnboardingPage() {
   const [uploading, setUploading] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const modStrings = useFeatureStrings(searchStrings).moderation;
+  const cfs = useFeatureStrings(countryFormStrings);
   const fileRef = useRef<HTMLInputElement>(null);
   const hydrated = useRef(false);
 
@@ -97,6 +101,7 @@ function OnboardingPage() {
       gender: p.gender ?? "",
       looking_for: p.looking_for ?? "",
       country_code: p.country_code ?? "",
+      custom_country: p.custom_country ?? "",
       city: p.city ?? "",
       bio: p.bio ?? "",
       occupation: p.occupation ?? "",
@@ -141,6 +146,8 @@ function OnboardingPage() {
     if (age < 18) return t.onboarding.ageError;
     if (!form.gender || !form.looking_for) return t.auth.errors.required;
     if (!form.country_code || !form.city.trim()) return t.auth.errors.required;
+    if (form.country_code === "OTHER" && !form.custom_country.trim())
+      return t.auth.errors.required;
     return null;
   }
 
@@ -169,6 +176,8 @@ function OnboardingPage() {
         gender: form.gender || null,
         looking_for: form.looking_for || null,
         country_code: form.country_code,
+        custom_country:
+          form.country_code === "OTHER" ? form.custom_country.trim() || null : null,
         city: form.city.trim(),
         preferred_language: locale,
       });
@@ -330,7 +339,17 @@ function OnboardingPage() {
                           {c.label}
                         </option>
                       ))}
+                      <option value="OTHER">{cfs.other}</option>
                     </select>
+                    {form.country_code === "OTHER" ? (
+                      <input
+                        className="field-navy mt-2 w-full"
+                        value={form.custom_country}
+                        placeholder={cfs.customPlaceholder}
+                        maxLength={60}
+                        onChange={(e) => set("custom_country", e.target.value)}
+                      />
+                    ) : null}
                   </Field>
                   <Field label={t.onboarding.city} className="sm:col-span-2">
                     <input

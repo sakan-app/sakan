@@ -28,6 +28,7 @@ import {
 
 import logo from "@/assets/sakan-logo.png.asset.json";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { FeaturedTicker } from "@/components/ads/FeaturedTicker";
 import { CallOverlay } from "@/components/calls/CallOverlay";
 import { CallProvider } from "@/lib/calls/CallProvider";
 import { shellStrings, type ShellStrings } from "@/components/app/shell.strings";
@@ -539,6 +540,7 @@ function TabBar() {
 
 export function AppShell() {
   const pathname = useActivePath();
+  const { t } = useI18n();
   const immersive = isImmersive(pathname);
   const { width, collapsed, persistWidth, toggleCollapsed } = useSidebarState();
   const shellInset = (collapsed ? SIDEBAR_COLLAPSED : width) + 32;
@@ -558,6 +560,7 @@ export function AppShell() {
       >
         <MobileBar />
         <Toolbar />
+        {!immersive && <FeaturedTicker />}
         <main
           className={`mx-auto w-full max-w-[1180px] px-3 sm:px-5 lg:px-0 ${
             immersive ? "pb-0" : "pb-[calc(5.75rem+env(safe-area-inset-bottom))] lg:pb-8"
@@ -576,6 +579,11 @@ export function AppShell() {
             </motion.div>
           </AnimatePresence>
           </MotionConfig>
+          {!immersive && (
+            <p className="mt-10 border-t border-gold/10 pt-5 text-center text-[11px] text-cream/45">
+              {t.footer.rights}
+            </p>
+          )}
         </main>
       </div>
       {!immersive && <TabBar />}
