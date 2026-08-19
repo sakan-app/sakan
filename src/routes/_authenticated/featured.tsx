@@ -15,6 +15,7 @@ import {
   uploadFeaturedCreative,
 } from "@/lib/ads/queries";
 import { adsStrings } from "@/lib/ads/strings";
+import { consentStrings } from "@/lib/consent/strings";
 import { useI18n } from "@/lib/i18n";
 import { RouteErrorBoundary } from "@/components/RouteError";
 
@@ -34,6 +35,7 @@ function FeaturedPage() {
   const { user } = useAuth();
   const { locale } = useI18n();
   const s = useFeatureStrings(adsStrings);
+  const cs = useFeatureStrings(consentStrings);
   const qc = useQueryClient();
   const userId = user?.id ?? "";
   const checkout = useServerFn(createFeaturedCheckout);
@@ -44,6 +46,7 @@ function FeaturedPage() {
   const [headline, setHeadline] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [link, setLink] = useState("");
+  const [consent, setConsent] = useState(false);
 
   const mine = useQuery({ ...myFeaturedAdsQuery(userId), enabled: Boolean(userId) });
   const queue = useQuery({
@@ -81,6 +84,7 @@ function FeaturedPage() {
       setHeadline("");
       setSubtitle("");
       setLink("");
+      setConsent(false);
       void qc.invalidateQueries({ queryKey: ["featured-ads"] });
     },
     onError: () => toast.error(s.error),
@@ -153,7 +157,7 @@ function FeaturedPage() {
 
             <button
               type="submit"
-              disabled={!file || submit.isPending}
+              disabled={!file || !consent || submit.isPending}
               className="btn-gold sm:col-span-2 inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-bold disabled:opacity-50"
             >
               {submit.isPending ? (
