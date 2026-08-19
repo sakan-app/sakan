@@ -155,6 +155,23 @@ function FeaturedPage() {
               className="sm:col-span-2"
             />
 
+            <label className="sm:col-span-2 flex items-start gap-2 text-[12px] leading-6 text-cream/70">
+              <input
+                type="checkbox"
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+                className="mt-1.5 h-4 w-4 shrink-0 accent-gold"
+              />
+              <span>
+                {cs.purchaseConsentLabel}
+                {!consent ? (
+                  <span className="mt-1 block text-[11px] text-gold/80">
+                    {cs.purchaseConsentRequired}
+                  </span>
+                ) : null}
+              </span>
+            </label>
+
             <button
               type="submit"
               disabled={!file || !consent || submit.isPending}
