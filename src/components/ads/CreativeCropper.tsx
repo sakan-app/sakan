@@ -3,6 +3,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 /** Output size of a featured creative (portrait 3:4). */
 const OUT_W = 900;
 const OUT_H = 1200;
+/** On-screen framing box (CSS px) used to map drag distance to output px. */
+const FRAME_W = 300;
+const FRAME_H = 400;
 
 type Props = {
   file: File;
@@ -75,7 +78,8 @@ export function CreativeCropper({ file, label, zoomLabel, hint, onChange }: Prop
     <div className="sm:col-span-2">
       <p className="mb-1 text-xs font-bold uppercase tracking-wide text-cream/60">{label}</p>
       <div
-        className="relative h-[200px] w-full cursor-grab overflow-hidden rounded-2xl border border-gold/25 bg-navy-deep active:cursor-grabbing"
+        style={{ width: FRAME_W, height: FRAME_H }}
+        className="relative mx-auto max-w-full cursor-grab touch-none overflow-hidden rounded-2xl border border-gold/25 bg-navy-deep active:cursor-grabbing"
         onPointerDown={(e) => {
           dragRef.current = { x: e.clientX - offset.x, y: e.clientY - offset.y };
           e.currentTarget.setPointerCapture(e.pointerId);
