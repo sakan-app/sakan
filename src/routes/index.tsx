@@ -393,7 +393,9 @@ function Index() {
                 }`}
               >
                 <div className="flex items-baseline justify-between gap-2">
-                  <h3 className="text-lg font-black text-cream">{plan.name[locale]}</h3>
+                  <h3 className="text-lg font-black text-cream">
+                    {planDisplayName(plan.code, "monthly", locale, plan.name[locale])}
+                  </h3>
                   {plan.code === "premium" ? (
                     <span className="chip-glass px-2 py-0.5 text-[10px] uppercase tracking-wider text-gold">
                       {bs.mostPopular}
