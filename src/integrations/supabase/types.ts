@@ -354,6 +354,81 @@ export type Database = {
           },
         ]
       }
+      commercial_ads: {
+        Row: {
+          advertiser_email: string | null
+          advertiser_name: string
+          amount_cents: number
+          clicks: number
+          created_at: string
+          created_by: string | null
+          currency: string
+          duration_key: string
+          ends_at: string | null
+          headline: string | null
+          id: string
+          image_path: string | null
+          image_url: string | null
+          impressions: number
+          paid_at: string | null
+          provider: string | null
+          provider_ref: string | null
+          slot_key: string
+          starts_at: string | null
+          status: string
+          target_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          advertiser_email?: string | null
+          advertiser_name: string
+          amount_cents?: number
+          clicks?: number
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          duration_key?: string
+          ends_at?: string | null
+          headline?: string | null
+          id?: string
+          image_path?: string | null
+          image_url?: string | null
+          impressions?: number
+          paid_at?: string | null
+          provider?: string | null
+          provider_ref?: string | null
+          slot_key?: string
+          starts_at?: string | null
+          status?: string
+          target_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          advertiser_email?: string | null
+          advertiser_name?: string
+          amount_cents?: number
+          clicks?: number
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          duration_key?: string
+          ends_at?: string | null
+          headline?: string | null
+          id?: string
+          image_path?: string | null
+          image_url?: string | null
+          impressions?: number
+          paid_at?: string | null
+          provider?: string | null
+          provider_ref?: string | null
+          slot_key?: string
+          starts_at?: string | null
+          status?: string
+          target_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       compatibility_scores: {
         Row: {
           candidate_id: string
@@ -998,6 +1073,7 @@ export type Database = {
           created_at: string
           default_language: Database["public"]["Enums"]["language_code"]
           id: boolean
+          inactivity_archive_days: number | null
           maintenance_mode: boolean
           max_gallery_photos: number
           max_image_mb: number
@@ -1013,6 +1089,7 @@ export type Database = {
           created_at?: string
           default_language?: Database["public"]["Enums"]["language_code"]
           id?: boolean
+          inactivity_archive_days?: number | null
           maintenance_mode?: boolean
           max_gallery_photos?: number
           max_image_mb?: number
@@ -1028,6 +1105,7 @@ export type Database = {
           created_at?: string
           default_language?: Database["public"]["Enums"]["language_code"]
           id?: boolean
+          inactivity_archive_days?: number | null
           maintenance_mode?: boolean
           max_gallery_photos?: number
           max_image_mb?: number
