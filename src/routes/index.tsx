@@ -21,6 +21,7 @@ import { Link } from "@tanstack/react-router";
 import { useFeatureStrings } from "@/i18n/feature";
 import { billingStrings } from "@/lib/billing/strings";
 import { plansQuery } from "@/lib/billing/queries";
+import { planDisplayName } from "@/lib/billing/plan-display";
 import { formatPrice } from "@/lib/billing/types";
 import { FeaturedTicker } from "@/components/ads/FeaturedTicker";
 import { AdSlot } from "@/components/ads/AdSlot";
@@ -46,6 +47,8 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "بحث ذكي، حسابات موثقة، وخصوصية كاملة — ابدأ رحلتك الآن.",
       },
+      { property: "og:image", content: "https://www.sakanapp.net/icons/icon-512.png" },
+      { name: "twitter:image", content: "https://www.sakanapp.net/icons/icon-512.png" },
     ],
     scripts: [
       {
@@ -391,7 +394,9 @@ function Index() {
                 }`}
               >
                 <div className="flex items-baseline justify-between gap-2">
-                  <h3 className="text-lg font-black text-cream">{plan.name[locale]}</h3>
+                  <h3 className="text-lg font-black text-cream">
+                    {planDisplayName(plan.code, "monthly", locale, plan.name[locale])}
+                  </h3>
                   {plan.code === "premium" ? (
                     <span className="chip-glass px-2 py-0.5 text-[10px] uppercase tracking-wider text-gold">
                       {bs.mostPopular}

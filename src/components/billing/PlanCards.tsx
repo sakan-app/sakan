@@ -9,6 +9,7 @@ import { useFeatureStrings } from "@/i18n/feature";
 import { useI18n } from "@/lib/i18n";
 import { useStartCheckout } from "@/lib/billing/queries";
 import { billingStrings } from "@/lib/billing/strings";
+import { planDisplayName } from "@/lib/billing/plan-display";
 import { formatPrice, type BillingInterval } from "@/lib/billing/types";
 
 export function PlanCards() {
@@ -97,7 +98,9 @@ export function PlanCards() {
 
                 <div className="flex items-center gap-2">
                   {plan.tier > 0 ? <Crown className="h-5 w-5 text-gold" aria-hidden="true" /> : null}
-                  <h2 className="text-xl font-black">{plan.name[locale]}</h2>
+                  <h2 className="text-xl font-black">
+                    {planDisplayName(plan.code, interval, locale, plan.name[locale])}
+                  </h2>
                 </div>
                 <p className={`mt-1 text-sm ${plan.tier === 1 ? "text-cream/70" : "text-muted-foreground"}`}>
                   {plan.tagline[locale]}
