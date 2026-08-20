@@ -46,6 +46,8 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "بحث ذكي، حسابات موثقة، وخصوصية كاملة — ابدأ رحلتك الآن.",
       },
+      { property: "og:image", content: "https://www.sakanapp.net/icons/icon-512.png" },
+      { name: "twitter:image", content: "https://www.sakanapp.net/icons/icon-512.png" },
     ],
     scripts: [
       {
