@@ -9,6 +9,7 @@ import { useFeatureStrings } from "@/i18n/feature";
 import { useI18n } from "@/lib/i18n";
 import { useStartCheckout } from "@/lib/billing/queries";
 import { billingStrings } from "@/lib/billing/strings";
+import { planDisplayName } from "@/lib/billing/plan-display";
 import { formatPrice, type BillingInterval } from "@/lib/billing/types";
 
 export function PlanCards() {
