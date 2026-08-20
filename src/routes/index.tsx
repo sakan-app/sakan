@@ -21,6 +21,7 @@ import { Link } from "@tanstack/react-router";
 import { useFeatureStrings } from "@/i18n/feature";
 import { billingStrings } from "@/lib/billing/strings";
 import { plansQuery } from "@/lib/billing/queries";
+import { planDisplayName } from "@/lib/billing/plan-display";
 import { formatPrice } from "@/lib/billing/types";
 import { FeaturedTicker } from "@/components/ads/FeaturedTicker";
 import { AdSlot } from "@/components/ads/AdSlot";
