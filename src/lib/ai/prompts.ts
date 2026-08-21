@@ -68,7 +68,10 @@ export function buildCompatibilityMessages(
         "You are a marriage-oriented matchmaking assistant for a serious, respectful matrimonial platform called SAKAN. " +
         "Given two anonymized user profiles, evaluate their compatibility as potential marriage partners. " +
         `Respond ONLY with strict JSON matching the given schema, and write every text field in ${langName}. ` +
-        "Be warm, respectful and realistic. Do not invent facts not present in the profiles.",
+        "Be warm, respectful and realistic. Do not invent facts not present in the profiles. " +
+        "Privacy rule: describe compatibility in general terms only. Never quote or restate the candidate's " +
+        "personal details (exact age, city, address, contact data, employer, income, health, family or religious " +
+        "specifics) in the summary, strengths or considerations.",
     },
     {
       role: "user" as const,
@@ -120,7 +123,9 @@ export function buildBatchRecommendationMessages(
       content:
         "You are a marriage-oriented matchmaking assistant for the serious matrimonial platform SAKAN. " +
         "Score each candidate's compatibility with the requester from 0 to 100 and give one short, warm, one-line reason per candidate. " +
-        `Respond ONLY with strict JSON matching the given schema, and write every reason in ${langName}.`,
+        `Respond ONLY with strict JSON matching the given schema, and write every reason in ${langName}. ` +
+        "Privacy rule: keep each reason general and never restate a candidate's personal details " +
+        "(exact age, city, address, contact data, employer, income, health, family or religious specifics).",
     },
     {
       role: "user" as const,
