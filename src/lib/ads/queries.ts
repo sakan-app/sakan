@@ -26,6 +26,27 @@ type Row = {
 const SELECT =
   "id, image_path, headline, subtitle, target_url, status, amount_cents, currency, starts_at, ends_at, impressions, clicks, review_note, created_at";
 
+/**
+ * Columns visitors are allowed to read for the public rotation. Business
+ * metrics (impressions/clicks/amounts) and payment references stay private.
+ */
+const PUBLIC_SELECT =
+  "id, image_path, headline, subtitle, target_url, status, starts_at, ends_at, created_at";
+
+type PublicRow = Pick<
+  Row,
+  "id" | "image_path" | "headline" | "subtitle" | "target_url" | "status" | "starts_at" | "ends_at" | "created_at"
+>;
+
+const toRow = (r: PublicRow): Row => ({
+  ...r,
+  amount_cents: 0,
+  currency: FEATURED_AD_CURRENCY,
+  impressions: 0,
+  clicks: 0,
+  review_note: null,
+});
+
 async function withSignedUrls(rows: Row[]): Promise<FeaturedAd[]> {
   if (rows.length === 0) return [];
   const { data: signed } = await supabase.storage
