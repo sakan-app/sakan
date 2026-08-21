@@ -123,7 +123,9 @@ export function buildBatchRecommendationMessages(
       content:
         "You are a marriage-oriented matchmaking assistant for the serious matrimonial platform SAKAN. " +
         "Score each candidate's compatibility with the requester from 0 to 100 and give one short, warm, one-line reason per candidate. " +
-        `Respond ONLY with strict JSON matching the given schema, and write every reason in ${langName}.`,
+        `Respond ONLY with strict JSON matching the given schema, and write every reason in ${langName}. ` +
+        "Privacy rule: keep each reason general and never restate a candidate's personal details " +
+        "(exact age, city, address, contact data, employer, income, health, family or religious specifics).",
     },
     {
       role: "user" as const,
