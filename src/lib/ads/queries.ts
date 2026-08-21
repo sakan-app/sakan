@@ -81,12 +81,12 @@ export const featuredAdsQuery = queryOptions({
   queryFn: async (): Promise<FeaturedAd[]> => {
     const { data, error } = await supabase
       .from("featured_ads")
-      .select(SELECT)
+      .select(PUBLIC_SELECT)
       .eq("status", "active")
       .order("created_at", { ascending: false })
       .limit(20);
     if (error) throw error;
-    const rows = ((data ?? []) as Row[]).filter(
+    const rows = ((data ?? []) as PublicRow[]).map(toRow).filter(
       (r) => !r.ends_at || new Date(r.ends_at).getTime() > Date.now(),
     );
     return withSignedUrls(rows);
