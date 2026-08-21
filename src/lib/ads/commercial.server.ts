@@ -55,7 +55,7 @@ async function withImageUrls(rows: Row[]): Promise<CommercialAd[]> {
   }
   return rows.map((r) => ({
     ...r,
-    display_url: (r.image_path ? (urls.get(r.image_path) ?? null) : null) ?? r.image_url,
+    display_url: (r.image_path ? urls.get(r.image_path) : undefined) ?? r.image_url,
   }));
 }
 
