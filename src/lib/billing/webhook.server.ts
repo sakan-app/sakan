@@ -112,6 +112,22 @@ export async function handleCheckoutCompleted(session: Obj) {
     );
     return;
   }
+  // Commercial header banner: this verified event is the ONLY path that may
+  // mark a commercial advertisement as paid and publish it. A browser
+  // reporting "checkout succeeded" never reaches this code.
+  if (meta["kind"] === "commercial_ad" && meta["ad_id"]) {
+    if (session["payment_status"] !== "paid") {
+      console.warn("[stripe] commercial ad session not paid", session["id"]);
+      return;
+    }
+    const { publishCommercialAd } = await import("@/lib/ads/commercial.server");
+    await publishCommercialAd(
+      meta["ad_id"]!,
+      "stripe",
+      idOf(session["payment_intent"]) ?? String(session["id"] ?? ""),
+    );
+    return;
+  }
   if (meta["kind"] !== "subscription") return;
   if (session["payment_status"] === "unpaid") return;
 
