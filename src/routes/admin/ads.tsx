@@ -18,6 +18,7 @@ import {
   Th,
 } from "@/components/admin/ui";
 import { listFeaturedAdsAdmin, reviewFeaturedAd } from "@/lib/ads/ads.functions";
+import { CommercialAdsPanel } from "@/components/admin/CommercialAdsPanel";
 import { RouteErrorBoundary } from "@/components/RouteError";
 
 export const Route = createFileRoute("/admin/ads")({
@@ -158,6 +159,8 @@ function AdminAds() {
           </TableShell>
         )}
       </Panel>
+
+      <CommercialAdsPanel />
     </div>
   );
 }
