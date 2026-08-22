@@ -14,7 +14,7 @@ import {
   LoadingState,
   Panel,
 } from "@/components/admin/ui";
-import { getPlatformSettings, updatePlatformSettings } from "@/lib/admin/ops.functions";
+import { getPlatformSettings, runInactivitySweep, updatePlatformSettings } from "@/lib/admin/ops.functions";
 import { useAdminAccess } from "@/routes/admin/route";
 import { RouteErrorBoundary } from "@/components/RouteError";
 
@@ -41,11 +41,13 @@ type Draft = {
   max_gallery_photos: number;
   max_image_mb: number;
   allowed_image_types: string;
+  inactivity_archive_days: number;
 };
 
 function AdminSettings() {
   const getFn = useServerFn(getPlatformSettings);
   const updateFn = useServerFn(updatePlatformSettings);
+  const sweepFn = useServerFn(runInactivitySweep);
   const queryClient = useQueryClient();
   const access = useAdminAccess();
   const [, confirm, , confirmNode] = useConfirm();
@@ -65,6 +67,7 @@ function AdminSettings() {
       max_gallery_photos: s.max_gallery_photos ?? 9,
       max_image_mb: s.max_image_mb ?? 5,
       allowed_image_types: (s.allowed_image_types ?? ["image/jpeg", "image/png", "image/webp"]).join(", "),
+      inactivity_archive_days: s.inactivity_archive_days ?? 0,
     });
   }, [settings.data]);
 
@@ -83,6 +86,7 @@ function AdminSettings() {
             .split(",")
             .map((value) => value.trim())
             .filter(Boolean),
+          inactivity_archive_days: Number(draft!.inactivity_archive_days) || 0,
         },
       }),
     onSuccess: () => {
@@ -90,6 +94,16 @@ function AdminSettings() {
       void queryClient.invalidateQueries({ queryKey: ["admin", "platform-settings"] });
     },
     onError: (error: Error) => toast.error(error.message || "Could not save settings"),
+  });
+
+  const sweep = useMutation({
+    mutationFn: (dryRun: boolean) => sweepFn({ data: { dryRun } }),
+    onSuccess: (result) => {
+      if (result.reason === "not_configured") toast.info("Inactivity archiving is disabled.");
+      else if (result.dryRun) toast.success(`${result.eligible} profile(s) eligible.`);
+      else toast.success(`${result.archived} profile(s) archived.`);
+    },
+    onError: (error: Error) => toast.error(error.message || "Sweep failed"),
   });
 
   const isSuper = Boolean(access.data?.isSuperAdmin);
@@ -204,6 +218,62 @@ function AdminSettings() {
               placeholder="image/jpeg, image/png, image/webp"
             />
           </Row>
+        </Panel>
+
+        <Panel className="space-y-4 xl:col-span-2">
+          <div>
+            <h2 className="text-sm font-semibold text-cream">Inactivity retention</h2>
+            <p className="text-xs text-cream/45">
+              Archiving only deactivates and hides a profile — accounts are never deleted, and members with a paid
+              subscription are always skipped. Running the sweep twice changes nothing.
+            </p>
+          </div>
+          <Row label="Archive after (days of inactivity) — 0 disables the sweep">
+            <AdminInput
+              type="number"
+              min={0}
+              max={3650}
+              disabled={!isSuper}
+              value={draft.inactivity_archive_days}
+              onChange={(event) => set("inactivity_archive_days", Number(event.target.value))}
+            />
+          </Row>
+          <div className="flex flex-wrap gap-2">
+            <ActionButton
+              disabled={sweep.isPending}
+              onClick={() => sweep.mutate(true)}
+            >
+              Preview eligible accounts
+            </ActionButton>
+            <ActionButton
+              tone="danger"
+              disabled={!isSuper || sweep.isPending}
+              onClick={() =>
+                confirm({
+                  title: "Run the inactivity archive sweep?",
+                  description:
+                    "Eligible inactive, non-paying profiles will be deactivated and hidden. Nothing is deleted and the action can be reversed per profile.",
+                  confirmLabel: "Run sweep",
+                  onConfirm: async () => {
+                    await sweep.mutateAsync(false);
+                  },
+                })
+              }
+            >
+              Run sweep now
+            </ActionButton>
+          </div>
+          {sweep.data ? (
+            <p className="text-xs text-cream/60">
+              {sweep.data.reason === "not_configured"
+                ? "Sweep disabled — set a day count above and save first."
+                : `${sweep.data.dryRun ? "Eligible" : "Archived"}: ${
+                    sweep.data.dryRun ? sweep.data.eligible : sweep.data.archived
+                  } · skipped paying members: ${sweep.data.skippedPaying} · cutoff ${
+                    sweep.data.cutoff ? new Date(sweep.data.cutoff).toLocaleDateString() : "—"
+                  }`}
+            </p>
+          ) : null}
         </Panel>
       </div>
     </div>
