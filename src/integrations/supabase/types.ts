@@ -1121,6 +1121,7 @@ export type Database = {
       profiles: {
         Row: {
           accent_color: string
+          archived_at: string | null
           avatar_border: Database["public"]["Enums"]["avatar_border"]
           avatar_url: string | null
           bio: string | null
@@ -1158,6 +1159,7 @@ export type Database = {
         }
         Insert: {
           accent_color?: string
+          archived_at?: string | null
           avatar_border?: Database["public"]["Enums"]["avatar_border"]
           avatar_url?: string | null
           bio?: string | null
@@ -1195,6 +1197,7 @@ export type Database = {
         }
         Update: {
           accent_color?: string
+          archived_at?: string | null
           avatar_border?: Database["public"]["Enums"]["avatar_border"]
           avatar_url?: string | null
           bio?: string | null
