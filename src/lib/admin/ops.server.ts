@@ -999,6 +999,7 @@ export type PlatformSettingsPatch = {
   max_gallery_photos?: number | undefined;
   max_image_mb?: number | undefined;
   allowed_image_types?: string[] | undefined;
+  inactivity_archive_days?: number | null | undefined;
   notify_defaults?: Record<string, boolean> | undefined;
 };
 

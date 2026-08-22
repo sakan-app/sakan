@@ -262,6 +262,7 @@ export const updatePlatformSettings = createServerFn({ method: "POST" })
       max_gallery_photos: z.number().int().min(1).max(50).optional(),
       max_image_mb: z.number().int().min(1).max(25).optional(),
       allowed_image_types: z.array(z.string().max(60)).max(10).optional(),
+      inactivity_archive_days: z.number().int().min(0).max(3650).nullable().optional(),
       notify_defaults: z.record(z.string(), z.boolean()).optional(),
     }),
   )
@@ -392,4 +393,28 @@ export const exportPaymentsCsv = createServerFn({ method: "GET" })
     const { exportPaymentsCsv: run } = await import("./billing.server");
     await assertStaff(context.supabase, context.userId);
     return { csv: await run(data) };
+  });
+
+// ---------------------------------------------------------------------------
+// Retention — inactivity archive sweep (non-destructive, admin only)
+// ---------------------------------------------------------------------------
+
+export const runInactivitySweep = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator(z.object({ dryRun: z.boolean().default(true) }))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./admin.server");
+    const { runInactivitySweep: run } = await import("./retention.server");
+    await assertAdmin(context.supabase, context.userId);
+    return run({ adminId: context.userId, dryRun: data.dryRun });
+  });
+
+export const unarchiveProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator(z.object({ targetId: z.string().uuid() }))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./admin.server");
+    const { unarchiveProfile: run } = await import("./retention.server");
+    await assertAdmin(context.supabase, context.userId);
+    return run({ adminId: context.userId, targetId: data.targetId });
   });
