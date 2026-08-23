@@ -336,7 +336,7 @@ export function CommercialAdsPanel() {
         </label>
 
         <div className="sm:col-span-2 flex flex-wrap items-center gap-3">
-          <ActionButton type="submit" tone="primary" disabled={save.isPending}>
+          <ActionButton type="submit" tone="gold" disabled={save.isPending}>
             {form.id ? "Save changes" : "Create draft"}
           </ActionButton>
           {form.id ? (
