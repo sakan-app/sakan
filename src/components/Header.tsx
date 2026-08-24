@@ -1,7 +1,6 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Check, Globe } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import logo from "@/assets/sakan-logo.png.asset.json";
 import { useI18n } from "@/lib/i18n";
 import { localeFlags, localeNames, localeOrder } from "@/i18n";
 import { useAuth } from "@/hooks/useAuth";
@@ -50,7 +49,8 @@ export function Header() {
     <header className="glass-topbar sticky top-0 z-50" style={{ paddingTop: "env(safe-area-inset-top)" }}>
       <div className="mx-auto grid max-w-[1360px] grid-cols-[auto_1fr_auto] items-center gap-4 px-4 py-3 lg:px-8">
         <Link to="/" className="flex shrink-0 items-center gap-2">
-          <img src={logo.url} alt="شعار منصة سكن" className="h-11 w-11 object-contain" />
+          {/* ✅ استخدم المسار المباشر */}
+          <img src="/sakan-logo.png" alt="شعار منصة سكن" className="h-11 w-11 object-contain" />
           <span className="hidden text-lg font-bold text-cream sm:block">
             سكن <span className="text-gold/60">|</span>{" "}
             <span className="latin text-sm text-gold">SAKAN</span>
