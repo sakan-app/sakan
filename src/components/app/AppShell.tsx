@@ -26,7 +26,7 @@ import {
   type ReactNode,
 } from "react";
 
-import logo from "@/assets/sakan-logo.png.asset.json";
+const logoUrl = "/sakan-logo.png";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { FeaturedTicker } from "@/components/ads/FeaturedTicker";
 import { CallOverlay } from "@/components/calls/CallOverlay";
