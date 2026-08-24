@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import { Facebook, Instagram, Youtube, Twitter, Mail, Globe, MapPin } from "lucide-react";
-import logo from "@/assets/sakan-logo.png.asset.json";
 import { COMPANY, COMPANY_PUBLIC_LOCATION } from "@/lib/company";
 import { useI18n } from "@/lib/i18n";
 
@@ -33,7 +32,8 @@ export function Footer() {
       <div className="relative mx-auto grid max-w-[1360px] gap-10 px-6 pb-10 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
         <div>
           <div className="flex items-center gap-2">
-            <img src={logo.url} alt="SAKAN" className="h-12 w-12 object-contain" loading="lazy" />
+            {/* ✅ استخدم المسار المباشر */}
+            <img src="/sakan-logo.png" alt="SAKAN" className="h-12 w-12 object-contain" loading="lazy" />
             <span className="text-lg font-bold text-cream">
               سكن <span className="text-gold/60">|</span>{" "}
               <span className="latin text-sm text-gold">SAKAN</span>
