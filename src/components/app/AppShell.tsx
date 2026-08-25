@@ -213,7 +213,7 @@ function Sidebar({
       <div
         className={`flex items-center gap-2.5 pb-4 pt-5 ${collapsed ? "justify-center px-2" : "px-5"}`}
       >
-        <img src={logo.url} alt="" className="h-9 w-9 shrink-0 object-contain" aria-hidden />
+        <img src={logoUrl} alt="" className="h-9 w-9 shrink-0 object-contain" aria-hidden />
         {!collapsed && (
           <span className="truncate text-base font-bold text-cream">
             سكن <span className="latin text-[11px] text-gold">SAKAN</span>
@@ -463,7 +463,7 @@ function MobileBar() {
     <header className="sticky top-0 z-30 border-b border-white/10 glass-bar app-safe-top lg:hidden">
       <div className="flex h-14 items-center gap-2 px-4">
         <Link to="/home" className="flex items-center gap-2">
-          <img src={logo.url} alt="" className="h-8 w-8 object-contain" aria-hidden />
+          <img src={logoUrl} alt="" className="h-8 w-8 object-contain" aria-hidden />
           <span className="text-sm font-bold text-cream">سكن</span>
         </Link>
         <div className="flex-1" />
