@@ -133,9 +133,7 @@ function AuthPage() {
     setError(null);
     setBusy(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}/auth/callback`,
-      });
+      const result = await signInWithGoogle(`${window.location.origin}/auth/callback`);
       if (result.error) throw result.error;
       if (result.redirected) return;
       void navigate({ to: "/home", replace: true });
