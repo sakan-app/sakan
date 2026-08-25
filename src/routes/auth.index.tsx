@@ -5,7 +5,7 @@ import { Loader2, Mail } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
+import { signInWithGoogle } from "@/lib/auth/google-signin";
 import { useAuth } from "@/hooks/useAuth";
 import { useI18n, format } from "@/lib/i18n";
 import { authErrorMessage } from "@/lib/auth-errors";
