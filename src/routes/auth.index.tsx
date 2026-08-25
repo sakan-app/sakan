@@ -5,7 +5,7 @@ import { Loader2, Mail } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
+import { signInWithGoogle } from "@/lib/auth/google-signin";
 import { useAuth } from "@/hooks/useAuth";
 import { useI18n, format } from "@/lib/i18n";
 import { authErrorMessage } from "@/lib/auth-errors";
@@ -133,9 +133,7 @@ function AuthPage() {
     setError(null);
     setBusy(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}/auth/callback`,
-      });
+      const result = await signInWithGoogle(`${window.location.origin}/auth/callback`);
       if (result.error) throw result.error;
       if (result.redirected) return;
       void navigate({ to: "/home", replace: true });
