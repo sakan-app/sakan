@@ -1,11 +1,10 @@
-import { supabase } from "@/integrations/supabase/client";
+const MANAGED_OAUTH_BROKER_URL =
+  "https://sakan-connect-prototype.lovable.app/~oauth/initiate";
 
 /**
- * The `/~oauth/initiate` broker path only exists on Lovable-hosted origins
- * (*.lovable.app / *.lovable.dev and Lovable-managed custom domains), where a
- * proxy worker intercepts it. On any other host (e.g. a Vercel deployment of
- * www.sakanapp.net) that path 404s, so we must talk to the auth provider
- * directly instead of going through the Lovable broker.
+ * The relative `/~oauth/initiate` broker path only exists on Lovable-hosted
+ * origins. Self-hosted deployments use the project's stable Lovable broker
+ * URL so managed Google credentials continue to work without a local proxy.
  */
 export function isLovableHostedOrigin(): boolean {
   if (typeof window === "undefined") return false;
@@ -37,12 +36,14 @@ export async function signInWithGoogle(redirectTo: string): Promise<GoogleSignIn
     return { redirected: Boolean(result.redirected) };
   }
 
-  // Self-hosted origin (Vercel/custom domain): full-page redirect straight to
-  // the backend auth endpoint, which then hands off to Google.
-  const { error } = await supabase.auth.signInWithOAuth({
+  // Self-hosted origin (Vercel/custom domain): use the same managed broker via
+  // its stable Lovable-hosted URL. Direct provider access requires a separate
+  // Google secret in the auth service and fails when only managed OAuth is set.
+  const params = new URLSearchParams({
     provider: "google",
-    options: { redirectTo, queryParams: { prompt: "select_account" } },
+    redirect_uri: redirectTo,
+    prompt: "select_account",
   });
-  if (error) return { redirected: false, error };
+  window.location.assign(`${MANAGED_OAUTH_BROKER_URL}?${params.toString()}`);
   return { redirected: true };
 }
