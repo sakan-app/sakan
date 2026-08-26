@@ -1,5 +1,3 @@
-import { supabase } from "@/integrations/supabase/client";
-
 const MANAGED_OAUTH_BROKER_URL =
   "https://sakan-connect-prototype.lovable.app/~oauth/initiate";
 
