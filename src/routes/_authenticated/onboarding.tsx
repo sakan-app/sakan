@@ -84,6 +84,7 @@ function OnboardingPage() {
   const [error, setError] = useState<string | null>(null);
   const [avatarPath, setAvatarPath] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const modStrings = useFeatureStrings(searchStrings).moderation;
   const cfs = useFeatureStrings(countryFormStrings);
@@ -152,8 +153,21 @@ function OnboardingPage() {
   }
 
   async function handleNext() {
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      await runStep();
+    } catch {
+      setError(t.common.errorText);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function runStep() {
     setError(null);
     setNotice(null);
+
     if (step === 1) {
       const invalid = validateStep1();
       if (invalid) return setError(invalid);
@@ -252,7 +266,7 @@ function OnboardingPage() {
   }
 
   const stepTitles = [t.onboarding.stepBasics, t.onboarding.stepAbout, t.onboarding.stepPhoto];
-  const busy = save.isPending || uploading;
+  const busy = save.isPending || uploading || submitting;
 
   return (
     <div className="w-full">
