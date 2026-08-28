@@ -152,8 +152,21 @@ function OnboardingPage() {
   }
 
   async function handleNext() {
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      await runStep();
+    } catch {
+      setError(t.common.errorText);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function runStep() {
     setError(null);
     setNotice(null);
+
     if (step === 1) {
       const invalid = validateStep1();
       if (invalid) return setError(invalid);
