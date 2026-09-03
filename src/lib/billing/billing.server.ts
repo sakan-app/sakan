@@ -272,7 +272,22 @@ export async function startCheckout(args: {
     detail: { provider: provider.id, interval: args.interval },
   });
 
-  const result = await provider.createCheckout(req);
+  // A rejected/expired Stripe key must not block the purchase flow: fall back
+  // to the manual provider exactly like a project with no PSP connected.
+  let result: Awaited<ReturnType<typeof provider.createCheckout>>;
+  let usedProviderId = provider.id;
+  let usedLive = provider.live;
+  try {
+    result = await provider.createCheckout(req);
+  } catch (err) {
+    const code = err instanceof Error ? err.message : "";
+    if (!code.startsWith("stripe_")) throw err;
+    console.error("Stripe checkout unavailable, using manual provider:", code);
+    result = { kind: "activate", providerRef: `manual_${args.planCode}_${Date.now()}` };
+    usedProviderId = "manual";
+    usedLive = false;
+  }
+
   if (result.kind === "redirect") {
     return { status: "redirect" as const, url: result.url };
   }
@@ -281,10 +296,11 @@ export async function startCheckout(args: {
     userId: args.userId,
     planCode: args.planCode,
     interval: args.interval,
-    provider: provider.id,
+    provider: usedProviderId,
     providerRef: result.providerRef,
   });
-  return { status: "active" as const, testMode: !provider.live };
+  return { status: "active" as const, testMode: !usedLive };
+
 }
 
 export async function cancelAtPeriodEnd(userId: string) {
