@@ -11,6 +11,7 @@ import { useStartCheckout } from "@/lib/billing/queries";
 import { billingStrings } from "@/lib/billing/strings";
 import { planDisplayName } from "@/lib/billing/plan-display";
 import { formatPrice, type BillingInterval } from "@/lib/billing/types";
+import { errorCode } from "@/lib/error-code";
 
 export function PlanCards() {
   const { user } = useAuth();
@@ -29,7 +30,7 @@ export function PlanCards() {
         onSuccess: (result) => {
           if (result.status === "active") toast.success(s.statuses["active"] ?? "Active");
         },
-        onError: () => toast.error(s.error),
+        onError: (err) => toast.error(s.error, { description: errorCode(err) }),
         onSettled: () => setPending(null),
       },
     );
