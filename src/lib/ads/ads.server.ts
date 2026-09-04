@@ -58,7 +58,8 @@ export async function startFeaturedCheckout(args: {
   } catch (err) {
     // Placeholder/rejected key: behave exactly like "no key configured"
     // instead of failing the whole flow.
-    if (err instanceof Error && err.message === "stripe_not_configured") {
+    if (err instanceof Error && err.message.startsWith("stripe_")) {
+      console.error("Stripe featured checkout unavailable:", err.message);
       await publishFeaturedAd(args.adId, "manual", `manual_ad_${Date.now()}`);
       return { status: "active" as const, testMode: true };
     }

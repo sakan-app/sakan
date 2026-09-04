@@ -18,6 +18,7 @@ import { adsStrings } from "@/lib/ads/strings";
 import { consentStrings } from "@/lib/consent/strings";
 import { useI18n } from "@/lib/i18n";
 import { RouteErrorBoundary } from "@/components/RouteError";
+import { errorCode } from "@/lib/error-code";
 
 export const Route = createFileRoute("/_authenticated/featured")({
   head: () => ({
@@ -87,7 +88,7 @@ function FeaturedPage() {
       setConsent(false);
       void qc.invalidateQueries({ queryKey: ["featured-ads"] });
     },
-    onError: () => toast.error(s.error),
+    onError: (err) => toast.error(s.error, { description: errorCode(err) }),
   });
 
   const fmtLeft = (ms: number) => {
