@@ -1,0 +1,1 @@
+delete from public.profiles where id = '60b6eeac-6142-4352-9d11-b105e19d746d';

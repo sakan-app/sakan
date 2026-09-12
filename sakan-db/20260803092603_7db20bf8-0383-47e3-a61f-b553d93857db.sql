@@ -1,0 +1,1 @@
+ALTER TYPE public.language_code ADD VALUE IF NOT EXISTS 'fr';
